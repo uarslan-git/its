@@ -1,10 +1,16 @@
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+
+import { CodeEditorComponent } from './code-editor/code-editor.component';
+
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CodeEditorComponent } from './code-editor/code-editor.component';
+
 import { SharedModule } from './shared/shared.module';
+
+
 
 @NgModule({
   declarations: [
@@ -14,7 +20,8 @@ import { SharedModule } from './shared/shared.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SharedModule
+    ReactiveFormsModule,
+    SharedModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

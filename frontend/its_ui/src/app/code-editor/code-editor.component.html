@@ -1,1 +1,39 @@
-<p>code-editor works!</p>
+<app-prism [code]=python_code [language]=code_language></app-prism>
+
+<!-- <form [formGroup]="form"]>
+    <div class="code-container line-numbers">
+        <textarea 
+                class="text-area-code-editor"
+                formControlName="content"
+                spellcheck="false"
+                    >
+        </textarea>
+        <pre
+            aria-hidden="true"
+            class="pre"
+        ><code #codeContent [ngClass]="['code', 'Language-' + codeType]">{{ text }}</code>
+    </pre>
+    </div>
+</form> -->
+
+<!-- <form [formGroup]="form"]>
+</form> -->
+
+
+<!-- <form [formGroup]="form">
+    <div class="code-container line-numbers">
+      <textarea
+        #textArea
+        placeholder="Add your code (default html)"
+        class="text-area-code-editor"
+        formControlName="content"
+        spellcheck="false"
+      ></textarea>
+      <pre
+        aria-hidden="true"
+        class="pre line-numbers"
+        #pre
+      ><code [ngClass]="['code', 'language-' + codeType]" #codeContent></code>
+      </pre>
+    </div>
+  </form> -->
