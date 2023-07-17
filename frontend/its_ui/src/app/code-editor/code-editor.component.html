@@ -1,10 +1,14 @@
 <app-prism [code]=python_code [language]=code_language></app-prism>
 
+
+<div><button mat-raised-button color="primary" (click)="submitButtonClicked()">submit</button></div>
+
+
   <form [formGroup]="form">
     <div class="code-container line-numbers">
       <textarea
         #textArea
-        placeholder="Add your code component"
+        placeholder="Add your code"
         class="text-area-code-editor"
         formControlName="content"
         spellcheck="false"
@@ -17,3 +21,6 @@
       </pre>
     </div>
   </form>
+
+<h2>Submitted Code:</h2>
+<app-prism [code]=submitted_code [language]=code_language></app-prism>

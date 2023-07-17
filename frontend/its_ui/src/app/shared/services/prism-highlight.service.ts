@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 
+// Prism as service tutorial
+// Tutorial: https://www.youtube.com/watch?v=avByjLNGV3E
+
 import 'prismjs';
 import 'prismjs/plugins/line-numbers/prism-line-numbers';
 import 'prismjs/components/prism-css';
@@ -23,6 +26,7 @@ export class PrismHighlightService {
     Prism.highlightAll();
   }
 
+  // TODO: Remove unecessary HTML stuff
   convertHtmlIntoString(text: string) {
     return text
       .replace(new RegExp('&', 'g'), '&amp;')

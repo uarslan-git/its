@@ -10,6 +10,8 @@ import { AppComponent } from './app.component';
 
 import { SharedModule } from './shared/shared.module';
 
+import { HttpClientModule } from '@angular/common/http';
+import {MatButtonModule} from '@angular/material/button';
 
 
 @NgModule({
@@ -19,9 +21,11 @@ import { SharedModule } from './shared/shared.module';
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
     SharedModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

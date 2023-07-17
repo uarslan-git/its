@@ -3,8 +3,12 @@
 /* @import "~prismjs/themes/prism-okaidia"; */
 @import "~prismjs/themes/prism-tomorrow";
 /* @import "~prismjs/themes/prism-solarizedlight"; */
-/* @import "~prismjs/themes/prism"; */ */
-*,
+/* @import "~prismjs/themes/prism"; */
+
+
+/* Use Angular Theme */
+@import '~@angular/material/prebuilt-themes/purple-green.css';
+
 *::after,
 *::before {
   padding: 0;
@@ -23,6 +27,14 @@ h1 {
   text-align: center;
   font-weight: 200;
   font-size: 50px;
+  color: rgb(233, 233, 233);
+}
+
+h2 {
+  padding: 10px 0;
+  text-align: center;
+  font-weight: 200;
+  font-size: 25px;
   color: rgb(233, 233, 233);
 }
 
