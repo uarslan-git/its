@@ -15,7 +15,10 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CodeEditorComponent {
 
-  python_code: string = 'print("Hello World")';
+  task_python_code: string = `#Implementiere die Fakultät von n
+#Nutze die folgende Signatur
+def factorial(n):
+      ...`;
   submitted_code: string = ''
   code_language = 'python';
 
