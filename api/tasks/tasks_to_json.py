@@ -2,6 +2,7 @@
 """
 import json
 import os
+import ast
 
 def process_file(file_path):
     # Process the content of the text file as needed.
@@ -10,6 +11,12 @@ def process_file(file_path):
         content = file.readlines()
     content_docstring = "".join(content)
     return(content_docstring)
+
+def get_function_names(file_path):
+    with open(file_path, 'r') as file:
+        tree = ast.parse(file.read())
+    function_names = [node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
+    return function_names
 
 def task_to_json(dir, task_name, outfile):
     # Iterate through the files in the folder
@@ -21,13 +28,16 @@ def task_to_json(dir, task_name, outfile):
         file_path = os.path.join(dir, task_name, file_name)
         content_docstring = process_file(file_path)
         if file_name.startswith("test"):
-            test_number = file_name.split("_")[1]
-            test_number = test_number.split(".")[0]
-            assert test_number.isnumeric(), "Wrong filename format for tests, should be test_[test_number] but is {0}".format(file_name)
+            #test_name = file_name.split("_", 1)[1]
+            test_name = file_name.split(".")[0]
+            test_name_alt = get_function_names(file_path)
+            assert len(test_name_alt) == 1, "Too many test functions defined in single test file. Define only one!"
+            assert test_name == test_name_alt[0], "Name of the test function should be the same as the filename"
+            #assert test_number.isnumeric(), "Wrong filename format for tests, should be test_[test_number] but is {0}".format(file_name)
             #Split on stop-symbol for imports
             test = content_docstring.split("#!--!#")[1]
             #json.dump({"test_{0}".format(test_number): test}, outfile, ensure_ascii=False)
-            tests[test_number] = test
+            tests[test_name] = test
         elif file_name.endswith("md"):
             task_dict["task"] = content_docstring
             #json.dump({"task": content_docstring}, outfile, ensure_ascii=False)

@@ -25,8 +25,8 @@ def factorial(n):
   //Submit Button
   submitButtonClicked() {
     this.submitted_code = this.contentControl;
-    this.client.post<any>('http://127.0.0.1:8000/code_submit', {code: this.submitted_code}).subscribe(data => {
-      console.log(data["test_result"])
+    this.client.post<any>('http://127.0.0.1:8000/code_submit', {task_id: 1, code: this.submitted_code}).subscribe(data => {
+      console.log(data["test_results"])
     });
   }
 
