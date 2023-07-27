@@ -3,6 +3,8 @@
 import json
 import os
 import ast
+from pymongo import MongoClient
+from fastapi.encoders import jsonable_encoder
 
 def process_file(file_path):
     # Process the content of the text file as needed.
@@ -18,12 +20,14 @@ def get_function_names(file_path):
     function_names = [node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
     return function_names
 
-def task_to_json(dir, task_name, outfile):
+def task_to_json(dir, task_name, task_number, outfile, db=None):
     # Iterate through the files in the folder
     task_dict = {}
+    task_dict["task_id"] = task_number
     tests = {}
     #create empty .json file
-    open(file=os.path.join(dir, outfile), mode="w")
+    if db is None:
+        open(file=os.path.join(dir, outfile), mode="w")
     for file_name in os.listdir(os.path.join(dir, task_name)):
         file_path = os.path.join(dir, task_name, file_name)
         content_docstring = process_file(file_path)
@@ -45,20 +49,33 @@ def task_to_json(dir, task_name, outfile):
             #json.dump({"example_solution": content_docstring}, outfile, ensure_ascii=False)
             task_dict["example_solution"] = content_docstring
     task_dict["tests"] = tests
-    print(task_dict)
-    with open(os.path.join(dir, outfile), "w") as f:
-        json.dump(task_dict, f, ensure_ascii=False)
+    if db is None:
+        print(task_dict)
+        with open(os.path.join(dir, outfile), "w") as f:
+            json.dump(task_dict, f, ensure_ascii=False)
+    else:
+        db.tasks.insert_one(jsonable_encoder(task_dict))
 
-def parse_all_tasks(dir):
+def parse_all_tasks(dir, db=None):
     for task_name in os.listdir(dir):
         if not task_name.endswith(".json"):
             assert task_name.startswith("task_"), "Wrong format for task folders, use task_[task_number]"
             task_number = task_name.split("_")[1].split(".")[0]
             assert task_number.isnumeric(), "Wrong task folder format, use task_[task_number]"
             outfile = "task_{0}.json".format(task_number)
-            task_to_json(dir, task_name, outfile)
+            if db is None:
+                task_to_json(dir, task_name, task_number, outfile)
+            else:
+                task_to_json(dir, task_name, task_number, outfile, db)
 
 if __name__ == "__main__":
+    print("Database import? (Y/N)")
+    db_import = input()
     print("Please give directory of the task folder to convert:")
     directory = input()
-    parse_all_tasks(directory)
+    if db_import == "Y":
+        client = MongoClient(host="localhost", port=27017)
+        db = client["its_db"]
+        parse_all_tasks(directory, db)
+    elif db_import == "N":
+        parse_all_tasks(directory)
