@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, ViewChild } from '@angular/core';
 import * as Prism from 'prismjs';
 
+// source: https://techincent.com/code-syntax-highlighter-angular-with-prism-js/
+// Consult source if multiple languages are required.
 
 @Component({
   selector: 'app-prism',
@@ -15,8 +17,11 @@ export class PrismComponent implements AfterViewInit, OnChanges {
   ngAfterViewInit() {
     Prism.highlightElement(this.codeEle.nativeElement);
   }
+
+
   ngOnChanges(changes: any): void {
     if (changes?.code) {
+      console.log("changes detected");
       if (this.codeEle?.nativeElement) {
         this.codeEle.nativeElement.textContent = this.code;
         Prism.highlightElement(this.codeEle.nativeElement);

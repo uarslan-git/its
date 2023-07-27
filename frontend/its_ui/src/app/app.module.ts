@@ -12,12 +12,14 @@ import { SharedModule } from './shared/shared.module';
 
 import { HttpClientModule } from '@angular/common/http';
 import {MatButtonModule} from '@angular/material/button';
+import { TaskPanelComponent } from './task-panel/task-panel.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    CodeEditorComponent
+    CodeEditorComponent,
+    TaskPanelComponent
   ],
   imports: [
     BrowserModule,

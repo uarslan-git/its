@@ -1,4 +1,4 @@
-import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ChangeDetectorRef, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 //Prism
 import { FormBuilder } from '@angular/forms'
@@ -15,18 +15,20 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CodeEditorComponent {
 
-  task_python_code: string = `#Implementiere die Fakultät von n
-#Nutze die folgende Signatur
-def factorial(n):
-      ...`;
+//   task_python_code: string = `#Implementiere die Fakultät von n
+// #Nutze die folgende Signatur
+// def factorial(n):
+//       ...`;
   submitted_code: string = ''
   code_language = 'python';
 
   //Submit Button
   submitButtonClicked() {
     this.submitted_code = this.contentControl;
-    this.client.post<any>('http://127.0.0.1:8000/code_submit', {task_id: 1, code: this.submitted_code}).subscribe(data => {
-      console.log(data["test_results"])
+    this.client.post<any>('http://127.0.0.1:8000/code_submit', {task_id: 1, code: this.submitted_code, log: "True"}).subscribe(data => {
+      console.log(data["test_results"]);
+    console.log(this.submitted_code)
+    this.cdr.detectChanges();
     });
   }
 
@@ -56,7 +58,9 @@ def factorial(n):
     private fb: FormBuilder,
     private renderer: Renderer2,
     //!!!!!!
-    private client: HttpClient
+    private client: HttpClient,
+    // TODO: code smell to manually trigger change detection, find better solution for updating submitted code
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
