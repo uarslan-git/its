@@ -3,14 +3,17 @@
 import json
 import os
 import ast
+import io
 from pymongo import MongoClient
 from fastapi.encoders import jsonable_encoder
 
 def process_file(file_path):
     # Process the content of the text file as needed.
     # For this example, let's assume each text file contains a single line of text.
-    with open(file_path, 'r') as file:
-        content = file.readlines()
+    # with open(file_path, 'r') as file:
+    #     content = file.readlines()
+    with io.open(file_path, mode="r", encoding="utf-8") as f:
+        content = f.readlines()
     content_docstring = "".join(content)
     return(content_docstring)
 
@@ -54,7 +57,7 @@ def task_to_json(dir, task_name, task_number, outfile, db=None):
         with open(os.path.join(dir, outfile), "w") as f:
             json.dump(task_dict, f, ensure_ascii=False)
     else:
-        db.tasks.insert_one(jsonable_encoder(task_dict))
+        db.tasks.insert_one(task_dict)
 
 def parse_all_tasks(dir, db=None):
     for task_name in os.listdir(dir):

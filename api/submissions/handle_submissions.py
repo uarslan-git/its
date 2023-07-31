@@ -35,7 +35,7 @@ async def handle_code_submission(submission: Code_submission):
     # task_path = path.join(path.dirname(__file__), "../tasks/task_folder")
     # with open("{0}/task_{1}.json".format(task_path, task_id) , "r") as f:
     #     task_json = json.load(f)
-    task_json = await db.db.get_task(str(task_id))
+    task_json = await db.database.get_task(str(task_id))
     tests = task_json['tests']
     test_results = []
     for test_name in tests.keys():
@@ -43,7 +43,7 @@ async def handle_code_submission(submission: Code_submission):
     # Log code submit to database
     tested_submission = Tested_code_submission(log = submission.log, task_id = submission.task_id, code = submission.code, test_results= test_results)
     if (submission.log == "True"):
-        await db.db.log_code_submission(tested_submission)
+        await db.database.log_code_submission(tested_submission)
     return  {"test_results": test_results}
 
 
