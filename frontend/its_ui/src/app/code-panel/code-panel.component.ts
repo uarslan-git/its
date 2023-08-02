@@ -2,18 +2,16 @@ import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnD
 
 //Prism
 import { FormBuilder } from '@angular/forms'
-import { fromEvent, Subscription } from 'rxjs'; // Notwendig?
+import { fromEvent, Subscription } from 'rxjs';
 import { PrismHighlightService } from '../shared/services/prism-highlight.service'
-
-//!!!!!!! Für Requests
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-code-editor',
-  templateUrl: './code-editor.component.html',
-  styleUrls: ['./code-editor.component.css'],
+  selector: 'app-code-panel',
+  templateUrl: './code-panel.component.html',
+  styleUrls: ['./code-panel.component.css'],
 })
-export class CodeEditorComponent {
+export class CodePanelComponent {
 
   submitted_code: string = ''
   code_language = 'python';
@@ -102,5 +100,4 @@ export class CodeEditorComponent {
 
     this.sub.add(localSub);
   }
-
 }

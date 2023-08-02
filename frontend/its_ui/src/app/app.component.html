@@ -1,5 +1,9 @@
 <!-- Main Page -->
 
-<h1>{{ title }}</h1>
-<app-task-panel></app-task-panel>
-<app-code-editor></app-code-editor>
+<!-- <h1>{{ title }}</h1> -->
+<div class="grid-container">
+    <div class="navbar"><app-navigation-bar></app-navigation-bar></div>
+    <div class="task-panel"><app-task-panel></app-task-panel></div>
+    <div class="feedback-panel"><app-feedback-panel></app-feedback-panel></div>
+    <div class="code-panel"><app-code-panel></app-code-panel></div>
+</div>

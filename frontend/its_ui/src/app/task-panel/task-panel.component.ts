@@ -7,10 +7,6 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./task-panel.component.css']
 })
 export class TaskPanelComponent {
-//   task_python_code: string = `#Implementiere die Fakultät von n
-// #Nutze die folgende Signatur
-// def factorial(n):
-//       ...`;
   task_python_code: string = '';
   code_language: string = 'python';
 
@@ -26,6 +22,7 @@ export class TaskPanelComponent {
       task_id: data.task_id,
       task: data.task
     };
+    //TODO: render task as markdown using: https://www.npmjs.com/package/ngx-markdown
     this.task_python_code = this.task['task']!;
   });
  }

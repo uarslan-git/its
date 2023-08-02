@@ -1,0 +1,32 @@
+.action-buttons {
+    background-color: #616161;
+    color: #fff;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; 
+    align-items: center;
+    padding: 15px;
+  }
+  
+  
+  /* Updated the class to target the action-button */
+  .action-buttons .action-button {
+    flex: 1; /* Each button will equally share the available space */
+    border: none;
+    background-color: #444;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s;
+    margin-right: 10px;
+  }
+  
+  .action-buttons .action-button:hover {
+    background-color: #555;
+  }
+  
+  /* Apply styles on button click */
+  .action-buttons .action-button:active {
+    background-color: #333;
+  }

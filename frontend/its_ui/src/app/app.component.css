@@ -1,0 +1,27 @@
+.grid-container { 
+    display: grid; 
+    grid-template-columns:  1fr 1fr;  
+    grid-template-rows: 1fr 10fr 10fr;
+    grid-template-areas: 
+    "nav nav"
+    "task code"
+    "feedback code";
+    gap: 10pt;
+    height: 100%;
+    width: 100%;
+  }
+.navbar {
+    grid-area: nav;
+    text-align: center;
+}
+.task-panel
+{
+    grid-area: task;
+}
+.feedback-panel {
+    grid-area: feedback;
+}
+.code-panel
+{
+    grid-area: code;
+}
