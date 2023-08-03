@@ -8,7 +8,6 @@ import ast
 # import motor.motor_asyncio
 import db
 
-
 router = APIRouter()
 
 
@@ -51,9 +50,11 @@ def get_test_result(test_code, test_name, submission_code):
     run_test_code = """
 try:
     {0}()
-    result = 1
+    test_result = 1
+    test_message = ""
 except AssertionError as e:
-    result = 0
+    test_result = 0
+    test_message = str(e)
     print(e)""".format(test_name)
     test_submission_code = """
 {0}
@@ -65,17 +66,19 @@ except AssertionError as e:
     #print(test_submission_code)
     parsed_ast = ast.parse(test_submission_code)
     #exec(test_submission_code, globals())
-    global result
+    global test_result
+    global test_message
     try:
         save = check_submission_code(ast_tree=parsed_ast)
         if save:
             exec(compile(parsed_ast, filename="<parsed_ast>", mode="exec"), globals())
-            result_message = "success" if result else "failure"
-        return {"test_name": test_name, "status": result, "message": result_message}
+            result_message = "Test success" if test_result else "Test failure:"
+        return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}
     except Exception as e:
-        result = 0
-        result_message = str(e)
-        return {"test_name": test_name, "status": result, "message": result_message}
+        test_result = 0
+        result_message = "Error or Exception:"
+        test_message = str(e)
+        return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}
 
 
 def check_submission_code(ast_tree):
@@ -99,23 +102,3 @@ def check_submission_code(ast_tree):
 #     client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
 #     db = client.its_db
 #     db["submission"].insert_one(jsonable_encoder(submission))
-
-# def get_test_result(test_code, test_name, submission_code):
-#     run_test_code = """try:  
-#     {0}()
-#     print("should work")
-#     result = 1
-# except AssertionError as e:
-#     result = 0
-#     print(e)""".format(test_name)
-#     test_submission_code = """
-# {0}
-
-# {1}
-
-# {2}
-#     """.format(submission_code, test_code, run_test_code)
-#     print(test_submission_code)
-#     exec(test_submission_code, globals())
-#     result_message = "succsess!" if result else "failure"
-#     return {"test_name": test_name, "status": result, "message": result_message}

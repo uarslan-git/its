@@ -6,6 +6,8 @@ import { fromEvent, Subscription } from 'rxjs';
 import { PrismHighlightService } from '../shared/services/prism-highlight.service'
 import { HttpClient } from '@angular/common/http';
 
+import { DataShareService } from '../shared/services/data-share.service';
+
 @Component({
   selector: 'app-code-panel',
   templateUrl: './code-panel.component.html',
@@ -19,7 +21,7 @@ export class CodePanelComponent {
   //Submit Button
   submitButtonClicked() {
     this.submitted_code = this.contentControl;
-    this.client.post<any>('http://127.0.0.1:8000/code_submit', {task_id: 1, code: this.submitted_code, log: "True"}).subscribe(data => {
+    this.client.post<any>('http://127.0.0.1:8000/code_submit', {task_id: this.current_task_id, code: this.submitted_code, log: "True"}).subscribe(data => {
       console.log(data["test_results"]);
     console.log(this.submitted_code)
     });
@@ -46,13 +48,21 @@ export class CodePanelComponent {
     return content != null ? content : '';
   }
 
+  taskIdSubscription: Subscription;
+  current_task_id: string = "";
+
   constructor(
     private prismService: PrismHighlightService,
     private fb: FormBuilder,
     private renderer: Renderer2,
     //!!!!!!
     private client: HttpClient,
-  ) {}
+    private dataShareService: DataShareService,
+  ) {
+    this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
+      (data) => (this.current_task_id = data)
+    );
+  }
 
   ngOnInit(): void {
     this.listenForm()

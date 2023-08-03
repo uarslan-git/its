@@ -19,6 +19,7 @@ export class FeedbackPanelComponent {
     });
   }
 
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EventShareService } from '../shared/services/event-share.service';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -8,5 +9,11 @@ import { Component } from '@angular/core';
 export class NavigationBarComponent {
 
   title: string = 'Tutoring System for Programming'
+
+  constructor(private eventShareService: EventShareService){}
+
+  newTaskButtonClicked(){
+    this.eventShareService.emitNewTaskButtonClick();
+  }
 
 }
