@@ -5,8 +5,11 @@ import { FormBuilder } from '@angular/forms'
 import { fromEvent, Subscription } from 'rxjs';
 import { PrismHighlightService } from '../shared/services/prism-highlight.service'
 import { HttpClient } from '@angular/common/http';
+import { v4 as uuidv4 } from 'uuid'
 
 import { DataShareService } from '../shared/services/data-share.service';
+import { EventShareService } from '../shared/services/event-share.service';
+
 
 @Component({
   selector: 'app-code-panel',
@@ -19,11 +22,12 @@ export class CodePanelComponent {
   code_language = 'python';
 
   //Submit Button
-  submitButtonClicked() {
+  submitButtonClicked(submissionId: string) {
     this.submitted_code = this.contentControl;
-    this.client.post<any>('http://127.0.0.1:8000/code_submit', {task_id: this.current_task_id, code: this.submitted_code, log: "True"}).subscribe(data => {
+    this.client.post<any>('http://127.0.0.1:8000/code_submit', {task_id: this.current_task_id, code: this.submitted_code, log: "True", submission_id: submissionId}).subscribe(data => {
       console.log(data["test_results"]);
-    console.log(this.submitted_code)
+      console.log(this.submitted_code);
+      this.eventShareService.emitTestReadyEvent();
     });
   }
 
@@ -58,6 +62,7 @@ export class CodePanelComponent {
     //!!!!!!
     private client: HttpClient,
     private dataShareService: DataShareService,
+    private eventShareService: EventShareService,
   ) {
     this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
       (data) => (this.current_task_id = data)

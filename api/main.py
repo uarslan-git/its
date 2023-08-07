@@ -3,12 +3,14 @@ from fastapi import FastAPI
 from fastapi import APIRouter
 from submissions import handle_submissions
 from tasks import handle_tasks
+from feedback import handle_feedback
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 app = FastAPI()
 app.include_router(handle_submissions.router)
 app.include_router(handle_tasks.router)
+app.include_router(handle_feedback.router)
 
 # TODO: Hiermit in Hinblick auf security auseinandersetzen!
 origins = ["*"]

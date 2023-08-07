@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EventShareService } from '../shared/services/event-share.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-feedback-panel',
@@ -9,18 +10,53 @@ import { EventShareService } from '../shared/services/event-share.service';
 })
 export class FeedbackPanelComponent {
 
-  private subscription: Subscription;
+  private submitSubscription: Subscription;
   code_language: string = 'python';
-  feedback: string = '';
+  feedback_string: string = '';
+  feedback:  { test_results?: Array<any>; task_id?: string; submission_id?: string} = {};
+  submissionId: string = '';
 
-  constructor(private eventShareService: EventShareService){
-    this.subscription = this.eventShareService.submitButtonClick$.subscribe(() => {
-      this.feedback = 'Code submitted, waiting for feedback...';
+  private testReadySubscription: Subscription;
+
+  constructor(
+    private eventShareService: EventShareService,
+    private client: HttpClient,){
+    this.submitSubscription = this.eventShareService.submitButtonClick$.subscribe((data) => {
+      this.submissionId = data;
+      this.feedback_string = 'Code submitted, waiting for feedback...';
+    });
+
+    this.testReadySubscription = this.eventShareService.testReady$.subscribe((data) => {
+      this.fetch_feedback(this.submissionId);
     });
   }
 
+  fetch_feedback(submission_id: string) {
+    const submission_url = `http://127.0.0.1:8000/feedback/${submission_id}`
+    this.client.get<any>(submission_url, ).subscribe((data) => { 
+      this.feedback = {
+        test_results: data.test_results,
+        task_id: data.task_id,
+        submission_id: data.submission_id,
+    };
+    this.feedback_string = this.process_feedback(this.feedback["test_results"]!, this.feedback["task_id"]!);
+    console.log(data);
+    //this.feedback_string = JSON.stringify(this.feedback);
+  });
+  }
+
+  process_feedback(feedback_array: Array<any>, task_name: string) {
+    var feedback_string = `Feedback for task ${task_name}\n`;
+    for (var test_obj of feedback_array) {
+      feedback_string += test_obj["test_name"] + ":\n";
+      feedback_string += test_obj["message"];
+      feedback_string += '\n';
+    }
+    return(feedback_string);
+  }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.submitSubscription.unsubscribe();
+    this.testReadySubscription.unsubscribe();
   }
 }

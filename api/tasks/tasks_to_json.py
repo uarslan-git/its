@@ -60,6 +60,7 @@ def task_to_json(dir, task_name, task_number, outfile, db=None):
         db.tasks.insert_one(task_dict)
 
 def parse_all_tasks(dir, db=None):
+    print(os.listdir(dir))
     for task_name in os.listdir(dir):
         if not task_name.endswith(".json"):
             assert task_name.startswith("task_"), "Wrong format for task folders, use task_[task_number]"

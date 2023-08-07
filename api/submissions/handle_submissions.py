@@ -16,6 +16,7 @@ class Code_submission(BaseModel):
     task_id: int
     code: str
     log: str
+    submission_id: str
 
 class Tested_code_submission(Code_submission):
     test_results: list
@@ -40,7 +41,9 @@ async def handle_code_submission(submission: Code_submission):
     for test_name in tests.keys():
         test_results.append(get_test_result(test_code=tests[test_name], test_name=test_name, submission_code=submission.code))
     # Log code submit to database
-    tested_submission = Tested_code_submission(log = submission.log, task_id = submission.task_id, code = submission.code, test_results= test_results)
+    tested_submission = Tested_code_submission(log = submission.log, task_id = submission.task_id, 
+                                               code = submission.code, test_results= test_results,
+                                               submission_id=submission.submission_id)
     if (submission.log == "True"):
         await db.database.log_code_submission(tested_submission)
     return  {"test_results": test_results}

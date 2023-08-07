@@ -14,12 +14,19 @@ export class EventShareService {
   constructor() { }
 
   //Submit button click
-  private submitButtonClickSubject = new Subject<void>();
-
+  private submitButtonClickSubject = new Subject<string>();
   submitButtonClick$ = this.submitButtonClickSubject.asObservable();
 
-  emitSubmitButtonClick() {
-    this.submitButtonClickSubject.next();
+  emitSubmitButtonClick(submissionId: string) {
+    this.submitButtonClickSubject.next(submissionId);
+  }
+
+  // Tests ready Event
+  private testReadySubject = new Subject<void>();
+  testReady$ = this.testReadySubject.asObservable();
+
+  emitTestReadyEvent() {
+    this.testReadySubject.next();
   }
 
   //New Task Request from User
@@ -29,5 +36,7 @@ export class EventShareService {
   emitNewTaskButtonClick() {
     this.newTaskButtonClickSubject.next();
   }
+
+
   
 }
