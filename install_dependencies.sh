@@ -14,6 +14,7 @@ wget https://repo.mongodb.org/apt/ubuntu/dists/jammy/mongodb-org/6.0/multiverse/
 sudo dpkg -i mongodb-org-server_6.0.8_amd64.deb
 rm mongodb-org-server_6.0.8_amd64.deb
 sudo systemctl start mongod
+systemctl enable mongod #Enable MongoDB service on every reboot!!!
 wget https://downloads.mongodb.com/compass/mongodb-mongosh_1.10.3_amd64.deb
 sudo dpkg -i mongodb-mongosh_1.10.3_amd64.deb
 rm mongodb-mongosh_1.10.3_amd64.deb
