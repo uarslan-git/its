@@ -46,7 +46,7 @@ export class FeedbackPanelComponent {
   }
 
   process_feedback(feedback_array: Array<any>, task_name: string) {
-    var feedback_string = `Feedback for task ${task_name}\n`;
+    var feedback_string = `##Feedback for task ${task_name}\n`;
     for (var test_obj of feedback_array) {
       feedback_string += test_obj["test_name"] + ":\n";
       feedback_string += test_obj["message"];
