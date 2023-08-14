@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 
 import { CodePanelComponent } from './code-panel/code-panel.component';
 
@@ -33,7 +34,15 @@ import { ActionPanelComponent } from './code-panel/action-panel/action-panel.com
     AppRoutingModule,
     ReactiveFormsModule,
     SharedModule,
-    MatButtonModule
+    MatButtonModule,
+    MarkdownModule.forRoot({
+      markedOptions: {
+        provide: MarkedOptions,
+        useValue: {
+          gfm: false
+        },
+      },
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]

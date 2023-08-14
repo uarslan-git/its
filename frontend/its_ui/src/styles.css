@@ -20,7 +20,7 @@ html, body {
   font-family: sans-serif;
   height: 100%;
   background-color: #3f3f3f;
-  overflow: hidden; /* hide scrollbars */
+  overflow: hide; /* hide scrollbars */
 }
 
 h1 {

@@ -12,7 +12,7 @@ export class FeedbackPanelComponent {
 
   private submitSubscription: Subscription;
   code_language: string = 'python';
-  feedback_string: string = '';
+  feedback_markdown: string = '';
   feedback:  { test_results?: Array<any>; task_id?: string; submission_id?: string} = {};
   submissionId: string = '';
 
@@ -23,7 +23,7 @@ export class FeedbackPanelComponent {
     private client: HttpClient,){
     this.submitSubscription = this.eventShareService.submitButtonClick$.subscribe((data) => {
       this.submissionId = data;
-      this.feedback_string = 'Code submitted, waiting for feedback...';
+      this.feedback_markdown = 'Code submitted, waiting for feedback...';
     });
 
     this.testReadySubscription = this.eventShareService.testReady$.subscribe((data) => {
@@ -39,20 +39,20 @@ export class FeedbackPanelComponent {
         task_id: data.task_id,
         submission_id: data.submission_id,
     };
-    this.feedback_string = this.process_feedback(this.feedback["test_results"]!, this.feedback["task_id"]!);
+    this.feedback_markdown = this.process_feedback(this.feedback["test_results"]!, this.feedback["task_id"]!);
     console.log(data);
     //this.feedback_string = JSON.stringify(this.feedback);
   });
   }
 
   process_feedback(feedback_array: Array<any>, task_name: string) {
-    var feedback_string = `Feedback for task ${task_name}\n`;
+    var feedback_markdown = `# Feedback for task ${task_name}\n`;
     for (var test_obj of feedback_array) {
-      feedback_string += test_obj["test_name"] + ":\n";
-      feedback_string += test_obj["message"];
-      feedback_string += '\n';
+      feedback_markdown += "## " + test_obj["test_name"] + "\n";
+      feedback_markdown += test_obj["message"];
+      feedback_markdown += '\n';
     }
-    return(feedback_string);
+    return(feedback_markdown);
   }
 
   ngOnDestroy() {
