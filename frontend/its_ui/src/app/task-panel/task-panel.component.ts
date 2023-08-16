@@ -51,7 +51,6 @@ export class TaskPanelComponent {
   });
  }
 
-
   ngOnInit(): void {
     this.fetch_task("1", undefined);
   }

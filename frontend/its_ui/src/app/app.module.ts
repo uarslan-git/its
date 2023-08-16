@@ -17,6 +17,7 @@ import { TaskPanelComponent } from './task-panel/task-panel.component';
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
 import { FeedbackPanelComponent } from './feedback-panel/feedback-panel.component';
 import { ActionPanelComponent } from './code-panel/action-panel/action-panel.component';
+import { CodeEditorComponent } from './code-panel/code-editor/code-editor.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { ActionPanelComponent } from './code-panel/action-panel/action-panel.com
     TaskPanelComponent,
     NavigationBarComponent,
     FeedbackPanelComponent,
-    ActionPanelComponent
+    ActionPanelComponent,
+    CodeEditorComponent
   ],
   imports: [
     BrowserModule,

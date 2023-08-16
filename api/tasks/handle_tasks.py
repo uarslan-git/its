@@ -7,14 +7,18 @@ router = APIRouter()
 
 class Pedagogical_model():
 
+    task_id = 1
+
     def select_task(self, user_id):
-        task_id = "2"
-        return(task_id)
+        self.task_id = self.task_id + 1
+        return(str(self.task_id))
 
 pedagogical_model = Pedagogical_model()
 
 @router.get("/task/{task_id}")
 async def read_task(task_id):
+    if task_id =="1":
+        pedagogical_model.task_id = 1
     task_json = await db.database.get_task(str(task_id))
     task_description = task_json["task"]
     if task_description == "":

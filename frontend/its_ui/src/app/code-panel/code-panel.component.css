@@ -1,18 +1,29 @@
-.grid-container-code { 
-  display: grid; 
-  grid-template-rows:  10fr 1fr;  
+.grid-container-code {
+  display: grid;
+  grid-template-rows: minmax(0, 10fr) minmax(0, 0.7fr);
   gap: 5pt;
   align-items: self-start;
   height: 100%;
-  width: 100%;
+  width: minmax(0, 100%);
 }
 
-.code-container {
+.code-editor {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.actionPanel {
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+
+/* .code-container {
     max-width: 1000px;
     margin: 0 auto;
     position: relative;
     overflow: hidden;
-    /* min-height: 100vh; */
     height: 100%;
     width: 100%;
  }
@@ -31,7 +42,7 @@
       border: 0;
     }
   }
-  
+
   .text-area-code-editor,
   .pre,
   .code {
@@ -74,5 +85,5 @@
     padding: 15px 0 0 70px;
     width: 100%;
     height: 100%;
-  }
+  } */
   

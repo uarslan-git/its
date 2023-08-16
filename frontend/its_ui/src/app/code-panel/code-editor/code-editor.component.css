@@ -1,0 +1,63 @@
+
+.code-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    /* min-height: 100vh; */
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background: #2d2d2d;
+ }
+
+  .text-area-code-editor {
+    &,
+    &:focus {
+      box-shadow: none;
+      outline: 0;
+      border: 0;
+    }
+  }
+  
+  .text-area-code-editor,
+  .pre,
+  .code {
+    tab-size: 4;
+    margin: 0;
+    padding: 0;
+    font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+    font-size: 1em;
+    line-height: 1.5;
+  }
+  
+  .pre {
+    height: inherit;
+    width: inherit;
+    min-height: inherit;
+    z-index: 1;
+    overflow: hidden;
+    padding: 15px 0 0 70px;
+  
+    .code {
+      min-height: inherit;
+      height: inherit;
+      width: inherit;
+      overflow: hidden;
+    }
+  }
+  
+  .text-area-code-editor {
+    margin: 0;
+    caret-color: rgb(255, 255, 255);
+    white-space: nowrap;
+    text-align: left;
+    resize: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    color: transparent;
+    background: transparent;
+    z-index: 2;
+    padding: 15px 0 0 70px;
+    overflow: visible;
+  }
