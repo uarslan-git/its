@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 
 import { CodePanelComponent } from './code-panel/code-panel.component';
 
@@ -16,6 +17,8 @@ import { TaskPanelComponent } from './task-panel/task-panel.component';
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
 import { FeedbackPanelComponent } from './feedback-panel/feedback-panel.component';
 import { ActionPanelComponent } from './code-panel/action-panel/action-panel.component';
+import { CodeEditorComponent } from './code-panel/code-editor/code-editor.component';
+import { AuthComponent } from './auth/auth.component';
 
 
 @NgModule({
@@ -25,7 +28,9 @@ import { ActionPanelComponent } from './code-panel/action-panel/action-panel.com
     TaskPanelComponent,
     NavigationBarComponent,
     FeedbackPanelComponent,
-    ActionPanelComponent
+    ActionPanelComponent,
+    CodeEditorComponent,
+    AuthComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +38,15 @@ import { ActionPanelComponent } from './code-panel/action-panel/action-panel.com
     AppRoutingModule,
     ReactiveFormsModule,
     SharedModule,
-    MatButtonModule
+    MatButtonModule,
+    MarkdownModule.forRoot({
+      markedOptions: {
+        provide: MarkedOptions,
+        useValue: {
+          gfm: false
+        },
+      },
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]

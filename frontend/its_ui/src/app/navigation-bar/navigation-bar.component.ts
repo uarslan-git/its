@@ -16,4 +16,8 @@ export class NavigationBarComponent {
     this.eventShareService.emitNewTaskButtonClick();
   }
 
+  profileButtonClicked() {
+    this.eventShareService.emitProfileButtonClick();
+  }
+
 }

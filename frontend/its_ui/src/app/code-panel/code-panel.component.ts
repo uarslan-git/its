@@ -5,10 +5,10 @@ import { FormBuilder } from '@angular/forms'
 import { fromEvent, Subscription } from 'rxjs';
 import { PrismHighlightService } from '../shared/services/prism-highlight.service'
 import { HttpClient } from '@angular/common/http';
-import { v4 as uuidv4 } from 'uuid'
 
 import { DataShareService } from '../shared/services/data-share.service';
 import { EventShareService } from '../shared/services/event-share.service';
+import { CodeEditorComponent } from './code-editor/code-editor.component';
 
 
 @Component({
@@ -20,10 +20,13 @@ export class CodePanelComponent {
 
   submitted_code: string = ''
   code_language = 'python';
+  @ViewChild(CodeEditorComponent)
+  codeEditorComponent!: CodeEditorComponent;
+
 
   //Submit Button
   submitButtonClicked(submissionId: string) {
-    this.submitted_code = this.contentControl;
+    this.submitted_code = this.codeEditorComponent.contentControl;
     this.client.post<any>('http://127.0.0.1:8000/code_submit', {task_id: this.current_task_id, code: this.submitted_code, log: "True", submission_id: submissionId}).subscribe(data => {
       console.log(data["test_results"]);
       console.log(this.submitted_code);
@@ -31,7 +34,7 @@ export class CodePanelComponent {
     });
   }
 
-  // Text Area with syntax highlighting and line numbers
+  /* // Text Area with syntax highlighting and line numbers
   @ViewChild('textArea', { static: true })
   textArea!: ElementRef;
   @ViewChild('codeContent', { static: true })
@@ -52,30 +55,31 @@ export class CodePanelComponent {
     return content != null ? content : '';
   }
 
+
+
+*/
+
   taskIdSubscription: Subscription;
   current_task_id: string = "";
 
   constructor(
-    private prismService: PrismHighlightService,
-    private fb: FormBuilder,
-    private renderer: Renderer2,
-    //!!!!!!
-    private client: HttpClient,
-    private dataShareService: DataShareService,
-    private eventShareService: EventShareService,
-  ) {
-    this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
-      (data) => (this.current_task_id = data)
-    );
-  }
+      private prismService: PrismHighlightService,
+      private fb: FormBuilder,
+      private renderer: Renderer2,
+      private client: HttpClient,
+      private dataShareService: DataShareService,
+      private eventShareService: EventShareService,
+    ) {
+      this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
+        (data) => (this.current_task_id = data)
+      );
+    }
+
+/*
 
   ngOnInit(): void {
     this.listenForm()
     this.synchronizeScroll();
-    //!!!!!!
-    this.client.get<any>('http://127.0.0.1:8000/status').subscribe((data) =>  {
-      console.log(data["message"]);
-    });
   }
 
   ngAfterViewInit() {
@@ -114,5 +118,5 @@ export class CodePanelComponent {
     });
 
     this.sub.add(localSub);
-  }
+  } */
 }

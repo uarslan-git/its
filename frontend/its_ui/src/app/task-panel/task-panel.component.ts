@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 export class TaskPanelComponent {
 
   private eventSubscription: Subscription;
-  task_python_code: string = '';
+  task_markdown: string = '';
   code_language: string = 'python';
 
   task: { task_id?: string; task?: string; } = {};
@@ -46,11 +46,10 @@ export class TaskPanelComponent {
       task: data.task
     };
     //TODO: render task as markdown using: https://www.npmjs.com/package/ngx-markdown
-    this.task_python_code = this.task['task']!;
+    this.task_markdown = this.task['task']!;
     this.dataShareService.emitTaskId(this.task.task_id!);
   });
  }
-
 
   ngOnInit(): void {
     this.fetch_task("1", undefined);

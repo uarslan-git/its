@@ -1,3 +1,5 @@
+from _ast import Call, Del, Delete, Global, Interactive, Load, Nonlocal, Store
+from typing import Any
 from fastapi import APIRouter
 # from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -31,9 +33,6 @@ class task(BaseModel):
 async def handle_code_submission(submission: Code_submission):
 # TODO: Funktion: (test_eingabe, soll_ausgabe) -> test_feedback
     task_id = submission.task_id
-    # task_path = path.join(path.dirname(__file__), "../tasks/task_folder")
-    # with open("{0}/task_{1}.json".format(task_path, task_id) , "r") as f:
-    #     task_json = json.load(f)
     task_json = await db.database.get_task(str(task_id))
     tests = task_json['tests']
     test_results = []
@@ -66,17 +65,18 @@ except AssertionError as e:
 {2}
     """.format(submission_code, test_code, run_test_code)
     #print(test_submission_code)
-    parsed_ast = ast.parse(test_submission_code)
     #exec(test_submission_code, globals())
     global test_result
     global test_message
     try:
+        parsed_ast = ast.parse(submission_code)
         save = check_submission_code(ast_tree=parsed_ast)
         if save:
-            exec(compile(parsed_ast, filename="<parsed_ast>", mode="exec"), globals())
+            #exec(compile(parsed_ast, filename="<parsed_ast>", mode="exec"), globals())
+            exec(test_submission_code, globals())
             result_message = "Test success" if test_result else "Test failure:"
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}
-    except Exception as e:
+    except BaseException as e:
         test_result = 0
         result_message = "Error or Exception:"
         test_message = str(e)
@@ -89,19 +89,52 @@ def check_submission_code(ast_tree):
             self.found_imports = False
 
         def visit_Import(self, node):
+<<<<<<< api/submissions/handle_submissions.py
+            self.found_imports = True
+            raise Exception("Imports are not allowed in this context")
+=======
             self.found_imports = True # TODO: Can the bool be removed?
             raise Exception("Imports are not allowed in this context.")
+>>>>>>> api/submissions/handle_submissions.py
 
         def visit_ImportFrom(self, node):
             self.found_imports = True
-            raise Exception("Imports are not allowed in this context.")
+            raise Exception("Imports are not allowed in this context")
+        
+        def visit_Interactive(self, node: Interactive):
+            raise Exception("Interactive Mode is not allowed")
+        
+        def visit_Delete(self, node: Delete):
+            raise Exception("Deletes are not allowed in this context")
+        
+        def visit_Global(self, node: Global):
+            raise Exception("Global Scope is not allowed")
+
+        def visit_Nonlocal(self, node: Nonlocal):
+            raise Exception("Nonlocal Scope is not allowed")
+        
+        #def visit_Load(self, node: Load) -> Any:
+        #    raise Exception("Load not allowed")
+        
+        #def visit_Store(self, node: Store) -> Any:
+        #    raise Exception("Store not allowed")
+        
+        def visit_Del(self, node: Del) -> Any:
+            raise Exception("Del not allowed")
+        
+        def visit_Call(self, node: Call) -> Any:
+            if node.func.id == "exec":
+                raise Exception("exec() is not allowed in this context")
+            if node.func.id in ["eval", "open", "breakpoint", "callable",
+                                 "delattr", "dir", "getattr", "globals",
+                                 "hasattr", "help", "id", "input", "locals", 
+                                 "memoryview", "property", "setattr", 
+                                 "staticmethod", "vars", "__import__"]:
+                fun_id = node.func.id
+                raise Exception(f"{fun_id}() is not allowed in this context")
+            self.generic_visit(node)
 
 
     visitor = ImportVisitor()
     visitor.visit(ast_tree)
     return not visitor.found_imports
-
-# def log_code_submission(submission, test_result):
-#     client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017")
-#     db = client.its_db
-#     db["submission"].insert_one(jsonable_encoder(submission))

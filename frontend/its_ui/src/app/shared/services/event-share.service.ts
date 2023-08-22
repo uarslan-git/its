@@ -37,6 +37,12 @@ export class EventShareService {
     this.newTaskButtonClickSubject.next();
   }
 
+  //Profile Button Click
+  private profileButtonClickSubject = new Subject<void>();
+  profileButtonClick$ = this.profileButtonClickSubject.asObservable();
 
-  
+  emitProfileButtonClick() {
+    this.profileButtonClickSubject.next();
+  }
+
 }
