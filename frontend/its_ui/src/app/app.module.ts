@@ -19,6 +19,7 @@ import { FeedbackPanelComponent } from './feedback-panel/feedback-panel.componen
 import { ActionPanelComponent } from './code-panel/action-panel/action-panel.component';
 import { CodeEditorComponent } from './code-panel/code-editor/code-editor.component';
 import { AuthComponent } from './auth/auth.component';
+import { ProfileComponent } from './profile/profile.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { AuthComponent } from './auth/auth.component';
     FeedbackPanelComponent,
     ActionPanelComponent,
     CodeEditorComponent,
-    AuthComponent
+    AuthComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

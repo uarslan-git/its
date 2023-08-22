@@ -89,13 +89,8 @@ def check_submission_code(ast_tree):
             self.found_imports = False
 
         def visit_Import(self, node):
-<<<<<<< api/submissions/handle_submissions.py
-            self.found_imports = True
-            raise Exception("Imports are not allowed in this context")
-=======
             self.found_imports = True # TODO: Can the bool be removed?
             raise Exception("Imports are not allowed in this context.")
->>>>>>> api/submissions/handle_submissions.py
 
         def visit_ImportFrom(self, node):
             self.found_imports = True

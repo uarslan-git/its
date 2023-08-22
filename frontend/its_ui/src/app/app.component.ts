@@ -1,5 +1,6 @@
 import { Component, OnInit, } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { EventShareService } from './shared/services/event-share.service';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +29,12 @@ export class AppComponent {
       case 'loggedOut':
           this.pageName = 'loginView';
           break;
+      case 'closedProfile':
+        this.pageName = 'tutoringView';
+        break;
+      case 'profileRequest':
+        this.pageName = 'profileView';
+        break;
       default:
         this.pageName = 'loginView'
           console.log("Invalid View request");

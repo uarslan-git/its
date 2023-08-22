@@ -22,11 +22,7 @@ export class AuthComponent {
   registering: boolean = false;
 
   constructor(private http: HttpClient,
-              private eventShareService: EventShareService) {
-                eventShareService.profileButtonClick$.subscribe((data) => {
-                  this.show_profile();
-                });
-              }
+              private eventShareService: EventShareService) {}
 
   login(username: string, password: string): void {
     // unfortunatley, the fastapi-users package requres logins to be FormData and not JSON.
@@ -36,8 +32,7 @@ export class AuthComponent {
 
     this.http.post<Response>(`${this.apiUrl}/auth/jwt/login`, formData, { withCredentials: true, observe: 'response' }).subscribe(
       response => {
-          // Handle successful login, e.g., store the token in local storage
-          // localStorage.setItem('token', response.token);
+          // Handle successful login
           this.loginStatus = "loggedIn";
           this.emitLoginEvent();
       },
@@ -57,11 +52,8 @@ export class AuthComponent {
     "password": password };
     this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, body).subscribe(
       response => {
-        if (response.token) {
-          // Handle successful registration, similar to login
-          localStorage.setItem('token', response.token);
-          console.log(response.message);
-        }
+          // Handle successful registration
+          this.setRegistering(false);
       },
       error => {
         console.error('Registration error:', error);
@@ -69,13 +61,7 @@ export class AuthComponent {
     );
   }
 
-  show_profile() {
-    this.http.get(`${this.apiUrl}/users/me`, {"withCredentials": true}).subscribe(
-      response => {
-        console.log(response)
-      }
-    )
-  }
+
 
   setRegistering(registering: boolean){
     this.registering = registering;

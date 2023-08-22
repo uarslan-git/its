@@ -45,7 +45,6 @@ export class TaskPanelComponent {
       task_id: data.task_id,
       task: data.task
     };
-    //TODO: render task as markdown using: https://www.npmjs.com/package/ngx-markdown
     this.task_markdown = this.task['task']!;
     this.dataShareService.emitTaskId(this.task.task_id!);
   });
