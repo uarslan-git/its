@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -8,15 +8,9 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AppComponent {
   title = 'Tutoring System for Programming';
+  pageName = 'loginView'
   //name = new FormControl('');
 
-/*   constructor(private mdService: MarkdownService) {}
-
-  const markdown: string | undefined;
-
-  ngOnInit(){
-    this.markdown = this.mdService.compile("# Hallo");
-  } */
 
   constructor(private client: HttpClient){}
 
@@ -25,6 +19,20 @@ export class AppComponent {
       console.log(data["message"]);
     });
   }
-  
 
+  setView(status: string) {
+    switch (status) {
+      case 'loggedIn':
+          this.pageName = 'tutoringView';
+          break;
+      case 'loggedOut':
+          this.pageName = 'loginView';
+          break;
+      default:
+        this.pageName = 'loginView'
+          console.log("Invalid View request");
+          break;
+  }
+  }
+  
 }

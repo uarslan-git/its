@@ -18,6 +18,7 @@ import { NavigationBarComponent } from './navigation-bar/navigation-bar.componen
 import { FeedbackPanelComponent } from './feedback-panel/feedback-panel.component';
 import { ActionPanelComponent } from './code-panel/action-panel/action-panel.component';
 import { CodeEditorComponent } from './code-panel/code-editor/code-editor.component';
+import { AuthComponent } from './auth/auth.component';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { CodeEditorComponent } from './code-panel/code-editor/code-editor.compon
     NavigationBarComponent,
     FeedbackPanelComponent,
     ActionPanelComponent,
-    CodeEditorComponent
+    CodeEditorComponent,
+    AuthComponent
   ],
   imports: [
     BrowserModule,
