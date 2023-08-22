@@ -5,14 +5,12 @@ import os
 import signal
 
 
-
 def cleanup_child_processes():
     for process in child_processes:
         try:
             os.kill(process.pid, signal.SIGTERM)
         except ProcessLookupError:
             pass  # Process already exited
-
 
 
 path = pathlib.Path(__file__).parent.resolve()

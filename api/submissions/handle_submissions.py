@@ -4,7 +4,6 @@ from fastapi import APIRouter
 # from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from os import path
-import json
 import ast
 
 # import motor.motor_asyncio
@@ -90,8 +89,13 @@ def check_submission_code(ast_tree):
             self.found_imports = False
 
         def visit_Import(self, node):
+<<<<<<< api/submissions/handle_submissions.py
             self.found_imports = True
             raise Exception("Imports are not allowed in this context")
+=======
+            self.found_imports = True # TODO: Can the bool be removed?
+            raise Exception("Imports are not allowed in this context.")
+>>>>>>> api/submissions/handle_submissions.py
 
         def visit_ImportFrom(self, node):
             self.found_imports = True
@@ -129,6 +133,7 @@ def check_submission_code(ast_tree):
                 fun_id = node.func.id
                 raise Exception(f"{fun_id}() is not allowed in this context")
             self.generic_visit(node)
+
 
     visitor = ImportVisitor()
     visitor.visit(ast_tree)
