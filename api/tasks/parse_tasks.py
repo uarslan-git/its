@@ -5,7 +5,6 @@ import os
 import ast
 import io
 from pymongo import MongoClient
-from fastapi.encoders import jsonable_encoder
 
 def process_file(file_path):
     # Process the content of the text file as needed.
@@ -23,16 +22,17 @@ def get_function_names(file_path):
     function_names = [node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
     return function_names
 
-def task_to_json(dir, task_name, task_number, outfile, db=None):
+def task_to_json(dir, task_unique_name, task_display_name, outfile, db=None):
     # Iterate through the files in the folder
     task_dict = {}
-    task_dict["task_id"] = task_number
+    task_dict["display_name"] = task_display_name
+    task_dict["unique_name"] = task_unique_name.removeprefix("task_").split(".")[0]
     tests = {}
     #create empty .json file
     if db is None:
         open(file=os.path.join(dir, outfile), mode="w")
-    for file_name in os.listdir(os.path.join(dir, task_name)):
-        file_path = os.path.join(dir, task_name, file_name)
+    for file_name in os.listdir(os.path.join(dir, task_unique_name)):
+        file_path = os.path.join(dir, task_unique_name, file_name)
         content_docstring = process_file(file_path)
         if file_name.startswith("test"):
             #test_name = file_name.split("_", 1)[1]
@@ -57,20 +57,26 @@ def task_to_json(dir, task_name, task_number, outfile, db=None):
         with open(os.path.join(dir, outfile), "w") as f:
             json.dump(task_dict, f, ensure_ascii=False)
     else:
-        db.tasks.insert_one(task_dict)
+        db.Task.insert_one(task_dict)
 
 def parse_all_tasks(dir, db=None):
     print(os.listdir(dir))
-    for task_name in os.listdir(dir):
-        if not task_name.endswith(".json"):
-            assert task_name.startswith("task_"), "Wrong format for task folders, use task_[task_number]"
-            task_number = task_name.split("_")[1].split(".")[0]
-            assert task_number.isnumeric(), "Wrong task folder format, use task_[task_number]"
-            outfile = "task_{0}.json".format(task_number)
+    for task_unique_name in os.listdir(dir):
+        if not task_unique_name.endswith(".json"):
+            #TODO: get task_display_name from task.md!!!
+            task_path = os.path.join(dir, task_unique_name)+"/task.md"
+            with open(task_path, "r") as task_file:
+                header = task_file.readline()
+                if not header.startswith("# "):
+                    raise Exception("task.md should contain the first line '# task_display_name'")
+                task_display_name = header.split("#")[1].strip()
+            assert task_unique_name.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
+            task_unique_name_postfix = task_unique_name.removeprefix("task_").split(".")[0]
+            outfile = "task_{0}.json".format(task_unique_name_postfix)
             if db is None:
-                task_to_json(dir, task_name, task_number, outfile)
+                task_to_json(dir, task_unique_name, task_display_name, outfile)
             else:
-                task_to_json(dir, task_name, task_number, outfile, db)
+                task_to_json(dir, task_unique_name, task_display_name, outfile, db)
 
 if __name__ == "__main__":
     print("Database import? (Y/N)")

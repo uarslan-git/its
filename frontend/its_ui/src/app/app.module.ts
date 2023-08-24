@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
+import { DatePipe } from '@angular/common';
 
 import { CodePanelComponent } from './code-panel/code-panel.component';
 
@@ -50,7 +51,7 @@ import { ProfileComponent } from './profile/profile.component';
       },
     }),
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

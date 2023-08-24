@@ -1,4 +1,5 @@
 import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 //Prism
 import { FormBuilder } from '@angular/forms'
@@ -27,7 +28,11 @@ export class CodePanelComponent {
   //Submit Button
   submitButtonClicked(submissionId: string) {
     this.submitted_code = this.codeEditorComponent.contentControl;
-    this.client.post<any>('http://127.0.0.1:8000/code_submit', {task_id: this.current_task_id, code: this.submitted_code, log: "True", submission_id: submissionId}).subscribe(data => {
+    this.client.post<any>('http://127.0.0.1:8000/code_submit', 
+          {task_id: this.current_task_id, code: this.submitted_code, 
+            log: "True", submission_id: submissionId,
+            submission_time: this.datePipe.transform((new Date), 'MM/dd/yyyy h:mm:ss')},
+            {withCredentials: true}).subscribe(data => {
       console.log(data["test_results"]);
       console.log(this.submitted_code);
       this.eventShareService.emitTestReadyEvent();
@@ -69,6 +74,7 @@ export class CodePanelComponent {
       private client: HttpClient,
       private dataShareService: DataShareService,
       private eventShareService: EventShareService,
+      public datePipe: DatePipe,
     ) {
       this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
         (data) => (this.current_task_id = data)

@@ -23,25 +23,21 @@ export class TaskPanelComponent {
     private dataShareService: DataShareService,
     ){
       this.eventSubscription = this.eventShareService.newTaskButtonClick$.subscribe(() => {
-        this.fetch_task(undefined, "test_user");
+        this.fetch_task();
       });
     }
 
-  fetch_task(task_id?: string, user_id?: string) {
+  fetch_task(task_unique_name?: string) {
     var task_url: string;
-    if (typeof task_id !== 'undefined') {
-      task_url = `http://127.0.0.1:8000/task/${task_id}`;
-      console.log(task_url)
-    }
-    else if (typeof user_id !== 'undefined') {
-      task_url = `http://127.0.0.1:8000/task/for_user/${user_id}`;
+    if (typeof task_unique_name == 'undefined') {
+      task_url = `http://127.0.0.1:8000/task/for_user`;
       console.log(task_url);
     }
     else {
-      console.log("invalid task request, aborting")
-      return
+      task_url = `http://127.0.0.1:8000/task/by_name/${task_unique_name}`;
+      console.log(task_url);
     }
-    this.client.get<any>(task_url, ).subscribe((data) => { this.task = {
+    this.client.get<any>(task_url, {withCredentials: true}).subscribe((data) => { this.task = {
       task_id: data.task_id,
       task: data.task
     };
@@ -51,6 +47,6 @@ export class TaskPanelComponent {
  }
 
   ngOnInit(): void {
-    this.fetch_task("1", undefined);
+    this.fetch_task();
   }
 }

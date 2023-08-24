@@ -2,14 +2,17 @@ import uvicorn
 from fastapi import FastAPI, Depends
 from fastapi import APIRouter
 from submissions import handle_submissions
+from submissions.schemas import Code_submission, Tested_code_submission
 from tasks import handle_tasks
 from feedback import handle_feedback
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from users import handle_users
 from users import schemas as user_schemas
+from courses.schemas import Course
+from tasks.schemas import Task
 from beanie import init_beanie
-from db import database_beanie, User
+from db import db_connector_beanie, User
 
 app = FastAPI()
 app.include_router(handle_submissions.router)
@@ -45,12 +48,15 @@ app.include_router(
 async def authenticated_route(user: User = Depends(handle_users.current_active_user)):
     return {"message": f"Hello {user.email}!"}
 
+db_connection_beanie = db_connector_beanie.database()
+
 @app.on_event("startup")
 async def on_startup():
+
     await init_beanie(
-        database=database_beanie,
+        database=db_connection_beanie.db,
         document_models=[
-            User,
+            User, Code_submission, Tested_code_submission, Course, Task
         ],
     )
 

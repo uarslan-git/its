@@ -1,10 +1,15 @@
 from _ast import Call, Del, Delete, Global, Interactive, Load, Nonlocal, Store
 from typing import Any
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 # from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
+
 from os import path
 import ast
+from users.handle_users import current_active_user
+
+from db.db_connector_beanie import User
+from submissions.schemas import Code_submission, Tested_code_submission
+from tasks.schemas import Task
 
 # import motor.motor_asyncio
 import db
@@ -13,25 +18,29 @@ router = APIRouter()
 
 
 # run test on submission
-class Code_submission(BaseModel):
-    task_id: int
-    code: str
-    log: str
-    submission_id: str
+#class Code_submission(BaseModel):
+#    task_id: str
+#    code: str
+#    log: str
+#    submission_id: str
+#    submission_time: str
 
-class Tested_code_submission(Code_submission):
-    test_results: list
+#class Tested_code_submission(Code_submission):
+#    test_results: list
+#    user_id: PydanticObjectId
+
 
 # task schema
-class task(BaseModel):
+""" class task(BaseModel):
     task_id: int
     task_markdown: str
     example_solution: str
-    tests: list
+    tests: list """
 
 @router.post("/code_submit")
-async def handle_code_submission(submission: Code_submission):
+async def handle_code_submission(submission: Code_submission, user: User = Depends(current_active_user)):
 # TODO: Funktion: (test_eingabe, soll_ausgabe) -> test_feedback
+    user_id = user.id
     task_id = submission.task_id
     task_json = await db.database.get_task(str(task_id))
     tests = task_json['tests']
@@ -41,7 +50,9 @@ async def handle_code_submission(submission: Code_submission):
     # Log code submit to database
     tested_submission = Tested_code_submission(log = submission.log, task_id = submission.task_id, 
                                                code = submission.code, test_results= test_results,
-                                               submission_id=submission.submission_id)
+                                               submission_id=submission.submission_id, user_id=user_id,
+                                               submission_time=submission.submission_time)
+    #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
     if (submission.log == "True"):
         await db.database.log_code_submission(tested_submission)
     return  {"test_results": test_results}

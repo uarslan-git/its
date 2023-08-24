@@ -1,23 +1,58 @@
 import motor.motor_asyncio
+from courses.schemas import Course
 from beanie import Document
 from fastapi_users.db import BeanieBaseUser, BeanieUserDatabase
 from typing import Optional
-
-DATABASE_URL = "mongodb://localhost:27017"
-client = motor.motor_asyncio.AsyncIOMotorClient(
-    DATABASE_URL, uuidRepresentation="standard"
-)
-db = client["its_db"]
-
-
-class User(BeanieBaseUser, Document):
-    email: str
-    #username: str
-    #tasks_completed: list
-    #tasks_attempted: list
-    #estimated_compentency: Optional[list]
-    pass
+from users.schemas import User
+from tasks.schemas import Task
+from submissions.schemas import Tested_code_submission as Submission
 
 
 async def get_user_db():
     yield BeanieUserDatabase(User)
+
+class database():
+    
+    def __init__(self) -> None:
+        DATABASE_URL = "mongodb://localhost:27017"
+        client = motor.motor_asyncio.AsyncIOMotorClient(
+            DATABASE_URL, uuidRepresentation="standard"
+        )
+        self.db = client["its_db"]
+
+    async def log_code_submission(self, tested_submission):
+        #Await to enusre the event-loop is not blocked
+        #await self.db["submission"].insert_one(jsonable_encoder(tested_submission))
+        await tested_submission.insert()
+
+    async def get_task(self, unique_name):
+        task = await Task.find_one(Task.unique_name == unique_name)
+        return(task)
+        #cursor = self.db.tasks.find({"task_id": task_id})
+        #task_json = await cursor.to_list(length=1)
+        #if len(task_json) == 1:
+        #    return(task_json[0])
+        #else: 
+        #    raise Exception("Multiple Tasks with same ID present")
+        
+    async def get_feedback(self, submission_id):
+        submission_json = await Submission.find(Submission.submission_id == submission_id).to_list()
+        if len(submission_json) == 1:
+            return(submission_json[0])
+        elif len(submission_json) == 2: 
+            raise Exception("Multiple Tasks with same ID present")
+        elif len(submission_json) == 0:
+            raise Exception("Unknown submission")
+        
+    async def get_user(self, user_id): 
+        #Use fastapi_users boilerplate indirectly to increase modularity.
+        user = await get_user_db.get(user_id)
+        return(user)
+    
+    async def get_course(self, unique_name):
+        course = await Course.find_one(Course.unique_name == unique_name)
+        return course
+
+
+
+

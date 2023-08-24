@@ -49,7 +49,7 @@ export class AuthComponent {
 
   register(username: string, password: string): void {
     const body = {"email": `${username}@anonym.de`,
-    "password": password };
+                  "password": password, "tasks_completed": [], "tasks_attempted": [], "enrolled_courses": ["test_course"] };
     this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, body).subscribe(
       response => {
           // Handle successful registration

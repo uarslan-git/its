@@ -3,12 +3,12 @@ from fastapi.encoders import jsonable_encoder
 import json
 import io
 
-def print_to_string(*args, **kwargs):
-    output = io.StringIO()
-    print(*args, file=output, **kwargs)
-    contents = output.getvalue()
-    output.close()
-    return contents
+#def print_to_string(*args, **kwargs):
+#    output = io.StringIO()
+#    print(*args, file=output, **kwargs)
+#    contents = output.getvalue()
+#    output.close()
+#    return contents
 
 class database:
 
