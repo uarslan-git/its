@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
 import { DataShareService } from '../shared/services/data-share.service';
@@ -11,18 +11,20 @@ import { Subscription } from 'rxjs';
 })
 export class TaskPanelComponent {
 
+  @ViewChild("courseCompleteDialog", {static: true}) courseCompleteDialog!: ElementRef<HTMLDialogElement>
+
   private eventSubscription: Subscription;
   task_markdown: string = '';
   code_language: string = 'python';
 
-  task: { task_id?: string; task?: string; } = {};
+  task: { unique_name?: string; task?: string; } = {};
 
   constructor(
     private client: HttpClient,
     private eventShareService: EventShareService,
     private dataShareService: DataShareService,
     ){
-      this.eventSubscription = this.eventShareService.newTaskButtonClick$.subscribe(() => {
+      this.eventSubscription = this.eventShareService.newTaskEvent$.subscribe(() => {
         this.fetch_task();
       });
     }
@@ -31,18 +33,23 @@ export class TaskPanelComponent {
     var task_url: string;
     if (typeof task_unique_name == 'undefined') {
       task_url = `http://127.0.0.1:8000/task/for_user`;
-      console.log(task_url);
     }
     else {
       task_url = `http://127.0.0.1:8000/task/by_name/${task_unique_name}`;
-      console.log(task_url);
     }
     this.client.get<any>(task_url, {withCredentials: true}).subscribe((data) => { this.task = {
-      task_id: data.task_id,
+      unique_name: data.unique_name,
       task: data.task
     };
+    console.log("new task request")
+    if (this.task['unique_name'] == "course completed") {
+      //alert("Awesome, you have completed the course! There are no tasks left to solve :)");
+      this.courseCompleteDialog.nativeElement.showModal();
+      return;
+    }
     this.task_markdown = this.task['task']!;
-    this.dataShareService.emitTaskId(this.task.task_id!);
+    //console.log(this.task['unique_name'])
+    this.dataShareService.emitTaskId(this.task['unique_name']!);
   });
  }
 

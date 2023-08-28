@@ -29,13 +29,11 @@ export class CodePanelComponent {
   submitButtonClicked(submissionId: string) {
     this.submitted_code = this.codeEditorComponent.contentControl;
     this.client.post<any>('http://127.0.0.1:8000/code_submit', 
-          {task_id: this.current_task_id, code: this.submitted_code, 
+          {task_unique_name: this.current_task_id, code: this.submitted_code, 
             log: "True", submission_id: submissionId,
             submission_time: this.datePipe.transform((new Date), 'MM/dd/yyyy h:mm:ss')},
-            {withCredentials: true}).subscribe(data => {
-      console.log(data["test_results"]);
-      console.log(this.submitted_code);
-      this.eventShareService.emitTestReadyEvent();
+            {withCredentials: true}).subscribe((data) => {
+              this.eventShareService.emitTestReadyEvent();
     });
   }
 
@@ -46,21 +44,6 @@ export class CodePanelComponent {
   codeContent!: ElementRef;
   @ViewChild('pre', { static: true })
   pre!: ElementRef;
-
-  sub!: Subscription;
-  highlighted = false;
-  codeType = 'python';
-
-  form = this.fb.group({
-    content: ''
-  });
-
-  get contentControl(): string {
-    const content: any = this.form.get('content')?.value;
-    return content != null ? content : '';
-  }
-
-
 
 */
 
@@ -77,52 +60,9 @@ export class CodePanelComponent {
       public datePipe: DatePipe,
     ) {
       this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
-        (data) => (this.current_task_id = data)
+        (data) => {this.current_task_id = data;
+                  console.log(this.current_task_id)}
       );
     }
 
-/*
-
-  ngOnInit(): void {
-    this.listenForm()
-    this.synchronizeScroll();
-  }
-
-  ngAfterViewInit() {
-    this.prismService.highlightAll();
-  }
-
-  ngAfterViewChecked() {
-    if (this.highlighted) {
-      this.prismService.highlightAll();
-      this.highlighted = false;
-    }
-  }
-
-  ngOnDestroy() {
-    this.sub?.unsubscribe();
-  }
-
-  private listenForm() {
-    this.sub = this.form.valueChanges.subscribe((val) => {
-      const modifiedContent = this.prismService.convertHtmlIntoString(val.content!);
-
-      // TODO: Remove uneccesary HTML stuff
-      this.renderer.setProperty(this.codeContent.nativeElement, 'innerHTML', modifiedContent);
-
-      this.highlighted = true;
-    });
-  }
-
-  private synchronizeScroll() {
-    const localSub  = fromEvent(this.textArea.nativeElement, 'scroll').subscribe(() => {
-      const toTop = this.textArea.nativeElement.scrollTop;
-      const toLeft = this.textArea.nativeElement.scrollLeft;
-
-      this.renderer.setProperty(this.pre.nativeElement, 'scrollTop', toTop);
-      this.renderer.setProperty(this.pre.nativeElement, 'scrollLeft', toLeft + 0.2);
-    });
-
-    this.sub.add(localSub);
-  } */
 }

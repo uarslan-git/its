@@ -17,19 +17,6 @@ import db
 router = APIRouter()
 
 
-# run test on submission
-#class Code_submission(BaseModel):
-#    task_id: str
-#    code: str
-#    log: str
-#    submission_id: str
-#    submission_time: str
-
-#class Tested_code_submission(Code_submission):
-#    test_results: list
-#    user_id: PydanticObjectId
-
-
 # task schema
 """ class task(BaseModel):
     task_id: int
@@ -39,23 +26,33 @@ router = APIRouter()
 
 @router.post("/code_submit")
 async def handle_code_submission(submission: Code_submission, user: User = Depends(current_active_user)):
-# TODO: Funktion: (test_eingabe, soll_ausgabe) -> test_feedback
     user_id = user.id
-    task_id = submission.task_id
+    task_id = submission.task_unique_name
     task_json = await db.database.get_task(str(task_id))
-    tests = task_json['tests']
+    tests = task_json.tests
     test_results = []
-    for test_name in tests.keys():
+    valid_solution = True
+    for i, test_name in enumerate(tests.keys()):
         test_results.append(get_test_result(test_code=tests[test_name], test_name=test_name, submission_code=submission.code))
+        if test_results[i]["status"] == 0:
+            valid_solution = False
     # Log code submit to database
-    tested_submission = Tested_code_submission(log = submission.log, task_id = submission.task_id, 
+    tested_submission = Tested_code_submission(log = submission.log, task_unique_name = submission.task_unique_name, 
                                                code = submission.code, test_results= test_results,
                                                submission_id=submission.submission_id, user_id=user_id,
-                                               submission_time=submission.submission_time)
+                                               submission_time=submission.submission_time, valid_solution=valid_solution)
+    #TODO: implement student model for this.
+    if valid_solution and (not submission.task_unique_name in user.tasks_completed):
+        user.tasks_completed.append(submission.task_unique_name)
+        course = await db.database.get_course(unique_name=user.enrolled_courses[0])
+        if course.curriculum == user.tasks_completed:
+            if user.enrolled_courses[0] not in user.courses_completed:
+                user.courses_completed.append(user.enrolled_courses[0]) #TODO: Unsafe, secure this
+        await db.database.update_user(user)
     #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
     if (submission.log == "True"):
         await db.database.log_code_submission(tested_submission)
-    return  {"test_results": test_results}
+    #return  {"test_results": test_results, "valid_solution": valid_solution}
 
 
 def get_test_result(test_code, test_name, submission_code):

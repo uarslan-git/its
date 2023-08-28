@@ -12,6 +12,7 @@ class User(BeanieBaseUser, Document):
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
+    courses_completed: list
     #estimated_compentency: Optional[list]
     pass
 
@@ -21,6 +22,7 @@ class UserRead(schemas.BaseUser[PydanticObjectId]):
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
+    courses_completed: list
     pass
     #estimated_compentency: Optional[list]
 
@@ -31,6 +33,7 @@ class UserCreate(schemas.BaseUserCreate):
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
+    courses_completed: list
     pass
     #username: str
     #estimated_compentency: Optional[list]
@@ -43,5 +46,6 @@ class UserUpdate(schemas.BaseUserUpdate):
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
+    courses_completed: list
     #estimated_compentency: Optional[list]
     pass

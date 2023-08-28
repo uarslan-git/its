@@ -4,11 +4,17 @@ from submissions.handle_submissions import router
 import pytest
 from httpx import AsyncClient
 
-
+#TODO: Implement User-logic for this test: create a test user and store cookie - send submit request with cookie.
 async def submit_code(code, expected_status=1, expected_message_prefix="", task_id=1):
     async with AsyncClient(app=router, base_url="http://test") as ac:
-        response = await ac.post("/code_submit", content=json.dumps({"task_id": task_id, "code": code, "log": "True", "submission_id": "test"}))
+        response = await ac.post("/code_submit", content=json.dumps({"task_unique_name": task_id, 
+                                                                     "code": code, 
+                                                                     "log": "True", 
+                                                                     "submission_id": "test",
+                                                                     "submission_time": ""}),
+                                                                     )
     payload = response.json()
+    print(payload)
     assert payload['test_results'][0]['status'] == expected_status, "Incorrect status code"
     message = payload['test_results'][0]['message']
     assert message.startswith(expected_message_prefix), f"Incorrect message prefix: {message} instead of {expected_message_prefix}"
@@ -126,3 +132,4 @@ def factorial(n):
 eval("import os")
 """
     await submit_code(code, 0, "Error or Exception: eval() is not allowed in this context")
+

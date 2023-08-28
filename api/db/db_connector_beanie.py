@@ -35,24 +35,20 @@ class database():
         #else: 
         #    raise Exception("Multiple Tasks with same ID present")
         
-    async def get_feedback(self, submission_id):
-        submission_json = await Submission.find(Submission.submission_id == submission_id).to_list()
-        if len(submission_json) == 1:
-            return(submission_json[0])
-        elif len(submission_json) == 2: 
-            raise Exception("Multiple Tasks with same ID present")
-        elif len(submission_json) == 0:
-            raise Exception("Unknown submission")
-        
+    async def get_submission(self, submission_id):
+        submission = await Submission.find_one(Submission.submission_id == submission_id)
+        return(submission)
+
     async def get_user(self, user_id): 
         #Use fastapi_users boilerplate indirectly to increase modularity.
         user = await get_user_db.get(user_id)
         return(user)
-    
+
+    async def update_user(self, user: User):
+        #await get_user_db().update(user)
+        await user.save()
+
     async def get_course(self, unique_name):
         course = await Course.find_one(Course.unique_name == unique_name)
         return course
-
-
-
 

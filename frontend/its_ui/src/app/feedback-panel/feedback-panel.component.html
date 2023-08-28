@@ -1,2 +1,13 @@
 <!-- <app-prism class="feedback-panel" [code]=feedback_string [language]=code_language></app-prism> -->
+<dialog #taskSolvedDialog class="popup-dialog-container">
+    <div class="popup-dialog">
+        <p>Congratulations, you have solved this task!</p>
+        <button class="popup-dialog-button" (click)="actOnValidSolution('stay')">
+            Review Feedback
+         </button>
+        <button class="popup-dialog-button" (click)="actOnValidSolution('next task')">
+            Next Task
+         </button>
+    </div>
+</dialog>
 <app-markdown-panel [markdownString]="feedback_markdown"></app-markdown-panel>

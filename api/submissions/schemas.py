@@ -5,7 +5,7 @@ from beanie import Document
 
 # class Code_submission(BaseModel):
 class Code_submission(Document):
-    task_id: str
+    task_unique_name: str
     code: str
     log: str
     submission_id: str
@@ -15,6 +15,7 @@ class Code_submission(Document):
         name = "Submission"
 
 class Tested_code_submission(Code_submission):
+    valid_solution: bool
     test_results: list
     user_id: PydanticObjectId
 

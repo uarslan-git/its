@@ -29,12 +29,12 @@ export class EventShareService {
     this.testReadySubject.next();
   }
 
-  //New Task Request from User
-  private newTaskButtonClickSubject = new Subject<void>();
-  newTaskButtonClick$ = this.newTaskButtonClickSubject.asObservable();
+  //New Task Event
+  private newTaskEventSubject = new Subject<void>();
+  newTaskEvent$ = this.newTaskEventSubject.asObservable();
 
-  emitNewTaskButtonClick() {
-    this.newTaskButtonClickSubject.next();
+  emitNewTaskEvent() {
+    this.newTaskEventSubject.next();
   }
 
   //Profile Button Click

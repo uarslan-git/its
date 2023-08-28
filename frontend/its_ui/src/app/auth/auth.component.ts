@@ -49,7 +49,8 @@ export class AuthComponent {
 
   register(username: string, password: string): void {
     const body = {"email": `${username}@anonym.de`,
-                  "password": password, "tasks_completed": [], "tasks_attempted": [], "enrolled_courses": ["test_course"] };
+                  "password": password, "tasks_completed": [], "tasks_attempted": [], 
+                  "enrolled_courses": ["test_course"], "courses_completed": []};
     this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, body).subscribe(
       response => {
           // Handle successful registration
@@ -57,6 +58,7 @@ export class AuthComponent {
       },
       error => {
         console.error('Registration error:', error);
+        alert("Registration not successful. Probably the user already exists.")
       }
     );
   }

@@ -15,7 +15,7 @@ export class NavigationBarComponent {
   constructor(private eventShareService: EventShareService){}
 
   newTaskButtonClicked(){
-    this.eventShareService.emitNewTaskButtonClick();
+    this.eventShareService.emitNewTaskEvent();
   }
 
   emitProfileButtonClicked() {

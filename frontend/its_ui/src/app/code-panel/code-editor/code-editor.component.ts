@@ -48,7 +48,7 @@ get contentControl(): string {
   return content != null ? content : '';
 }
 
-taskIdSubscription: Subscription;
+newTaskSubscription: Subscription;
 current_task_id: string = "";
 
 constructor(
@@ -58,9 +58,16 @@ constructor(
   private dataShareService: DataShareService,
   private eventShareService: EventShareService,
 ) {
-  this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
-    (data) => (this.current_task_id = data)
+  this.newTaskSubscription = this.eventShareService.newTaskEvent$.subscribe(
+    () => {
+      console.log("Editor Content reset!");     
+/*       this.textArea.nativeElement.content = '';
+           this.codeContent.nativeElement.content = '';
+           this.editorForm.nativeElement.content = ''; */
+           this.form.setValue({'content': ''});
+          }
   );
+
 }
 
 ngOnInit(): void {

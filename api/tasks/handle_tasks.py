@@ -24,6 +24,8 @@ pedagogical_model = Prototype_pedagogical_model()
 @router.get("/task/for_user/")
 async def get_task_for_user(user: User = Depends(current_active_user)):
     task_unique_name = await pedagogical_model.select_task(user)
+    if task_unique_name == "course completed":
+        return({"unique_name": "course completed", "task": ""})
     return(await read_task(task_unique_name))
 
 
