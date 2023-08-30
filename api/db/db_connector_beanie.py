@@ -5,7 +5,9 @@ from fastapi_users.db import BeanieBaseUser, BeanieUserDatabase
 from typing import Optional
 from users.schemas import User
 from tasks.schemas import Task
+from attempts.schemas import Attempt
 from submissions.schemas import Tested_code_submission as Submission
+from beanie import PydanticObjectId
 
 
 async def get_user_db():
@@ -51,4 +53,18 @@ class database():
     async def get_course(self, unique_name):
         course = await Course.find_one(Course.unique_name == unique_name)
         return course
+    
+    async def get_attempt(self, attempt_id):
+        attempt = await Attempt.get(PydanticObjectId(attempt_id))
+        return attempt
+
+    async def find_attempt(self, task_unique_name, user_id: PydanticObjectId):
+        attempt = await Attempt.find_one(Attempt.task_unique_name == task_unique_name, Attempt.user_id == str(user_id))
+        return attempt
+    
+    async def update_attempt(self, attempt: Attempt): 
+        await attempt.save()
+
+    async def create_attempt(self, attempt: Attempt): 
+        await attempt.insert()
 

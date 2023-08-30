@@ -1,4 +1,4 @@
-import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
 
 //Prism
 import { FormBuilder } from '@angular/forms'
@@ -18,11 +18,28 @@ export class CodeEditorComponent {
   submitted_code: string = ''
   code_language = 'python';
 
+  @Output() codeChangeEvent : EventEmitter<string> = new EventEmitter<string>();
+  timer: any; 
+
+
+  emitCodeChangeEventTimer(newVal: string) {
+    this.timer = setTimeout(
+      () => {
+        this.codeChangeEvent.emit(newVal);
+      }
+    , 1000) //Milliseconds timeout
+  }
+
+  private clearCodeChangeTimer(): void {
+    clearTimeout(this.timer);
+  }
+
+
 // Text Area with syntax highlighting and line numbers
 // At this point, the solution is not very stable.
-// It relies on growing the textarea (form) and the rendered 
+// It relies on growing the textarea (form) and the rendered
 // code synchronosly using scripts and html properties from
-// different elements. 
+// different elements.
 
 @ViewChild('textArea', { static: true })
 textArea!: ElementRef;
@@ -67,7 +84,6 @@ constructor(
            this.form.setValue({'content': ''});
           }
   );
-
 }
 
 ngOnInit(): void {
@@ -75,6 +91,8 @@ ngOnInit(): void {
   /* this.synchronizeScroll(); */
   this.form.controls.content.valueChanges.subscribe((newValue) => {
     this.synchronizedTextareaGrow();
+    this.clearCodeChangeTimer();
+    this.emitCodeChangeEventTimer(newValue!);
   });
 }
 
@@ -101,7 +119,6 @@ private synchronizedTextareaGrow() {
   const toHeight = Math.max(this.editorForm.nativeElement.offsetHeight, minHeight);
   // Add Padding (70px) and font size (16px)
   const toWidth = Math.max(this.codeContent.nativeElement.offsetWidth + 70 + 16, minWidth);
-  console.log(toWidth)
   this.renderer.setProperty(this.textArea.nativeElement, 'style', `height: ${toHeight}px;width: ${toWidth}px;overflow:hidden;`)
   this.renderer.setProperty(this.editorForm.nativeElement, 'style', `width: ${toWidth}px;overflow:hidden;`)
 }
@@ -109,23 +126,10 @@ private synchronizedTextareaGrow() {
 private listenForm() {
   this.sub = this.form.valueChanges.subscribe((val) => {
 /*     const modifiedContent = this.prismService.convertHtmlIntoString(val.content!); */
-
     this.renderer.setProperty(this.codeContent.nativeElement, 'innerHTML', val.content!);
     this.highlighted = true;
     
   });
 }
-
-/* private synchronizeScroll() {
-  const localSub  = fromEvent(this.textArea.nativeElement, 'scroll').subscribe(() => {
-    const toTop = this.textArea.nativeElement.scrollTop;
-    const toLeft = this.textArea.nativeElement.scrollLeft;
-
-    this.renderer.setProperty(this.pre.nativeElement, 'scrollTop', toTop);
-    this.renderer.setProperty(this.pre.nativeElement, 'scrollLeft', toLeft + 0.2);
-  });
-
-  this.sub.add(localSub);
-} */
-
 }
+

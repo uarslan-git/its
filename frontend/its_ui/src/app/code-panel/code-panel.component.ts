@@ -37,23 +37,14 @@ export class CodePanelComponent {
     });
   }
 
-  /* // Text Area with syntax highlighting and line numbers
-  @ViewChild('textArea', { static: true })
-  textArea!: ElementRef;
-  @ViewChild('codeContent', { static: true })
-  codeContent!: ElementRef;
-  @ViewChild('pre', { static: true })
-  pre!: ElementRef;
-
-*/
 
   taskIdSubscription: Subscription;
   current_task_id: string = "";
 
   constructor(
-      private prismService: PrismHighlightService,
+/*       private prismService: PrismHighlightService,
       private fb: FormBuilder,
-      private renderer: Renderer2,
+      private renderer: Renderer2, */
       private client: HttpClient,
       private dataShareService: DataShareService,
       private eventShareService: EventShareService,
@@ -61,8 +52,40 @@ export class CodePanelComponent {
     ) {
       this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
         (data) => {this.current_task_id = data;
-                  console.log(this.current_task_id)}
+                  console.log(this.current_task_id);
+                  this.getCurrentAttemptState();}
       );
     }
 
+    // Tracking Users Coding process
+
+    currentAttemptId!: string;
+    contentReloaded: boolean = false;
+
+    getCurrentAttemptState() {
+      this.client.get<any>(`http://127.0.0.1:8000/attempt/get_state/${this.current_task_id}`, {withCredentials: true}).subscribe(
+        (data) => {
+          console.log(data.attempt_id)
+          this.currentAttemptId = data.attempt_id;
+          this.codeEditorComponent.form.setValue({'content': data.code});
+          this.contentReloaded = true;
+        }
+      )
+    }
+
+    recordChanges(newContent: string) {
+      if (!this.contentReloaded) {
+        const body = {
+          'attempt_id': this.currentAttemptId,
+          'code': newContent, 
+          'state_datetime': this.datePipe.transform((new Date), 'MM/dd/yyyy h:mm:ss'), //TODO: Use correct time zones
+          'submission_id': ''};
+        this.client.post<any>('http://127.0.0.1:8000/attempt/log', body, {withCredentials: true}).subscribe(
+          () => {
+            console.log("State logged");
+          }
+        )
+      }
+        this.contentReloaded = false;
+    }
 }

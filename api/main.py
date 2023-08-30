@@ -2,6 +2,7 @@ import uvicorn
 from fastapi import FastAPI, Depends
 from fastapi import APIRouter
 from submissions import handle_submissions
+from attempts import handle_attempts
 from submissions.schemas import Code_submission, Tested_code_submission
 from tasks import handle_tasks
 from feedback import handle_feedback
@@ -11,13 +12,16 @@ from users import handle_users
 from users import schemas as user_schemas
 from courses.schemas import Course
 from tasks.schemas import Task
+from attempts.schemas import Attempt, AttemptState
 from beanie import init_beanie
-from db import db_connector_beanie, User
+from db import db_connector_beanie
+from users.schemas import User
 
 app = FastAPI()
 app.include_router(handle_submissions.router)
 app.include_router(handle_tasks.router)
 app.include_router(handle_feedback.router)
+app.include_router(handle_attempts.router)
 
 # User Router and database setup
 app.include_router(
@@ -56,7 +60,7 @@ async def on_startup():
     await init_beanie(
         database=db_connection_beanie.db,
         document_models=[
-            User, Code_submission, Tested_code_submission, Course, Task
+            User, Code_submission, Tested_code_submission, Course, Task, Attempt, AttemptState
         ],
     )
 
