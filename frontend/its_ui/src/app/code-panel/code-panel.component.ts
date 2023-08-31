@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { DataShareService } from '../shared/services/data-share.service';
 import { EventShareService } from '../shared/services/event-share.service';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
+import { DatetimeService } from '../shared/services/datetime.service';
 
 
 @Component({
@@ -26,14 +27,16 @@ export class CodePanelComponent {
 
 
   //Submit Button
-  submitButtonClicked(submissionId: string) {
+  submitButtonClicked() {
     this.submitted_code = this.codeEditorComponent.contentControl;
     this.client.post<any>('http://127.0.0.1:8000/code_submit', 
           {task_unique_name: this.current_task_id, code: this.submitted_code, 
-            log: "True", submission_id: submissionId,
-            submission_time: this.datePipe.transform((new Date), 'MM/dd/yyyy h:mm:ss')},
+            log: "True",
+            submission_time: this.datetimeService.datetimeNow()
+          },
             {withCredentials: true}).subscribe((data) => {
-              this.eventShareService.emitTestReadyEvent();
+              this.recordChanges(this.submitted_code, data.submissionId);
+              this.eventShareService.emitTestReadyEvent(data.submission_id);
     });
   }
 
@@ -49,6 +52,7 @@ export class CodePanelComponent {
       private dataShareService: DataShareService,
       private eventShareService: EventShareService,
       public datePipe: DatePipe,
+      private datetimeService: DatetimeService,
     ) {
       this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
         (data) => {this.current_task_id = data;
@@ -57,15 +61,13 @@ export class CodePanelComponent {
       );
     }
 
-    // Tracking Users Coding process
-
+    // Tracking Users Coding process, also functionality to save and restore attempts.
     currentAttemptId!: string;
     contentReloaded: boolean = false;
 
     getCurrentAttemptState() {
       this.client.get<any>(`http://127.0.0.1:8000/attempt/get_state/${this.current_task_id}`, {withCredentials: true}).subscribe(
         (data) => {
-          console.log(data.attempt_id)
           this.currentAttemptId = data.attempt_id;
           this.codeEditorComponent.form.setValue({'content': data.code});
           this.contentReloaded = true;
@@ -73,13 +75,14 @@ export class CodePanelComponent {
       )
     }
 
-    recordChanges(newContent: string) {
-      if (!this.contentReloaded) {
+    recordChanges(newContent: string, submissionId: string='') {
+      console.log(this.current_task_id);
+      if ((!this.contentReloaded) || (this.current_task_id=='course completed')) {
         const body = {
           'attempt_id': this.currentAttemptId,
           'code': newContent, 
-          'state_datetime': this.datePipe.transform((new Date), 'MM/dd/yyyy h:mm:ss'), //TODO: Use correct time zones
-          'submission_id': ''};
+          'state_datetime': this.datetimeService.datetimeNow(),
+          'submission_id': submissionId};
         this.client.post<any>('http://127.0.0.1:8000/attempt/log', body, {withCredentials: true}).subscribe(
           () => {
             console.log("State logged");

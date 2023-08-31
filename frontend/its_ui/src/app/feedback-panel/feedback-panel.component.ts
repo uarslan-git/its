@@ -26,12 +26,12 @@ export class FeedbackPanelComponent {
     private eventShareService: EventShareService,
     private client: HttpClient,){
     this.submitSubscription = this.eventShareService.submitButtonClick$.subscribe((data) => {
-      this.submissionId = data;
       this.feedback_markdown = 'Code submitted, waiting for feedback...';
     });
 
     this.testReadySubscription = this.eventShareService.testReady$.subscribe((data) => {
-      this.fetchFeedback(this.submissionId);
+      const submissionId = data
+      this.fetchFeedback(submissionId);
     });
     this.newTaskSubscription = this.eventShareService.newTaskEvent$.subscribe(() => {
       this.feedback_markdown = '';

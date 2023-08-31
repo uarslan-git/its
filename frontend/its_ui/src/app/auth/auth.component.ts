@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
+import { DatetimeService } from '../shared/services/datetime.service';
 
 
 interface AuthResponse {
@@ -15,6 +16,7 @@ interface AuthResponse {
 })
 export class AuthComponent {
   apiUrl = 'http://127.0.0.1:8000';
+  timer: any;
 
   @Output() loginEvent : EventEmitter<string> = new EventEmitter<string>();
   loginStatus: string = 'none';
@@ -22,7 +24,8 @@ export class AuthComponent {
   registering: boolean = false;
 
   constructor(private http: HttpClient,
-              private eventShareService: EventShareService) {}
+              private eventShareService: EventShareService,
+              private datetimeService: DatetimeService) {}
 
   login(username: string, password: string): void {
     // unfortunatley, the fastapi-users package requres logins to be FormData and not JSON.
@@ -30,11 +33,24 @@ export class AuthComponent {
     formData.append('username', `${username}@anonym.de`); //At some later point we may want to prefer e-mail based login
     formData.append('password', password);
 
-    this.http.post<Response>(`${this.apiUrl}/auth/jwt/login`, formData, { withCredentials: true, observe: 'response' }).subscribe(
+    this.http.post<Response>(`${this.apiUrl}/auth/jwt/login`, formData, { withCredentials: true, observe: 'response'}).subscribe(
       response => {
           // Handle successful login
           this.loginStatus = "loggedIn";
           this.emitLoginEvent();
+          console.log(response.headers)
+          const setCookieHeader = response.headers.get('Set-Cookie');
+          console.log(setCookieHeader)
+          if (setCookieHeader) {
+            console.log("A cookie was set!")
+          }
+          this.timer = setTimeout(
+            () => {
+              this.loginStatus = 'LoggedOut';
+              this.eventShareService.emitViewChange(this.loginStatus);
+              alert("You have been automatically logged out, since your authentification token has expired. However you can just log back in, your progress is stored.")
+            }
+            , 3600000);
       },
       error => {
         console.error('Login error:', error);
@@ -50,7 +66,9 @@ export class AuthComponent {
   register(username: string, password: string): void {
     const body = {"email": `${username}@anonym.de`,
                   "password": password, "tasks_completed": [], "tasks_attempted": [], 
-                  "enrolled_courses": ["test_course"], "courses_completed": []};
+                  "enrolled_courses": ["test_course"], "courses_completed": [],
+                  "register_datetime": this.datetimeService.datetimeNow() 
+                };
     this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, body).subscribe(
       response => {
           // Handle successful registration
@@ -64,9 +82,7 @@ export class AuthComponent {
   }
 
 
-
   setRegistering(registering: boolean){
     this.registering = registering;
   }
-
 }

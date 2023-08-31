@@ -13,7 +13,14 @@ export class AppComponent {
   //name = new FormControl('');
 
 
-  constructor(private client: HttpClient){}
+  constructor(private client: HttpClient,
+    eventShareService: EventShareService){
+      eventShareService.viewChange$.subscribe(
+        (status) => {
+          this.setView(status);
+        }
+      );
+  }
 
   ngOnInit(): void {
     this.client.get<any>('http://127.0.0.1:8000/status').subscribe((data) =>  {

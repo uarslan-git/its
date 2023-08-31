@@ -8,8 +8,7 @@ class Code_submission(Document):
     task_unique_name: str
     code: str
     log: str
-    submission_id: str
-    submission_time: str
+    submission_time: dict
 
     class Settings:
         name = "Submission"

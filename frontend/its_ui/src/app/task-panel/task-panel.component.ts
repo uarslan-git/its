@@ -2,7 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
 import { DataShareService } from '../shared/services/data-share.service';
-import { Subscription } from 'rxjs';
+import { Subscription, delay } from 'rxjs';
 
 @Component({
   selector: 'app-task-panel',
@@ -43,9 +43,8 @@ export class TaskPanelComponent {
     };
     console.log("new task request")
     if (this.task['unique_name'] == "course completed") {
-      //alert("Awesome, you have completed the course! There are no tasks left to solve :)");
+      delay(100);
       this.courseCompleteDialog.nativeElement.showModal();
-      return;
     }
     this.task_markdown = this.task['task']!;
     //console.log(this.task['unique_name'])

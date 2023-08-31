@@ -8,6 +8,6 @@ class Attempt(Document):
 
 class AttemptState(Document):
     attempt_id: str
-    state_datetime: str
+    state_datetime: dict
     code: str
     submission_id: str

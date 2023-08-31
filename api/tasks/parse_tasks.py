@@ -63,7 +63,6 @@ def parse_all_tasks(dir, db=None):
     print(os.listdir(dir))
     for task_unique_name in os.listdir(dir):
         if not task_unique_name.endswith(".json"):
-            #TODO: get task_display_name from task.md!!!
             task_path = os.path.join(dir, task_unique_name)+"/task.md"
             with open(task_path, "r") as task_file:
                 header = task_file.readline()

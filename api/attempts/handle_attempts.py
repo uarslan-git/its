@@ -14,8 +14,9 @@ async def get_attempt_state(task_unique_name, user: User = Depends(current_activ
     if attempt is None:
         attempt = Attempt(user_id = str(user.id), task_unique_name=task_unique_name, state_log=[])
         await database.create_attempt(attempt)
+    if len(attempt.state_log)==0:
         return({"attempt_id": str(attempt.id), "code": ""})
-    else: #TODO: was passiert wenn state_log leer ist?
+    else:
         return(attempt.state_log[-1])
 
 

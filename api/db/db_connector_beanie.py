@@ -38,7 +38,7 @@ class database():
         #    raise Exception("Multiple Tasks with same ID present")
         
     async def get_submission(self, submission_id):
-        submission = await Submission.find_one(Submission.submission_id == submission_id)
+        submission = await Submission.find_one(Submission.id == PydanticObjectId(submission_id))
         return(submission)
 
     async def get_user(self, user_id): 

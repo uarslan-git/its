@@ -14,7 +14,8 @@ export class ProfileComponent {
   apiUrl: string = 'http://127.0.0.1:8000';
   email: string = '';
   name: string = '';
-  user: {email?: string} = {};
+  registeredDatetime: string = '';
+  user: {email?: string, register_datetime?: any} = {};
 
   constructor(private http: HttpClient,
     private eventShareService: EventShareService) {
@@ -32,9 +33,11 @@ export class ProfileComponent {
         (data)  => {
         this.user = {
           email: data.email,
+          register_datetime: data.register_datetime
         };
         this.email = this.user.email!;
         this.name = this.user.email!.split("@")[0];
+        this.registeredDatetime = this.user.register_datetime["local"];
       });
     }
 

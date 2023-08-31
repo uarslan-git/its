@@ -1,6 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { EventShareService } from 'src/app/shared/services/event-share.service';
-import { v4 as uuidv4 } from 'uuid'
 
 @Component({
   selector: 'app-action-panel',
@@ -16,8 +15,7 @@ export class ActionPanelComponent {
 
   //Submit Button
   submitButtonClicked() {
-    this.submissionId = uuidv4()
-    this.submitEvent.emit(this.submissionId);
-    this.eventShareService.emitSubmitButtonClick(this.submissionId);
+    this.submitEvent.emit();
+    this.eventShareService.emitSubmitButtonClick();
   }
 }

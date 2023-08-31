@@ -14,19 +14,19 @@ export class EventShareService {
   constructor() { }
 
   //Submit button click
-  private submitButtonClickSubject = new Subject<string>();
+  private submitButtonClickSubject = new Subject<void>();
   submitButtonClick$ = this.submitButtonClickSubject.asObservable();
 
-  emitSubmitButtonClick(submissionId: string) {
-    this.submitButtonClickSubject.next(submissionId);
+  emitSubmitButtonClick() {
+    this.submitButtonClickSubject.next();
   }
 
   // Tests ready Event
-  private testReadySubject = new Subject<void>();
+  private testReadySubject = new Subject<string>();
   testReady$ = this.testReadySubject.asObservable();
 
-  emitTestReadyEvent() {
-    this.testReadySubject.next();
+  emitTestReadyEvent(submissionId: string) {
+    this.testReadySubject.next(submissionId);
   }
 
   //New Task Event
@@ -37,12 +37,12 @@ export class EventShareService {
     this.newTaskEventSubject.next();
   }
 
-  //Profile Button Click
-  private profileButtonClickSubject = new Subject<void>();
-  profileButtonClick$ = this.profileButtonClickSubject.asObservable();
+  //View Change Event
+  private viewChangeSubject = new Subject<string>();
+  viewChange$ = this.viewChangeSubject.asObservable();
 
-  emitProfileButtonClick() {
-    this.profileButtonClickSubject.next();
+  emitViewChange(view: string) {
+    this.viewChangeSubject.next(view);
   }
 
 }

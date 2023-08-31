@@ -38,8 +38,8 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
             valid_solution = False
     # Log code submit to database
     tested_submission = Tested_code_submission(log = submission.log, task_unique_name = submission.task_unique_name, 
-                                               code = submission.code, test_results= test_results,
-                                               submission_id=submission.submission_id, user_id=user_id,
+                                               code = submission.code, test_results = test_results,
+                                               user_id=user_id,
                                                submission_time=submission.submission_time, valid_solution=valid_solution)
     #TODO: implement student model for this.
     if valid_solution and (not submission.task_unique_name in user.tasks_completed):
@@ -52,7 +52,7 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
     #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
     if (submission.log == "True"):
         await db.database.log_code_submission(tested_submission)
-    #return  {"test_results": test_results, "valid_solution": valid_solution}
+    return  {"submission_id": str(tested_submission.id)}
 
 
 def get_test_result(test_code, test_name, submission_code):
