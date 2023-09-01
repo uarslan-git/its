@@ -76,7 +76,7 @@ export class FeedbackPanelComponent {
       this.taskSolvedDialog.nativeElement.close();
     }
     else if (action == "next task") {
-      this.eventShareService.emitNewTaskEvent();
+      this.eventShareService.emitNewTaskEvent('personal');
       this.taskSolvedDialog.nativeElement.close();
     }
   }

@@ -30,11 +30,11 @@ export class EventShareService {
   }
 
   //New Task Event
-  private newTaskEventSubject = new Subject<void>();
+  private newTaskEventSubject = new Subject<string>();
   newTaskEvent$ = this.newTaskEventSubject.asObservable();
 
-  emitNewTaskEvent() {
-    this.newTaskEventSubject.next();
+  emitNewTaskEvent(direction: string) {
+    this.newTaskEventSubject.next(direction);
   }
 
   //View Change Event

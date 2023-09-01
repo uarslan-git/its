@@ -17,6 +17,7 @@ export class TaskPanelComponent {
   task_markdown: string = '';
   code_language: string = 'python';
 
+  course: {unique_name?: string; curriculum?: string[]} = {}
   task: { unique_name?: string; task?: string; } = {};
 
   constructor(
@@ -24,10 +25,36 @@ export class TaskPanelComponent {
     private eventShareService: EventShareService,
     private dataShareService: DataShareService,
     ){
-      this.eventSubscription = this.eventShareService.newTaskEvent$.subscribe(() => {
-        this.fetch_task();
+      this.eventSubscription = this.eventShareService.newTaskEvent$.subscribe((message) => {
+        this.selectAndFetchTask(message);
       });
     }
+
+  selectAndFetchTask(message: string) {
+    console.log(message)
+    const curriculum = this.course.curriculum!;
+    const current_task_name = this.task.unique_name!;
+    const task_index: number = curriculum.findIndex((element) => element == current_task_name);
+    if (message == 'next') {
+      //TODO: Think about whether to allow clicking through next tasks.
+      if (task_index == (curriculum.length-1)) {
+        alert("No further task availiable")
+        return;
+      }
+      console.log(curriculum[task_index+1])
+      this.fetch_task(curriculum[task_index+1]);
+    }
+    if (message == 'previous') {
+      if (task_index == 0) {
+        alert("Previous Task doesn't exist");
+        return;
+      }
+      this.fetch_task(curriculum[task_index-1]);
+    }
+    if (message == 'personal') {
+      this.fetch_task();
+    }
+  }
 
   fetch_task(task_unique_name?: string) {
     var task_url: string;
@@ -37,9 +64,11 @@ export class TaskPanelComponent {
     else {
       task_url = `http://127.0.0.1:8000/task/by_name/${task_unique_name}`;
     }
-    this.client.get<any>(task_url, {withCredentials: true}).subscribe((data) => { this.task = {
-      unique_name: data.unique_name,
-      task: data.task
+    this.client.get<any>(task_url, {withCredentials: true}).subscribe(
+      (data) => { 
+      this.task = {
+        unique_name: data.unique_name,
+        task: data.task
     };
     console.log("new task request")
     if (this.task['unique_name'] == "course completed") {
@@ -54,5 +83,14 @@ export class TaskPanelComponent {
 
   ngOnInit(): void {
     this.fetch_task();
+    this.client.get<any>(`http://127.0.0.1:8000/course/get`, {withCredentials: true}).subscribe(
+      (data) => {
+        this.course = {
+          unique_name: data.unique_name,
+          curriculum: data.curriculum,
+        }
+        console.log(this.course);
+      }
+    );
   }
 }

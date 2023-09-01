@@ -6,6 +6,7 @@ from attempts import handle_attempts
 from submissions.schemas import Code_submission, Tested_code_submission
 from tasks import handle_tasks
 from feedback import handle_feedback
+from courses import handle_courses
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from users import handle_users
@@ -22,6 +23,7 @@ app.include_router(handle_submissions.router)
 app.include_router(handle_tasks.router)
 app.include_router(handle_feedback.router)
 app.include_router(handle_attempts.router)
+app.include_router(handle_courses.router)
 
 # User Router and database setup
 app.include_router(

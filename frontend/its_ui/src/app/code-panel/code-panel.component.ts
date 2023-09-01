@@ -40,7 +40,6 @@ export class CodePanelComponent {
     });
   }
 
-
   taskIdSubscription: Subscription;
   current_task_id: string = "";
 
@@ -56,7 +55,6 @@ export class CodePanelComponent {
     ) {
       this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
         (data) => {this.current_task_id = data;
-                  console.log(this.current_task_id);
                   this.getCurrentAttemptState();}
       );
     }
@@ -76,7 +74,6 @@ export class CodePanelComponent {
     }
 
     recordChanges(newContent: string, submissionId: string='') {
-      console.log(this.current_task_id);
       if ((!this.contentReloaded) || (this.current_task_id=='course completed')) {
         const body = {
           'attempt_id': this.currentAttemptId,
