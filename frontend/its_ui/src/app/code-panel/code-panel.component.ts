@@ -12,6 +12,8 @@ import { EventShareService } from '../shared/services/event-share.service';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
 import { DatetimeService } from '../shared/services/datetime.service';
 
+import { environment } from 'src/environments/environment';
+
 
 @Component({
   selector: 'app-code-panel',
@@ -29,7 +31,7 @@ export class CodePanelComponent {
   //Submit Button
   submitButtonClicked() {
     this.submitted_code = this.codeEditorComponent.contentControl;
-    this.client.post<any>('http://127.0.0.1:8000/code_submit', 
+    this.client.post<any>(`${environment.apiUrl}/code_submit`, 
           {task_unique_name: this.current_task_id, code: this.submitted_code, 
             log: "True",
             submission_time: this.datetimeService.datetimeNow()
@@ -64,7 +66,7 @@ export class CodePanelComponent {
     contentReloaded: boolean = false;
 
     getCurrentAttemptState() {
-      this.client.get<any>(`http://127.0.0.1:8000/attempt/get_state/${this.current_task_id}`, {withCredentials: true}).subscribe(
+      this.client.get<any>(`${environment.apiUrl}/attempt/get_state/${this.current_task_id}`, {withCredentials: true}).subscribe(
         (data) => {
           this.currentAttemptId = data.attempt_id;
           this.codeEditorComponent.form.setValue({'content': data.code});
@@ -80,7 +82,7 @@ export class CodePanelComponent {
           'code': newContent, 
           'state_datetime': this.datetimeService.datetimeNow(),
           'submission_id': submissionId};
-        this.client.post<any>('http://127.0.0.1:8000/attempt/log', body, {withCredentials: true}).subscribe(
+        this.client.post<any>(`${environment.apiUrl}/attempt/log`, body, {withCredentials: true}).subscribe(
           () => {
             console.log("State logged");
           }

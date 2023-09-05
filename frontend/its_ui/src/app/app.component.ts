@@ -1,6 +1,7 @@
 import { Component, OnInit, } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from './shared/services/event-share.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,7 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
-    this.client.get<any>('http://127.0.0.1:8000/status').subscribe((data) =>  {
+    this.client.get<any>(`${environment.apiUrl}/status`).subscribe((data) =>  {
       console.log(data["message"]);
     });
   }

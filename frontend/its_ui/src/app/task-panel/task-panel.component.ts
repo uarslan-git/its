@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
 import { DataShareService } from '../shared/services/data-share.service';
 import { Subscription, delay } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-task-panel',
@@ -59,10 +60,10 @@ export class TaskPanelComponent {
   fetch_task(task_unique_name?: string) {
     var task_url: string;
     if (typeof task_unique_name == 'undefined') {
-      task_url = `http://127.0.0.1:8000/task/for_user`;
+      task_url = `${environment.apiUrl}/task/for_user`;
     }
     else {
-      task_url = `http://127.0.0.1:8000/task/by_name/${task_unique_name}`;
+      task_url = `${environment.apiUrl}/task/by_name/${task_unique_name}`;
     }
     this.client.get<any>(task_url, {withCredentials: true}).subscribe(
       (data) => { 
@@ -83,7 +84,7 @@ export class TaskPanelComponent {
 
   ngOnInit(): void {
     this.fetch_task();
-    this.client.get<any>(`http://127.0.0.1:8000/course/get`, {withCredentials: true}).subscribe(
+    this.client.get<any>(`${environment.apiUrl}/course/get`, {withCredentials: true}).subscribe(
       (data) => {
         this.course = {
           unique_name: data.unique_name,

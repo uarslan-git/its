@@ -68,7 +68,7 @@ async def on_startup():
 
 # TODO: Hiermit in Hinblick auf security auseinandersetzen!
 #origins = ["*"]
-origins = ["http://localhost:4200"]
+origins = ["http://localhost:4200", "http://localhost:3000"]
 
 app.add_middleware(
     CORSMiddleware,

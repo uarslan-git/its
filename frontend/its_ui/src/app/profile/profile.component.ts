@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, EventEmitter, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-profile',
@@ -11,7 +12,7 @@ export class ProfileComponent {
 
   @Output() profileAction: EventEmitter<string> = new EventEmitter<string>;
 
-  apiUrl: string = 'http://127.0.0.1:8000';
+  apiUrl: string = environment.apiUrl;
   email: string = '';
   name: string = '';
   registeredDatetime: string = '';

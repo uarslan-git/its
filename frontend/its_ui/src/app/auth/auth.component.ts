@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
 import { DatetimeService } from '../shared/services/datetime.service';
 
+import { environment } from 'src/environments/environment';
 
 interface AuthResponse {
   message: string;
@@ -15,7 +16,7 @@ interface AuthResponse {
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent {
-  apiUrl = 'http://127.0.0.1:8000';
+  apiUrl = environment.apiUrl;
   timer: any;
 
   @Output() loginEvent : EventEmitter<string> = new EventEmitter<string>();
@@ -69,7 +70,7 @@ export class AuthComponent {
                   "enrolled_courses": ["test_course"], "courses_completed": [],
                   "register_datetime": this.datetimeService.datetimeNow() 
                 };
-    this.http.post<AuthResponse>(`${this.apiUrl}/auth/register`, body).subscribe(
+    this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, body).subscribe(
       response => {
           // Handle successful registration
           this.setRegistering(false);

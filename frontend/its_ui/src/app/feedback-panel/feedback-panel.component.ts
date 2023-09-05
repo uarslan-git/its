@@ -2,6 +2,7 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { EventShareService } from '../shared/services/event-share.service';
 import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-feedback-panel',
@@ -39,7 +40,7 @@ export class FeedbackPanelComponent {
   }
 
   fetchFeedback(submission_id: string) {
-    const submission_url = `http://127.0.0.1:8000/feedback/${submission_id}`
+    const submission_url = `${environment.apiUrl}/feedback/${submission_id}`
     this.client.get<any>(submission_url, ).subscribe((data) => { 
       this.feedback = {
         test_results: data.test_results,

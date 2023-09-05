@@ -25,6 +25,8 @@ sudo npm cache clean -fs
 sudo npm install -g n
 sudo n stable
 sudo npm install -g @angular/cli
+cd frontend
+npm install
 
 #Database dependencies (MongoDB)
 wget https://repo.mongodb.org/apt/ubuntu/dists/jammy/mongodb-org/6.0/multiverse/binary-amd64/mongodb-org-server_6.0.8_amd64.deb
