@@ -1,6 +1,7 @@
 import json
 import os
 from pymongo import MongoClient
+import parse_tasks
 
 def parse_course(dir, db):
     with open(dir+"/course.json", "r") as course_file:
@@ -17,3 +18,4 @@ if __name__ == "__main__":
     client = MongoClient(host="localhost", port=27017)
     db = client["its_db"]
     parse_course(directory, db)
+    parse_tasks.parse_all_tasks(directory+"/task_folder", db=db)

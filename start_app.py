@@ -19,6 +19,7 @@ frontend_start = os.path.join("start_frontend.py")
 
 if __name__ == "__main__":
 
+
     # Store references to the child processes
     child_processes = []
 
