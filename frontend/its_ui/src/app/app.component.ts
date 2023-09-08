@@ -13,7 +13,6 @@ export class AppComponent {
   pageName = 'loginView'
   //name = new FormControl('');
 
-
   constructor(private client: HttpClient,
     eventShareService: EventShareService){
       eventShareService.viewChange$.subscribe(
@@ -25,6 +24,7 @@ export class AppComponent {
 
   ngOnInit(): void {
     this.client.get<any>(`${environment.apiUrl}/status`).subscribe((data) =>  {
+      console.log(environment.apiUrl);
       console.log(data["message"]);
     });
   }
@@ -49,5 +49,4 @@ export class AppComponent {
           break;
   }
   }
-  
 }
