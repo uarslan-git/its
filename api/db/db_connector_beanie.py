@@ -16,7 +16,7 @@ async def get_user_db():
 class database():
     
     def __init__(self) -> None:
-        DATABASE_URL = "mongodb://localhost:27017"
+        DATABASE_URL = "mongodb://mongodb:27017"
         client = motor.motor_asyncio.AsyncIOMotorClient(
             DATABASE_URL, uuidRepresentation="standard"
         )

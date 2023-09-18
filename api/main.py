@@ -18,39 +18,42 @@ from beanie import init_beanie
 from db import db_connector_beanie
 from users.schemas import User
 
+#Api prefix
+prefix = ""
+
 app = FastAPI()
-app.include_router(handle_submissions.router, prefix="/api")
-app.include_router(handle_tasks.router, prefix="/api")
-app.include_router(handle_feedback.router, prefix="/api")
-app.include_router(handle_attempts.router, prefix="/api")
-app.include_router(handle_courses.router, prefix="/api")
+app.include_router(handle_submissions.router, prefix=f"{prefix}")
+app.include_router(handle_tasks.router, prefix=f"{prefix}")
+app.include_router(handle_feedback.router, prefix=f"{prefix}")
+app.include_router(handle_attempts.router, prefix=f"{prefix}")
+app.include_router(handle_courses.router, prefix=f"{prefix}")
 
 # User Router and database setup
 app.include_router(
-    handle_users.fastapi_users.get_auth_router(handle_users.auth_backend), prefix="/api/auth/jwt", tags=["auth"]
+    handle_users.fastapi_users.get_auth_router(handle_users.auth_backend), prefix=f"{prefix}/auth/jwt", tags=["auth"]
 )
 app.include_router(
     handle_users.fastapi_users.get_register_router(user_schemas.UserRead, user_schemas.UserCreate),
-    prefix="/api/auth",
+    prefix=f"{prefix}/auth",
     tags=["auth"],
 )
 app.include_router(
     handle_users.fastapi_users.get_reset_password_router(),
-    prefix="/api/auth",
+    prefix=f"{prefix}/auth",
     tags=["auth"],
 )
 app.include_router(
     handle_users.fastapi_users.get_verify_router(user_schemas.UserRead),
-    prefix="/api/auth",
+    prefix=f"{prefix}/auth",
     tags=["auth"],
 )
 app.include_router(
     handle_users.fastapi_users.get_users_router(user_schemas.UserRead, user_schemas.UserUpdate),
-    prefix="/api/users",
+    prefix=f"{prefix}/users",
     tags=["users"],
 )
 
-@app.get("/api/authenticated-route")
+@app.get(f"{prefix}/authenticated-route")
 async def authenticated_route(user: User = Depends(handle_users.current_active_user)):
     return {"message": f"Hello {user.email}!"}
 
@@ -68,7 +71,7 @@ async def on_startup():
 
 # TODO: Hiermit in Hinblick auf security auseinandersetzen!
 #origins = ["*"]
-origins = ["http://localhost:4200", "http://localhost:3000", "http://localhost"]
+origins = ["http://localhost:4200", "http://localhost:3000", "http://localhost", "http://app.localhost"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -80,7 +83,7 @@ app.add_middleware(
 
 
 # Check connection status
-@app.get("/api/status")
+@app.get(f"{prefix}/status")
 async def get_status():
     print("Status requested")
     return {"message": "Connected!"}
