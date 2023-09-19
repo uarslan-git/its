@@ -22,7 +22,7 @@ services:
       - its_network
 
   mongodb:
-    image: mongo:latest
+    image: mongo:4.4.6
     volumes:
       - mongodb_data:/data/db
     ports:

@@ -7,12 +7,14 @@ from db.db_connector_beanie import User
 from db import User, get_user_db
 from beanie import PydanticObjectId
 from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
+import os
 
 """For Information about fastapi-users and this implementation of it, please refer to
 https://fastapi-users.github.io/fastapi-users/12.1/configuration/overview/"""
 
-SECRET = "SECRET" #TODO: Put secret in separate untracked file
-
+filedir = os.path.dirname(__file__)
+with open(os.path.join(filedir,"SECRET.txt")) as f:
+    SECRET = f.readline()
 
 class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     reset_password_token_secret = SECRET

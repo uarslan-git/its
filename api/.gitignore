@@ -4,3 +4,5 @@ tasks/task_folder/
 *.pyc
 *.pyo
 *.pytest_cache
+# Put your own file containing a single line with a password or passphrase in users/SECRET:
+users/SECRET.txt

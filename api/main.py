@@ -21,7 +21,9 @@ from users.schemas import User
 #Api prefix
 prefix = "/api"
 
-app = FastAPI()
+app = FastAPI(docs_url=f'{prefix}/docs',
+              redoc_url=f'{prefix}/redoc',
+              openapi_url=f'{prefix}/openapi.json')
 app.include_router(handle_submissions.router, prefix=f"{prefix}")
 app.include_router(handle_tasks.router, prefix=f"{prefix}")
 app.include_router(handle_feedback.router, prefix=f"{prefix}")
