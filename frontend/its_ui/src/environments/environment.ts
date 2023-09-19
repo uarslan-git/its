@@ -1,5 +1,5 @@
 export const environment = {
     production: true,
-    apiUrl: 'http://api.its.techfak.de',
+    apiUrl: 'http://its.techfak.de/api',
     environmentName:"prod",
 };

@@ -19,7 +19,7 @@ from db import db_connector_beanie
 from users.schemas import User
 
 #Api prefix
-prefix = ""
+prefix = "/api"
 
 app = FastAPI()
 app.include_router(handle_submissions.router, prefix=f"{prefix}")
@@ -71,7 +71,9 @@ async def on_startup():
 
 # TODO: Hiermit in Hinblick auf security auseinandersetzen!
 #origins = ["*"]
-origins = ["http://localhost:4200", "http://localhost:3000", "http://localhost", "http://app.localhost"]
+origins = ["http://localhost:4200", "http://localhost:3000", 
+           "http://localhost", 
+           "http://its.techfak.de", "https://its.techfak.de"]
 
 app.add_middleware(
     CORSMiddleware,
