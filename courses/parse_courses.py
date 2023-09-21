@@ -27,7 +27,7 @@ if __name__ == "__main__":
     args = parse_arguments()
     print("Please give directory of the course folder to add to db:")
     directory = input()
-    client = MongoClient(host=args.database_host, port=args.database_port)
+    client = MongoClient(host=args.database_host, port=int(args.database_port))
     db = client["its_db"]
     parse_course(directory, db)
     import parse_tasks

@@ -5,7 +5,6 @@ import os
 import ast
 import io
 from pymongo import MongoClient
-from api.config import config
 
 def process_file(file_path):
     # Process the content of the text file as needed.
@@ -84,7 +83,7 @@ if __name__ == "__main__":
     print("Please give directory of the task folder to convert:")
     directory = input()
     if db_import == "Y":
-        client = MongoClient(host=config.database_host, port=27017)
+        client = MongoClient(host="localhost", port=27017)
         db = client["its_db"]
         parse_all_tasks(directory, db)
     elif db_import == "N":
