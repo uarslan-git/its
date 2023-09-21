@@ -4,6 +4,9 @@ WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
 
+#TODO: Test Docker environment variable: https://phoenixnap.com/kb/docker-environment-variables
+ARG [env]=[production]
+
 RUN apt-get update \
     && apt-get clean
 

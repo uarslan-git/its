@@ -1,4 +1,4 @@
-import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild, EventEmitter, Output, HostListener } from '@angular/core';
 
 //Prism
 import { FormBuilder } from '@angular/forms'
@@ -15,8 +15,6 @@ import { EventShareService } from 'src/app/shared/services/event-share.service';
 })
 export class CodeEditorComponent {
 
-  submitted_code: string = ''
-  code_language = 'python';
 
   @Output() codeChangeEvent : EventEmitter<string> = new EventEmitter<string>();
   timer: any; 
@@ -40,6 +38,8 @@ export class CodeEditorComponent {
 // It relies on growing the textarea (form) and the rendered
 // code synchronosly using scripts and html properties from
 // different elements.
+submitted_code: string = ''
+code_language = 'python';
 
 @ViewChild('textArea', { static: true })
 textArea!: ElementRef;
@@ -128,8 +128,25 @@ private listenForm() {
 /*     const modifiedContent = this.prismService.convertHtmlIntoString(val.content!); */
     this.renderer.setProperty(this.codeContent.nativeElement, 'innerHTML', val.content!);
     this.highlighted = true;
-    
   });
+}
+
+onTextareaKeyDown(event: KeyboardEvent): void {
+  if (event.key === 'Tab') {
+    event.preventDefault(); // Prevent the default tab behavior
+    this.form.setValue({'content': this.contentControl + '    '});
+    //const textarea: HTMLTextAreaElement = event.target as HTMLTextAreaElement;
+/*     const selectionStart = this.textArea.nativeElement.selectionStart;
+    const selectionEnd = this.textArea.nativeElement.selectionEnd;
+    const currentValue = this.textArea.nativeElement.textValue;
+    const newValue =
+      currentValue.substring(0, selectionStart) +
+      '    ' + // Four spaces
+      currentValue.substring(selectionEnd);
+    this.textArea.nativeElement.textValue = newValue;
+    // Move cursor forward by 4 spaces
+    this.textArea.nativeElement.setSelectionRange(selectionStart + 4, selectionStart + 4); */
+  }
 }
 }
 

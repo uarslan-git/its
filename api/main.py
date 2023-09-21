@@ -17,6 +17,8 @@ from attempts.schemas import Attempt, AttemptState
 from beanie import init_beanie
 from db import db_connector_beanie
 from users.schemas import User
+from config import config
+
 
 #Api prefix
 prefix = "/api"
@@ -59,7 +61,7 @@ app.include_router(
 async def authenticated_route(user: User = Depends(handle_users.current_active_user)):
     return {"message": f"Hello {user.email}!"}
 
-db_connection_beanie = db_connector_beanie.database()
+
 
 @app.on_event("startup")
 async def on_startup():
@@ -85,12 +87,22 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-
 # Check connection status
 @app.get(f"{prefix}/status")
 async def get_status():
     print("Status requested")
     return {"message": "Connected!"}
 
+
+""" def parse_cl_arguments():
+    parser = argparse.ArgumentParser(description="Command-line argument parser for database network.")
+    # Add the --database-network argument with a default value of "localhost"
+    parser.add_argument("--database-network", default="localhost", help="Specify the database network address")
+    args = parser.parse_args()
+    return args """
+
+
 if __name__ == "__main__":
+    database_host = config.database_host
+    db_connection_beanie = db_connector_beanie.database(database_host=database_host)
     uvicorn.run(app, host="0.0.0.0", port=8000)

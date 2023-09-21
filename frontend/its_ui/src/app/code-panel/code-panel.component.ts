@@ -37,7 +37,7 @@ export class CodePanelComponent {
             submission_time: this.datetimeService.datetimeNow()
           },
             {withCredentials: true}).subscribe((data) => {
-              this.recordChanges(this.submitted_code, data.submissionId);
+              this.recordChanges(this.submitted_code, data.submission_id);
               this.eventShareService.emitTestReadyEvent(data.submission_id);
     });
   }
@@ -62,6 +62,7 @@ export class CodePanelComponent {
     }
 
     // Tracking Users Coding process, also functionality to save and restore attempts.
+
     currentAttemptId!: string;
     contentReloaded: boolean = false;
 
