@@ -18,10 +18,25 @@
       <h2>Register</h2>
       <input #registerUsername placeholder="Username" /><br />
       <input #registerPassword type="password" placeholder="Password" /><br />
+
+      <hr>
+      <div class="checkbox-container">
+            <input class="data-checkbox" id="data-checkbox" type="checkbox" #consentCheckbox checked/> 
+            <label class="consent-label" for="data-checkbox">I consent to anonymized data collection for purely scientific purposes.</label>
+      </div>
+      <div class="checkbox-info">
+        <div class="invisible-checkbox"></div>
+        <p>
+          <a (click)="showDataTermPopup()">Learn more about the data we gather and its potential uses.</a>
+        </p>
+        <app-data-terms-popup #dataTermsPopupComponent></app-data-terms-popup>
+      </div>
+      <hr>
+
     <div class="centered-button">
       <button (click)="register(registerUsername.value, registerPassword.value)">Register</button>
     </div>
       <p>Do you already have an account? If so, you can <a (click)="setRegistering(false)"><u>login here!</u></a></p>
     </div>
   </div>
-  
+

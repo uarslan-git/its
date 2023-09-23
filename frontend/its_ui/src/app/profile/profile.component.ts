@@ -1,7 +1,9 @@
-import { Component, AfterViewInit, EventEmitter, Output } from '@angular/core';
+import { Component, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
 import { environment } from 'src/environments/environment';
+
+import { DataTermsPopupComponent } from '../shared/components/data-terms-popup/data-terms-popup.component';
 
 @Component({
   selector: 'app-profile',
@@ -9,6 +11,11 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent {
+
+  @ViewChild('dataTermsPopupComponent', {static: true}) dataTermsPopupComponent!: DataTermsPopupComponent;
+  showDataTermsPopup(){
+    this.dataTermsPopupComponent.showPopup();
+  }
 
   @Output() profileAction: EventEmitter<string> = new EventEmitter<string>;
 

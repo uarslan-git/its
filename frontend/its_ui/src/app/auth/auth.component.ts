@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
 import { DatetimeService } from '../shared/services/datetime.service';
 
 import { environment } from 'src/environments/environment';
+import { DataTermsPopupComponent } from '../shared/components/data-terms-popup/data-terms-popup.component';
 
 interface AuthResponse {
   message: string;
@@ -16,6 +17,14 @@ interface AuthResponse {
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent {
+
+  @ViewChild('dataTermsPopupComponent', { static: false }) dataTermsPopupComponent!: DataTermsPopupComponent;
+
+  //showDataTermPopup: boolean = false;
+  showDataTermPopup() {
+    this.dataTermsPopupComponent!.showPopup();
+  }
+
   apiUrl = environment.apiUrl;
   timer: any;
 

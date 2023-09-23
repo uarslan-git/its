@@ -9,15 +9,16 @@ import { MarkdownModule } from 'ngx-markdown';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-java'; */
 import { MarkdownPanelComponent } from './components/markdown-panel/markdown-panel.component';
+import { DataTermsPopupComponent } from './components/data-terms-popup/data-terms-popup.component';
 
 
 @NgModule({
-  declarations: [/* PrismComponent,  */MarkdownPanelComponent],
+  declarations: [/* PrismComponent,  */MarkdownPanelComponent, DataTermsPopupComponent],
   imports: [
     CommonModule,
     MarkdownModule.forChild(),
     // ReactiveFormsModule
   ],
-  exports: [/* PrismComponent,  */MarkdownPanelComponent]
+  exports: [/* PrismComponent,  */MarkdownPanelComponent, DataTermsPopupComponent]
 })
 export class SharedModule {}
