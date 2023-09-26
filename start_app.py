@@ -47,7 +47,7 @@ if __name__ == "__main__":
     atexit.register(cleanup_child_processes)
 
     backend_env = os.environ.copy()
-    backend_env["env"] = "development"
+    backend_env["its_env"] = "development"
 
     backend = subprocess.Popen([f"python {backend_start}"], shell=True, env=backend_env)
     child_processes.append(backend)

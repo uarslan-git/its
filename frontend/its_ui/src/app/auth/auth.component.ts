@@ -48,19 +48,14 @@ export class AuthComponent {
           // Handle successful login
           this.loginStatus = "loggedIn";
           this.emitLoginEvent();
-          console.log(response.headers)
-          const setCookieHeader = response.headers.get('Set-Cookie');
-          console.log(setCookieHeader)
-          if (setCookieHeader) {
-            console.log("A cookie was set!")
-          }
           this.timer = setTimeout(
             () => {
               this.loginStatus = 'LoggedOut';
               this.eventShareService.emitViewChange(this.loginStatus);
               alert("You have been automatically logged out, since your authentification token has expired. However you can just log back in, your progress is stored.")
             }
-            , 3600000);
+            , 6400000);
+           this.retrieveSessionSettings();
       },
       error => {
         console.error('Login error:', error);
@@ -73,11 +68,12 @@ export class AuthComponent {
     this.loginEvent.emit(this.loginStatus);
   }
 
-  register(username: string, password: string): void {
+  register(username: string, password: string, dataCollectionConsent: boolean): void {
     const body = {"email": `${username}@anonym.de`,
                   "password": password, "tasks_completed": [], "tasks_attempted": [], 
                   "enrolled_courses": ["test_course"], "courses_completed": [],
-                  "register_datetime": this.datetimeService.datetimeNow() 
+                  "register_datetime": this.datetimeService.datetimeNow(),
+                  "settings": {"dataCollection": dataCollectionConsent}
                 };
     this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, body).subscribe(
       response => {
@@ -91,8 +87,19 @@ export class AuthComponent {
     );
   }
 
-
   setRegistering(registering: boolean){
     this.registering = registering;
+  }
+
+  retrieveSessionSettings() {
+    this.http.get<any>(`${this.apiUrl}/users/me`, {withCredentials: true}).subscribe(
+      (data) => {
+        const settings = data.settings
+        //for (var key in Object.keys(settings)) {
+          for (const key in settings) {
+            sessionStorage.setItem(key, settings[key]);
+        }
+      }
+    )
   }
 }

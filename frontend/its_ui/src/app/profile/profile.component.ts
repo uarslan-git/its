@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
 import { environment } from 'src/environments/environment';
@@ -17,13 +17,15 @@ export class ProfileComponent {
     this.dataTermsPopupComponent.showPopup();
   }
 
+  @ViewChild('consentCheckbox', {static: true}) consentCheckbox!: ElementRef
+
   @Output() profileAction: EventEmitter<string> = new EventEmitter<string>;
 
   apiUrl: string = environment.apiUrl;
   email: string = '';
   name: string = '';
   registeredDatetime: string = '';
-  user: {email?: string, register_datetime?: any} = {};
+  user: {email?: string, register_datetime?: any, settings?: any} = {};
 
   constructor(private http: HttpClient,
     private eventShareService: EventShareService) {
@@ -41,11 +43,18 @@ export class ProfileComponent {
         (data)  => {
         this.user = {
           email: data.email,
-          register_datetime: data.register_datetime
+          register_datetime: data.register_datetime,
+          settings: data.settings,
         };
         this.email = this.user.email!;
         this.name = this.user.email!.split("@")[0];
         this.registeredDatetime = this.user.register_datetime["local"];
+        if(this.user.settings.dataCollection) {
+          this.consentCheckbox.nativeElement.checked = true;
+        }
+        else {
+          this.consentCheckbox.nativeElement.checked = false;
+        }
       });
     }
 
@@ -58,6 +67,14 @@ export class ProfileComponent {
     closeProfile() {
       console.log("close profile!");
       this.profileAction.emit('closedProfile');
+    }
+
+    updateSettings() {
+      if(this.consentCheckbox.nativeElement.checked != this.user.settings.dataCollection) {
+        this.user.settings.dataCollection = this.consentCheckbox.nativeElement.checked
+        this.http.patch<any>(`${this.apiUrl}/users/me`, this.user, {withCredentials: true}).subscribe();
+        sessionStorage.setItem('dataCollection', this.consentCheckbox.nativeElement.checked)
+      }
     }
 }
 

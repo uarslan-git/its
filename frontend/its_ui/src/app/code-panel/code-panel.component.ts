@@ -26,6 +26,7 @@ export class CodePanelComponent {
   code_language = 'python';
   @ViewChild(CodeEditorComponent)
   codeEditorComponent!: CodeEditorComponent;
+  lastSavedCode!: string;
 
 
   //Submit Button
@@ -46,9 +47,6 @@ export class CodePanelComponent {
   current_task_id: string = "";
 
   constructor(
-/*       private prismService: PrismHighlightService,
-      private fb: FormBuilder,
-      private renderer: Renderer2, */
       private client: HttpClient,
       private dataShareService: DataShareService,
       private eventShareService: EventShareService,
@@ -72,23 +70,36 @@ export class CodePanelComponent {
           this.currentAttemptId = data.attempt_id;
           this.codeEditorComponent.form.setValue({'content': data.code});
           this.contentReloaded = true;
+          this.lastSavedCode = data.code;
         }
       )
     }
 
     recordChanges(newContent: string, submissionId: string='') {
       if ((!this.contentReloaded) || (this.current_task_id=='course completed')) {
+        //ensure that code has changed
+        if(this.lastSavedCode == newContent) {return};
         const body = {
           'attempt_id': this.currentAttemptId,
           'code': newContent, 
           'state_datetime': this.datetimeService.datetimeNow(),
-          'submission_id': submissionId};
+          'submission_id': submissionId,
+          'dataCollection': sessionStorage.getItem('dataCollection')};
         this.client.post<any>(`${environment.apiUrl}/attempt/log`, body, {withCredentials: true}).subscribe(
           () => {
-            console.log("State logged");
+            console.log("State saved");
           }
         )
       }
         this.contentReloaded = false;
+        this.lastSavedCode = newContent;
     }
+
+    ngOnDestroy(){
+    if(this.codeEditorComponent.contentControl != this.lastSavedCode) {
+      this.recordChanges(this.codeEditorComponent.contentControl);
+    }
+    this.taskIdSubscription.unsubscribe();
+   }
+
 }

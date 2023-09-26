@@ -41,10 +41,11 @@ async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
 
 
-cookie_transport = CookieTransport(cookie_max_age=3600, cookie_secure=True, cookie_samesite='none', cookie_httponly=False)
+#TODO: make cookie valid for two hours
+cookie_transport = CookieTransport(cookie_max_age=6400, cookie_secure=True, cookie_samesite='none', cookie_httponly=False)
 
 def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=SECRET, lifetime_seconds=3600)
+    return JWTStrategy(secret=SECRET, lifetime_seconds=6400)
 
 
 auth_backend = AuthenticationBackend(

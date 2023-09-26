@@ -20,6 +20,8 @@ export class CodeEditorComponent {
   timer: any; 
 
 
+  // The Timer is set every time the user code changes, if it changes again,
+  // the timer is reset
   emitCodeChangeEventTimer(newVal: string) {
     this.timer = setTimeout(
       () => {
@@ -77,18 +79,18 @@ constructor(
 ) {
   this.newTaskSubscription = this.eventShareService.newTaskEvent$.subscribe(
     () => {
-      console.log("Editor Content reset!");     
-/*       this.textArea.nativeElement.content = '';
-           this.codeContent.nativeElement.content = '';
-           this.editorForm.nativeElement.content = ''; */
-           this.form.setValue({'content': ''});
+            console.log("Editor Content reset!");
+            // store current program state, if a new task is selected
+            this.codeChangeEvent.emit(this.contentControl);
+            this.form.setValue({'content': ''});
           }
   );
 }
 
 ngOnInit(): void {
   this.listenForm()
-  /* this.synchronizeScroll(); */
+  // This subscription runs code every time the user changes the code.
+  //TODO: onTextareaKeydown does the same in principal. Check if this should be handled in same method.
   this.form.controls.content.valueChanges.subscribe((newValue) => {
     this.synchronizedTextareaGrow();
     this.clearCodeChangeTimer();
@@ -135,17 +137,6 @@ onTextareaKeyDown(event: KeyboardEvent): void {
   if (event.key === 'Tab') {
     event.preventDefault(); // Prevent the default tab behavior
     this.form.setValue({'content': this.contentControl + '    '});
-    //const textarea: HTMLTextAreaElement = event.target as HTMLTextAreaElement;
-/*     const selectionStart = this.textArea.nativeElement.selectionStart;
-    const selectionEnd = this.textArea.nativeElement.selectionEnd;
-    const currentValue = this.textArea.nativeElement.textValue;
-    const newValue =
-      currentValue.substring(0, selectionStart) +
-      '    ' + // Four spaces
-      currentValue.substring(selectionEnd);
-    this.textArea.nativeElement.textValue = newValue;
-    // Move cursor forward by 4 spaces
-    this.textArea.nativeElement.setSelectionRange(selectionStart + 4, selectionStart + 4); */
   }
 }
 }

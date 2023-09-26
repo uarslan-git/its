@@ -94,4 +94,9 @@ export class TaskPanelComponent {
       }
     );
   }
+
+  ngOnDestroy() {
+    this.eventSubscription.unsubscribe();
+  }
+
 }

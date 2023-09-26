@@ -14,6 +14,7 @@ class User(BeanieBaseUser, Document):
     enrolled_courses: list
     courses_completed: list
     register_datetime: dict
+    settings: dict
     #estimated_compentency: Optional[list]
     pass
 
@@ -25,6 +26,7 @@ class UserRead(schemas.BaseUser[PydanticObjectId]):
     enrolled_courses: list
     courses_completed: list
     register_datetime: dict
+    settings: dict
     pass
     #estimated_compentency: Optional[list]
 
@@ -37,6 +39,7 @@ class UserCreate(schemas.BaseUserCreate):
     enrolled_courses: list
     courses_completed: list
     register_datetime: dict
+    settings: dict
     pass
     #username: str
     #estimated_compentency: Optional[list]
@@ -44,12 +47,14 @@ class UserCreate(schemas.BaseUserCreate):
 
 
 class UserUpdate(schemas.BaseUserUpdate):
+    """This Schema defines how the request body for the user-patch enpoints has to look. 
+    Every setting that is modifyable through the profile-page should be part of this schema.
+    Other user-fields, that get update during interactions with the system automatically, 
+    are directly updated through database calls. This might be an anti-pattern and change
+    in later iterations. Potentially all such information should be stored in different
+    documents.
+    """
     email: str
-    #username: str
-    tasks_completed: list
-    tasks_attempted: list
-    enrolled_courses: list
-    courses_completed: list
     register_datetime: dict
-    #estimated_compentency: Optional[list]
+    settings: dict
     pass

@@ -1,35 +1,6 @@
 <div class="grid-container-code">
 
-<!--   <div class="code-container line-numbers">
-    <form class="area-form" [formGroup]="form">
-    <textarea
-      #textArea
-      placeholder="Add your code"
-      class="text-area-code-editor"
-      formControlName="content"
-      spellcheck="false"
-    ></textarea>
-    <pre
-      aria-hidden="true"
-      class="pre line-numbers"
-      #pre
-    ><code [ngClass]="['code', 'language-' + codeType]" #codeContent></code>
-    </pre>
-  </form>
-  </div> -->
-
-<div class="code-editor"><app-code-editor (codeChangeEvent)="recordChanges($event)"></app-code-editor></div>
-
-<div class="actionPanel"><app-action-panel (submitEvent)="submitButtonClicked()"></app-action-panel></div>
+  <div class="code-editor"><app-code-editor (codeChangeEvent)="recordChanges($event)"></app-code-editor></div>
+  <div class="actionPanel"><app-action-panel (submitEvent)="submitButtonClicked()"></app-action-panel></div>
 
 </div>
-
-
-
-
-
-<!-- <div><button mat-raised-button color="primary" (click)="submitButtonClicked()">submit</button></div> -->
-
-
-<!-- <h2>Submitted Code:</h2>
-<app-prism [code]=submitted_code [language]=code_language></app-prism> -->
