@@ -1,5 +1,5 @@
 from example_solution import greet as greet
-#!--!#
+#!cut_imports!#
 import sys
 from io import StringIO
 

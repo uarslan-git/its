@@ -42,7 +42,7 @@ def task_to_json(dir, task_unique_name, task_display_name, outfile, db=None):
             assert test_name == test_name_alt[0], "Name of the test function should be the same as the filename"
             #assert test_number.isnumeric(), "Wrong filename format for tests, should be test_[test_number] but is {0}".format(file_name)
             #Split on stop-symbol for imports
-            test = content_docstring.split("#!--!#")[1]
+            test = content_docstring.split("#!cut_imports!#")[1]
             #json.dump({"test_{0}".format(test_number): test}, outfile, ensure_ascii=False)
             tests[test_name] = test
         elif file_name.endswith("md"):
@@ -50,6 +50,8 @@ def task_to_json(dir, task_unique_name, task_display_name, outfile, db=None):
             #json.dump({"task": content_docstring}, outfile, ensure_ascii=False)
         elif file_name == "example_solution.py":
             #json.dump({"example_solution": content_docstring}, outfile, ensure_ascii=False)
+            prefix = content_docstring.split("#!prefix!#")
+            #test if there is a required signature, and if so, add it to database.
             task_dict["example_solution"] = content_docstring
     task_dict["tests"] = tests
     if db is None:
