@@ -39,7 +39,7 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
     # Log code submit to database
     tested_submission = Tested_code_submission(log = submission.log, task_unique_name = submission.task_unique_name, 
                                                code = submission.code, test_results = test_results,
-                                               user_id=user_id,
+                                               user_id=user_id, type="submission",
                                                submission_time=submission.submission_time, valid_solution=valid_solution)
     #TODO: implement student model for this.
     if valid_solution and (not submission.task_unique_name in user.tasks_completed):
@@ -78,7 +78,7 @@ except AssertionError as e:
     global test_message
     try:
         parsed_ast = ast.parse(submission_code)
-        save = check_submission_code(ast_tree=parsed_ast)
+        save = check_user_code(ast_tree=parsed_ast)
         if save:
             #exec(compile(parsed_ast, filename="<parsed_ast>", mode="exec"), globals())
             exec(test_submission_code, globals())
@@ -91,7 +91,7 @@ except AssertionError as e:
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}
 
 
-def check_submission_code(ast_tree):
+def check_user_code(ast_tree):
     class ImportVisitor(ast.NodeVisitor):
         def __init__(self):
             self.found_imports = False

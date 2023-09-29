@@ -28,19 +28,32 @@ export class CodePanelComponent {
   codeEditorComponent!: CodeEditorComponent;
   lastSavedCode!: string;
 
-
   //Submit Button
   submitButtonClicked() {
     this.submitted_code = this.codeEditorComponent.contentControl;
     this.client.post<any>(`${environment.apiUrl}/code_submit`, 
           {task_unique_name: this.current_task_id, code: this.submitted_code, 
-            log: "True",
+            log: "True", type: "submission",
             submission_time: this.datetimeService.datetimeNow()
           },
             {withCredentials: true}).subscribe((data) => {
               this.recordChanges(this.submitted_code, data.submission_id);
               this.eventShareService.emitTestReadyEvent(data.submission_id);
     });
+  }
+
+  //Run Button
+  handleRunEvent(parameters: any) {
+    const runCode = this.codeEditorComponent.contentControl;
+    const body = {task_unique_name: this.current_task_id, code: runCode,
+                log: "True", 
+                submission_time: this.datetimeService.datetimeNow(),
+                run_arguments: parameters, type: "run"};
+    this.client.post<any>(`${environment.apiUrl}/run/run_code`, body, {withCredentials: true}).subscribe(
+      (data) => {
+        this.eventShareService.emitCodeRunReadyEvent(data.run_id);
+      }
+    );
   }
 
   taskIdSubscription: Subscription;
@@ -57,7 +70,7 @@ export class CodePanelComponent {
         (data) => {this.current_task_id = data;
                   this.getCurrentAttemptState();}
       );
-    }
+  }
 
     // Tracking Users Coding process, also functionality to save and restore attempts.
 
@@ -78,7 +91,7 @@ export class CodePanelComponent {
     recordChanges(newContent: string, submissionId: string='') {
       if ((!this.contentReloaded) || (this.current_task_id=='course completed')) {
         //ensure that code has changed
-        if(this.lastSavedCode == newContent) {return};
+        if((this.lastSavedCode == newContent) && (submissionId == '')) {return};
         const body = {
           'attempt_id': this.currentAttemptId,
           'code': newContent, 
@@ -101,5 +114,4 @@ export class CodePanelComponent {
     }
     this.taskIdSubscription.unsubscribe();
    }
-
 }

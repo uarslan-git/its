@@ -37,7 +37,6 @@ async def read_task(unique_name):
     task_description = task.task
     if task_description == "":
         raise HTTPException(status_code=400, detail="Task not known")
-    return({"unique_name": unique_name, "task": task_description})
-
+    return({"unique_name": unique_name, "task": task_description, "type": task.type, "prefix": task.prefix, "arguments": task.arguments})
 
 

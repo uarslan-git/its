@@ -1,4 +1,5 @@
 from beanie import Document
+from typing import Optional
 
 
 class Task(Document):
@@ -7,3 +8,7 @@ class Task(Document):
     task: str
     example_solution: str
     tests: dict
+    type: str
+    prefix: str
+    arguments: list
+    function_name: Optional[str]

@@ -1,6 +1,6 @@
 <div class="grid-container-code">
 
   <div class="code-editor"><app-code-editor (codeChangeEvent)="recordChanges($event)"></app-code-editor></div>
-  <div class="actionPanel"><app-action-panel (submitEvent)="submitButtonClicked()"></app-action-panel></div>
+  <div class="actionPanel"><app-action-panel (submitEvent)="submitButtonClicked()" (runEvent)="handleRunEvent($event)"></app-action-panel></div>
 
 </div>

@@ -1,5 +1,5 @@
-#!--!#
-#!-required-signature!-#
+#!function!#
+#!prefix!#
 def factorial(n):
     if n < 0:
         raise ValueError("Factorial is undefined for negative numbers.")

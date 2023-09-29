@@ -19,7 +19,7 @@ export class TaskPanelComponent {
   code_language: string = 'python';
 
   course: {unique_name?: string; curriculum?: string[]} = {}
-  task: { unique_name?: string; task?: string; } = {};
+  task: { unique_name?: string; task?: string; type?: string, prefix?: string, arguments?: string[]} = {};
 
   constructor(
     private client: HttpClient,
@@ -69,7 +69,10 @@ export class TaskPanelComponent {
       (data) => { 
       this.task = {
         unique_name: data.unique_name,
-        task: data.task
+        task: data.task,
+        type: data.type,
+        prefix: data.prefix,
+        arguments: data.arguments,
     };
     console.log("new task request")
     if (this.task['unique_name'] == "course completed") {
@@ -79,6 +82,9 @@ export class TaskPanelComponent {
     this.task_markdown = this.task['task']!;
     //console.log(this.task['unique_name'])
     this.dataShareService.emitTaskId(this.task['unique_name']!);
+    console.log(this.task);
+    sessionStorage.setItem("taskType", this.task['type']!);
+    sessionStorage.setItem("taskArguments", JSON.stringify(this.task['arguments']!))
   });
  }
 
@@ -90,7 +96,6 @@ export class TaskPanelComponent {
           unique_name: data.unique_name,
           curriculum: data.curriculum,
         }
-        console.log(this.course);
       }
     );
   }
