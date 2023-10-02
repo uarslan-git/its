@@ -17,9 +17,9 @@ export class NavigationBarComponent {
   constructor(
     private eventShareService: EventShareService,
     private dataShareService: DataShareService){
-      this.dataShareService.taskIdShare$.subscribe(
-        (data) => {
-          this.task_name = data
+      this.eventShareService.newTaskFetched$.subscribe(
+        () => {
+          this.task_name = sessionStorage.getItem("taskId")!
         }
       )
     }

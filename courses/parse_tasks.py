@@ -76,7 +76,7 @@ def task_to_json(dir, task_unique_name, outfile, db=None):
             if task_type == "function":
                 task_dict["function_name"] = get_function_names(file_path)[0] #TODO: Secure for example solutions with multiple functions.
                 arguments = extract_argument_names(task_dict["example_solution"])
-            task_dict["arguments"] = arguments
+                task_dict["arguments"] = arguments
     task_dict["tests"] = tests
     if db is None:
         print(task_dict)

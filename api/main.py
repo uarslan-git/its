@@ -103,7 +103,6 @@ async def get_status():
     args = parser.parse_args()
     return args """
 
-
 if __name__ == "__main__":
     database_host = config.database_host
     db_connection_beanie = db_connector_beanie.database(database_host=database_host)

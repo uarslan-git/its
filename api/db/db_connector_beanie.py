@@ -8,6 +8,7 @@ from tasks.schemas import Task
 from attempts.schemas import Attempt
 from submissions.schemas import Code_submission as Submission
 from runs.schemas import Evaluated_run_code_submission as Run_submission
+from tasks.schemas import Task
 from beanie import PydanticObjectId
 
 

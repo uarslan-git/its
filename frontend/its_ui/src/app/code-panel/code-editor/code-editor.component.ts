@@ -77,7 +77,7 @@ constructor(
   private dataShareService: DataShareService,
   private eventShareService: EventShareService,
 ) {
-  this.newTaskSubscription = this.eventShareService.newTaskEvent$.subscribe(
+  this.newTaskSubscription = this.eventShareService.newTaskFetched$.subscribe(
     () => {
             console.log("Editor Content reset!");
             // store current program state, if a new task is selected
@@ -136,7 +136,20 @@ private listenForm() {
 onTextareaKeyDown(event: KeyboardEvent): void {
   if (event.key === 'Tab') {
     event.preventDefault(); // Prevent the default tab behavior
-    this.form.setValue({'content': this.contentControl + '    '});
+    const start = this.textArea.nativeElement.selectionStart;
+    const end = this.textArea.nativeElement.selectionEnd;
+  
+    // Get the current content of the textarea
+    const currentContent = this.contentControl;
+
+    // Insert four spaces at the current cursor position
+    const newContent = currentContent.substring(0, start) + '    ' + currentContent.substring(end);
+
+    this.form.setValue({'content': newContent});
+
+    // Move the cursor to the end of the inserted spaces
+    const newCursorPosition = start + 4;
+    this.textArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
   }
 }
 }

@@ -53,6 +53,14 @@ export class EventShareService {
     this.newTaskEventSubject.next(direction);
   }
 
+  //New Task Event
+  private newTaskFetchedSubject = new Subject<void>();
+  newTaskFetched$ = this.newTaskFetchedSubject.asObservable();
+
+  emitNewTaskFetchedEvent() {
+    this.newTaskFetchedSubject.next();
+  }
+
   //View Change Event
   private viewChangeSubject = new Subject<string>();
   viewChange$ = this.viewChangeSubject.asObservable();

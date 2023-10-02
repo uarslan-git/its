@@ -56,7 +56,7 @@ export class CodePanelComponent {
     );
   }
 
-  taskIdSubscription: Subscription;
+  taskFetchedSubscription: Subscription;
   current_task_id: string = "";
 
   constructor(
@@ -66,8 +66,9 @@ export class CodePanelComponent {
       public datePipe: DatePipe,
       private datetimeService: DatetimeService,
     ) {
-      this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
-        (data) => {this.current_task_id = data;
+      this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe(
+        (data) => {this.current_task_id = sessionStorage.getItem("taskId")!;
+                  console.log(this.current_task_id);
                   this.getCurrentAttemptState();}
       );
   }
@@ -112,6 +113,6 @@ export class CodePanelComponent {
     if(this.codeEditorComponent.contentControl != this.lastSavedCode) {
       this.recordChanges(this.codeEditorComponent.contentControl);
     }
-    this.taskIdSubscription.unsubscribe();
+    this.taskFetchedSubscription.unsubscribe();
    }
 }

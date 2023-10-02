@@ -13,6 +13,10 @@ from tasks.schemas import Task
 
 # import motor.motor_asyncio
 import db
+from io import StringIO
+#TODO: Discuss how this can be prohibited!
+import sys as unsafe_sys_import
+from sys import __stdout__
 
 router = APIRouter()
 
@@ -66,8 +70,11 @@ except AssertionError as e:
     test_message = str(e)
     print(e)""".format(test_name)
     test_submission_code = """
+submission_captured_output = StringIO()
+unsafe_sys_import.stdout = submission_captured_output
 {0}
-
+unsafe_sys_import.stdout = __stdout__
+submission_captured_output = submission_captured_output.getvalue().strip()
 {1}
 
 {2}

@@ -10,5 +10,6 @@ class Task(Document):
     tests: dict
     type: str
     prefix: str
-    arguments: list
-    function_name: Optional[str]
+    arguments: Optional[list]=None
+    function_name: Optional[str]=None
+

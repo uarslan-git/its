@@ -81,10 +81,12 @@ export class TaskPanelComponent {
     }
     this.task_markdown = this.task['task']!;
     //console.log(this.task['unique_name'])
-    this.dataShareService.emitTaskId(this.task['unique_name']!);
+    //this.dataShareService.emitTaskId(this.task['unique_name']!);
     console.log(this.task);
+    sessionStorage.setItem("taskId", this.task['unique_name']!);
     sessionStorage.setItem("taskType", this.task['type']!);
     sessionStorage.setItem("taskArguments", JSON.stringify(this.task['arguments']!))
+    this.eventShareService.emitNewTaskFetchedEvent();
   });
  }
 

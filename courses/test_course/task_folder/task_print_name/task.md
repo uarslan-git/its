@@ -18,3 +18,10 @@ Write a function named greet that prints "Hello {name}" where name is taken as t
 def greet(name):
     ...
 ```
+
+Use greet to print welcome slogans to Alice and Bob, such that your program ouputs.
+
+```
+Hello Alice
+Hello Bob
+```
