@@ -20,7 +20,16 @@
 
       <hr>
       <div class="checkbox-container">
-            <input class="data-checkbox" id="data-checkbox" type="checkbox" #consentCheckbox checked/> 
+      <div class="data-checkbox">
+        <p>
+          <input type="radio" id="radio-select-yes" name="consentRadio" #consentCheckboxYes/>
+          <label for="radio-select-yes">Yes</label>
+        </p>
+        <p>
+          <input type="radio" id="radio-select-no" name="consentRadio" #consentCheckboxNo/>
+          <label for="radio-select-no">No</label>
+        </p>
+      </div>
             <label class="consent-label" for="data-checkbox">I consent to anonymized data collection for purely scientific purposes.</label>
       </div>
       <div class="checkbox-info">
@@ -33,7 +42,7 @@
       <hr>
 
     <div class="centered-button">
-      <button (click)="register(registerUsername.value, registerPassword.value, consentCheckbox.checked)">Register</button>
+      <button (click)="register(registerUsername.value, registerPassword.value, consentCheckboxYes.checked)">Register</button>
     </div>
       <p>Do you already have an account? If so, you can <a (click)="setRegistering(false)"><u>login here!</u></a></p>
     </div>

@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request, Response, HTTPException
 from fastapi import APIRouter
 from submissions import handle_submissions
 from attempts import handle_attempts
@@ -19,6 +19,12 @@ from db import db_connector_beanie
 from users.schemas import User
 from config import config
 from runs import handle_runs
+import time
+import asyncio
+from fastapi.responses import JSONResponse
+from starlette.status import HTTP_504_GATEWAY_TIMEOUT
+
+REQUEST_TIMEOUT_ERROR = 4  # Threshold
 
 
 #Api prefix
@@ -27,6 +33,22 @@ prefix = "/api"
 app = FastAPI(docs_url=f'{prefix}/docs',
               redoc_url=f'{prefix}/redoc',
               openapi_url=f'{prefix}/openapi.json')
+
+
+# Adding a middleware returning a 504 error if the request processing time is above a certain threshold
+@app.middleware("http")
+async def timeout_middleware(request: Request, call_next):
+    try:
+        start_time = time.time()
+        return await asyncio.wait_for(call_next(request), timeout=REQUEST_TIMEOUT_ERROR)
+
+    except asyncio.TimeoutError:
+        process_time = time.time() - start_time
+        return JSONResponse({'detail': 'Request processing time excedeed limit',
+                             'processing_time': process_time},
+                            status_code=HTTP_504_GATEWAY_TIMEOUT)
+
+
 app.include_router(handle_submissions.router, prefix=f"{prefix}")
 app.include_router(handle_tasks.router, prefix=f"{prefix}")
 app.include_router(handle_feedback.router, prefix=f"{prefix}")

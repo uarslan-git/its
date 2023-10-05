@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
 import { DatetimeService } from '../shared/services/datetime.service';
@@ -19,6 +19,8 @@ interface AuthResponse {
 export class AuthComponent {
 
   @ViewChild('dataTermsPopupComponent', { static: false }) dataTermsPopupComponent!: DataTermsPopupComponent;
+  @ViewChild('consentCheckboxYes', {static: false}) consentCheckboxYes!: ElementRef
+  @ViewChild('consentCheckboxNo', {static: false}) consentCheckboxNo!: ElementRef
 
   //showDataTermPopup: boolean = false;
   showDataTermPopup() {
@@ -69,6 +71,10 @@ export class AuthComponent {
   }
 
   register(username: string, password: string, dataCollectionConsent: boolean): void {
+    if(!this.consentCheckboxNo.nativeElement.checked && !this.consentCheckboxYes.nativeElement.checked){
+      window.alert("Please select (Yes/No) whether we can use your data for scientific purposes.")
+      return;
+    }
     const body = {"email": `${username}@anonym.de`,
                   "password": password, "tasks_completed": [], "tasks_attempted": [], 
                   "enrolled_courses": ["test_course"], "courses_completed": [],

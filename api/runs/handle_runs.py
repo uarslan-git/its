@@ -5,7 +5,7 @@ from db import database
 from fastapi import Depends
 from users.handle_users import current_active_user
 import ast
-from submissions.handle_submissions import check_user_code
+from submissions.handle_submissions import check_user_code, run_with_timeout
 #TODO: secure this:
 import sys as unsafe_sys_import 
 from io import StringIO
@@ -25,7 +25,7 @@ def capture_output(code):
 def parse_argument_types(arg_dict):
     run_arguments = [(key, arg_dict[key]) for key in arg_dict.keys()]
     try:
-        check_list = [check_user_code(ast.parse(entry[1])) for entry in run_arguments]
+        check_list = [check_user_code(entry[1]) for entry in run_arguments]
     except Exception as e: 
         return {}, "Illegal argument"
     else:
@@ -61,17 +61,24 @@ code = '''{0}'''
 run_result = capture_output(code)""".format(submission.code)
     else:
         raise Exception("Task type not known.")
-    global run_result
-    try:
-        parsed_ast = ast.parse(run_code)
-        save = check_user_code(ast_tree=parsed_ast)
-        if save:
-            exec(run_code, globals())
-    except BaseException as e:
-        run_result = f"Error or Exception: {str(e)}"
+    wrap_execute_code = lambda queue: execute_code(run_code, queue)
+    run_result = run_with_timeout(wrap_execute_code, timeout=4)
+    #run_result = execute_code(run_code)
     evaluated_submission = Evaluated_run_code_submission(
         code = submission.code, submission_time=submission.submission_time, run_arguments=submission.run_arguments,
         run_output=str(run_result), task_unique_name=submission.task_unique_name, log=submission.log, type="run", user_id=user_id
     )
     await database.log_code_submission(evaluated_submission)
     return  {"run_id": str(evaluated_submission.id)}
+
+def execute_code(code, queue):
+    global run_result
+    try:
+        #parsed_ast = ast.parse(run_code)
+        save = check_user_code(code)
+        if save:
+            exec(code, globals())
+    except BaseException as e:
+        run_result = f"Error or Exception: {str(e)}"
+    queue.put(run_result)
+    return(run_result)
