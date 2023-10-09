@@ -25,7 +25,11 @@ export class CodeEditorComponent {
   emitCodeChangeEventTimer(newVal: string) {
     this.timer = setTimeout(
       () => {
-        this.codeChangeEvent.emit(newVal);
+        const prefix = sessionStorage.getItem('taskPrefix')!;
+        if (newVal.startsWith(prefix)) {
+          console.log("prefix sliced!");
+          this.codeChangeEvent.emit(newVal.slice(prefix.length));
+        }
       }
     , 1000) //Milliseconds timeout
   }
@@ -67,8 +71,19 @@ get contentControl(): string {
   return content != null ? content : '';
 }
 
+get userContentControl() {
+  const content: any = this.form.get('content')?.value;
+  if (content.startsWith(this.prefix)) {
+    return content.slice(this.prefix.length);
+  }
+  else {
+   console.error("Code prefix not present!") 
+  }
+}
+
 newTaskSubscription: Subscription;
 current_task_id: string = "";
+prefix: string = "";
 
 constructor(
   private prismService: PrismHighlightService,
@@ -79,19 +94,27 @@ constructor(
 ) {
   this.newTaskSubscription = this.eventShareService.newTaskFetched$.subscribe(
     () => {
+            //TODO: Bettr control time of execution, because codePanel is also listening to newTaskFetched!
             console.log("Editor Content reset!");
-            // store current program state, if a new task is selected
-            this.codeChangeEvent.emit(this.contentControl);
+            if (typeof this.prefix !== 'undefined') {
+              this.prefix = sessionStorage.getItem('taskPrefix')!;
+            }
+            else {
+              this.codeChangeEvent.emit(this.userContentControl);
+              this.prefix = sessionStorage.getItem('taskPrefix')!;
+            }
             this.form.setValue({'content': ''});
           }
   );
 }
+
 
 ngOnInit(): void {
   this.listenForm()
   // This subscription runs code every time the user changes the code.
   //TODO: onTextareaKeydown does the same in principal. Check if this should be handled in same method.
   this.form.controls.content.valueChanges.subscribe((newValue) => {
+    newValue = this.ensurePrefix(newValue!);
     this.synchronizedTextareaGrow();
     this.clearCodeChangeTimer();
     this.emitCodeChangeEventTimer(newValue!);
@@ -111,6 +134,16 @@ ngAfterViewChecked() {
 
 ngOnDestroy() {
   this.sub?.unsubscribe();
+}
+
+private ensurePrefix(newContent: string){
+  const prefix = sessionStorage.getItem("taskPrefix")!
+  if(!(newContent.startsWith(prefix))) {
+    console.log("Ensuring prefix");
+    newContent = prefix + newContent.slice(prefix.length);
+    this.form.setValue({'content': newContent});
+  }
+  return(newContent);
 }
 
 private synchronizedTextareaGrow() {
@@ -152,5 +185,14 @@ onTextareaKeyDown(event: KeyboardEvent): void {
     this.textArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
   }
 }
-}
 
+onSelect(event: Event) {
+  const start = this.textArea.nativeElement.selectionStart;
+  const end = this.textArea.nativeElement.selectionEnd;
+  if (start == end) {
+    if (start <= this.prefix.length) {
+      this.textArea.nativeElement.setSelectionRange(this.prefix.length+1, this.prefix.length+1);
+    }
+  }
+}
+}

@@ -30,7 +30,7 @@ export class CodePanelComponent {
 
   //Submit Button
   submitButtonClicked() {
-    this.submitted_code = this.codeEditorComponent.contentControl;
+    this.submitted_code = this.codeEditorComponent.userContentControl;
     this.client.post<any>(`${environment.apiUrl}/code_submit`, 
           {task_unique_name: this.current_task_id, code: this.submitted_code, 
             log: "True", type: "submission",
@@ -44,7 +44,7 @@ export class CodePanelComponent {
 
   //Run Button
   handleRunEvent(parameters: any) {
-    const runCode = this.codeEditorComponent.contentControl;
+    var runCode = this.codeEditorComponent.userContentControl;
     const body = {task_unique_name: this.current_task_id, code: runCode,
                 log: "True", 
                 submission_time: this.datetimeService.datetimeNow(),
@@ -82,7 +82,7 @@ export class CodePanelComponent {
       this.client.get<any>(`${environment.apiUrl}/attempt/get_state/${this.current_task_id}`, {withCredentials: true}).subscribe(
         (data) => {
           this.currentAttemptId = data.attempt_id;
-          this.codeEditorComponent.form.setValue({'content': data.code});
+          this.codeEditorComponent.form.setValue({'content': sessionStorage.getItem('taskPrefix') + data.code});
           this.contentReloaded = true;
           this.lastSavedCode = data.code;
         }
@@ -90,6 +90,11 @@ export class CodePanelComponent {
     }
 
     recordChanges(newContent: string, submissionId: string='') {
+      /* newContent = this.codeEditorComponent.userContentControl; */
+      const prefix = sessionStorage.getItem("taskPrefix")!;
+      if (newContent.startsWith(prefix)) {
+        newContent = newContent.slice(prefix.length);
+      } 
       if ((!this.contentReloaded) || (this.current_task_id=='course completed')) {
         //ensure that code has changed
         if((this.lastSavedCode == newContent) && (submissionId == '')) {return};

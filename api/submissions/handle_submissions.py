@@ -39,7 +39,7 @@ def run_with_timeout(func, timeout):
 
         # If the process is still alive, terminate it
         if process.is_alive():
-            active = multiprocessing.active_children()
+            #active = multiprocessing.active_children()
             #for child in active: 
             #    child.terminate()
             #    child.kill()
@@ -71,7 +71,8 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
     test_results = []
     valid_solution = True
     for i, test_name in enumerate(tests.keys()):
-        wrap_get_test_result = lambda queue: get_test_result(tests[test_name], test_name, submission.code, queue=queue)
+        prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
+        wrap_get_test_result = lambda queue: get_test_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines, queue=queue)
         test_result = run_with_timeout(wrap_get_test_result, 5)
         if test_result is None:
             submission.type = "timed_out_submission"
@@ -99,7 +100,7 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
     return  {"submission_id": str(tested_submission.id)}
 
 
-def get_test_result(test_code, test_name, submission_code, queue):
+def get_test_result(test_code, test_name, submission_code, prefix_lines, queue):
     run_test_code = """
 try:
     {0}()
@@ -125,7 +126,7 @@ submission_captured_output = submission_captured_output.getvalue().strip()
     global test_message
     try:
         
-        save = check_user_code(submission_code)
+        save = check_user_code(submission_code, prefix_lines)
         if save:
             #exec(compile(parsed_ast, filename="<parsed_ast>", mode="exec"), globals())
             exec(test_submission_code, globals())
@@ -140,30 +141,49 @@ submission_captured_output = submission_captured_output.getvalue().strip()
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}
 
 
-def check_user_code(code):
+def check_user_code(code, prefix_lines=[]):
     class ImportVisitor(ast.NodeVisitor):
-        def __init__(self):
+        def __init__(self, prefix_lines: list=[]):
             self.found_imports = False
+            self.prefix_lines = prefix_lines
 
         def visit_Import(self, node):
-            self.found_imports = True # TODO: Can the bool be removed?
-            raise Exception("Imports are not allowed in this context.")
+            if node.lineno not in self.prefix_lines:
+                self.found_imports = True # TODO: Can the bool be removed?
+                raise Exception("Imports are not allowed in this context.")
+            else: 
+                self.generic_visit(node)
 
         def visit_ImportFrom(self, node):
-            self.found_imports = True
-            raise Exception("Imports are not allowed in this context")
+            if node.lineno not in self.prefix_lines:
+                self.found_imports = True
+                raise Exception("Imports are not allowed in this context")
+            else:
+                self.generic_visit(node)
         
         def visit_Interactive(self, node: Interactive):
-            raise Exception("Interactive Mode is not allowed")
+            if node.lineno in self.prefix_lines:
+                raise Exception("Interactive Mode is not allowed")
+            else: 
+                self.generic_visit(node)
         
         def visit_Delete(self, node: Delete):
-            raise Exception("Deletes are not allowed in this context")
+            if node.lineno not in self.prefix_lines:
+                raise Exception("Deletes are not allowed in this context")
+            else:
+                self.generic_visit(node)
         
         def visit_Global(self, node: Global):
-            raise Exception("Global Scope is not allowed")
+            if node.lineno not in self.prefix_lines:
+                raise Exception("Global Scope is not allowed")
+            else:
+                self.generic_visit(node)
 
         def visit_Nonlocal(self, node: Nonlocal):
-            raise Exception("Nonlocal Scope is not allowed")
+            if node.lineno not in self.prefix_lines: 
+                raise Exception("Nonlocal Scope is not allowed")
+            else:
+                self.generic_visit(node)
         
         #def visit_Load(self, node: Load) -> Any:
         #    raise Exception("Load not allowed")
@@ -172,22 +192,28 @@ def check_user_code(code):
         #    raise Exception("Store not allowed")
         
         def visit_Del(self, node: Del) -> Any:
-            raise Exception("Del not allowed")
+            if node.lineno not in self.prefix_lines:
+                raise Exception("Del not allowed")
+            else: self.generic_visit(node)
         
         def visit_Call(self, node: Call) -> Any:
-            if node.func.id == "exec":
+            if "id" in node.func._fields:
+                func_id = node.func.id
+            else:
+                func_id = node.func.attr
+                module_id = node.func.value.id
+            if func_id == "exec":
                 raise Exception("exec() is not allowed in this context")
-            if node.func.id in ["eval", "open", "breakpoint", "callable",
+            if func_id in ["eval", "open", "breakpoint", "callable",
                                  "delattr", "dir", "getattr", "globals",
                                  "hasattr", "help", "id", "input", "locals", 
                                  "memoryview", "property", "setattr", 
                                  "staticmethod", "vars", "__import__"]:
-                fun_id = node.func.id
-                raise Exception(f"{fun_id}() is not allowed in this context")
+                raise Exception(f"{func_id}() is not allowed in this context")
             self.generic_visit(node)
 
     ast_tree = ast.parse(code)
-    visitor = ImportVisitor()
+    visitor = ImportVisitor(prefix_lines=prefix_lines)
     visitor.visit(ast_tree)
     print(code)
     bad_strings = ["np.distutil", "multiprocessing", "APIRouter", "asyncio", "current_active_user", "unsafe_sys_import", "database", "run_with_timeout"]

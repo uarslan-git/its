@@ -85,7 +85,8 @@ export class TaskPanelComponent {
     console.log(this.task);
     sessionStorage.setItem("taskId", this.task['unique_name']!);
     sessionStorage.setItem("taskType", this.task['type']!);
-    sessionStorage.setItem("taskArguments", JSON.stringify(this.task['arguments']!))
+    sessionStorage.setItem("taskArguments", JSON.stringify(this.task['arguments']!));
+    sessionStorage.setItem("taskPrefix", this.task['prefix']!);
     this.eventShareService.emitNewTaskFetchedEvent();
   });
  }

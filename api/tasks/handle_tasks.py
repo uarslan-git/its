@@ -11,14 +11,6 @@ import db
 router = APIRouter()
 
 
-#class Pedagogical_model():
-#
-#    task_id = 1
-#
-#    def select_task(self, user_id):
-#        self.task_id = self.task_id + 1
-#        return(str(self.task_id))
-
 pedagogical_model = Prototype_pedagogical_model()
 
 @router.get("/task/for_user/")

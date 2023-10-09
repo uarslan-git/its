@@ -50,9 +50,8 @@ async def run_code(submission: Run_code_submission, user: User = Depends(current
         #else:
         run_arguments, arg_message = parse_argument_types(submission.run_arguments)
         if arg_message == "Success":
-            run_code = """
-{0}
-run_result = {1}(**{2})""".format(submission.code, task_json.function_name, run_arguments)
+            run_code = """{0}{1}
+run_result = {2}(**{3})""".format(task_json.prefix, submission.code, task_json.function_name, run_arguments)
         else: 
             run_code = "raise Exception('{0}')".format(arg_message)
     elif task_type == "print":
@@ -61,7 +60,12 @@ code = '''{0}'''
 run_result = capture_output(code)""".format(submission.code)
     else:
         raise Exception("Task type not known.")
-    wrap_execute_code = lambda queue: execute_code(run_code, queue)
+    if task_json.prefix == "": 
+        prefix_lines == []
+    else: 
+        prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
+    wrap_execute_code = lambda queue: execute_code(run_code, prefix_lines, queue)
+    check_user_code(run_code, prefix_lines)
     run_result = run_with_timeout(wrap_execute_code, timeout=4)
     #run_result = execute_code(run_code)
     evaluated_submission = Evaluated_run_code_submission(
@@ -71,11 +75,11 @@ run_result = capture_output(code)""".format(submission.code)
     await database.log_code_submission(evaluated_submission)
     return  {"run_id": str(evaluated_submission.id)}
 
-def execute_code(code, queue):
+def execute_code(code, prefix_lines, queue):
     global run_result
     try:
         #parsed_ast = ast.parse(run_code)
-        save = check_user_code(code)
+        save = check_user_code(code, prefix_lines)
         if save:
             exec(code, globals())
     except BaseException as e:

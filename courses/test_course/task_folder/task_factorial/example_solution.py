@@ -1,6 +1,6 @@
 #!function!#
-#!prefix!#
 def factorial(n):
+#!prefix!#
     if n < 0:
         raise ValueError("Factorial is undefined for negative numbers.")
     elif n == 0:

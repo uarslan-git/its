@@ -64,6 +64,7 @@ export class ProfileComponent {
       this.profileAction.emit('loggedOut');
     }
 
+    //TODO: fix BUG that resets task selection on close profile!
     closeProfile() {
       console.log("close profile!");
       this.profileAction.emit('closedProfile');
