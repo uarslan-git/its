@@ -25,7 +25,8 @@ export class ProfileComponent {
   email: string = '';
   name: string = '';
   registeredDatetime: string = '';
-  user: {email?: string, register_datetime?: any, settings?: any} = {};
+  user: {email?: string, register_datetime?: any, settings?: any, enrolled_courses?: string[]} = {};
+  enrolledCourse: string = '';
 
   constructor(private http: HttpClient,
     private eventShareService: EventShareService) {
@@ -45,10 +46,13 @@ export class ProfileComponent {
           email: data.email,
           register_datetime: data.register_datetime,
           settings: data.settings,
+          enrolled_courses: data.enrolled_courses,
         };
         this.email = this.user.email!;
         this.name = this.user.email!.split("@")[0];
         this.registeredDatetime = this.user.register_datetime["local"];
+        this.enrolledCourse = this.user.enrolled_courses![0];
+        console.log("enrolled");
         if(this.user.settings.dataCollection) {
           this.consentCheckbox.nativeElement.checked = true;
         }
@@ -78,4 +82,3 @@ export class ProfileComponent {
       }
     }
 }
-

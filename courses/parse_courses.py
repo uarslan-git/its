@@ -18,6 +18,7 @@ def parse_arguments():
     # Add the --database-network argument with a default value of "localhost"
     parser.add_argument("--database-host", default="localhost", help="Specify the database network address")
     parser.add_argument("--database-port", default="27017", help="Specify the database network address")
+    parser.add_argument("--tasks", default="true", help="Specify whether to parse a task folder")
 
     args = parser.parse_args()
     return args
@@ -30,5 +31,10 @@ if __name__ == "__main__":
     client = MongoClient(host=args.database_host, port=int(args.database_port))
     db = client["its_db"]
     parse_course(directory, db)
-    import parse_tasks
-    parse_tasks.parse_all_tasks(directory+"/task_folder", db=db)
+    if args.tasks == "true":
+        import parse_tasks
+        parse_tasks.parse_all_tasks(directory+"/task_folder", db=db)
+    elif args.tasks == "false":
+        print("Not parsing tasks due to settings")
+    else:
+        raise Exception("Invalid commandline argument tasks, choose true or false")

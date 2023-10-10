@@ -19,6 +19,7 @@ from db import db_connector_beanie
 from users.schemas import User
 from config import config
 from runs import handle_runs
+from info import retrieve_info
 import time
 import asyncio
 from fastapi.responses import JSONResponse
@@ -55,6 +56,7 @@ app.include_router(handle_feedback.router, prefix=f"{prefix}")
 app.include_router(handle_attempts.router, prefix=f"{prefix}")
 app.include_router(handle_courses.router, prefix=f"{prefix}")
 app.include_router(handle_runs.router, prefix=f"{prefix}/run")
+app.include_router(retrieve_info.router, prefix=f"{prefix}/info")
 
 # User Router and database setup
 app.include_router(

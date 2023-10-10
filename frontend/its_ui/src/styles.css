@@ -77,13 +77,16 @@ p {
 .popup-dialog-container {
   background-color: rgb(37, 37, 37);
   border-color: rgb(0, 0, 0);
+  max-width: 37rem;
+  max-height: 45rem;
 }
 
 .popup-dialog { 
   text-align: left;
   background-color: rgb(37, 37, 37);
   color:aliceblue;
-  font-size: 16px;
+  font-size: 1rem;
+  overflow: auto;
 }
 
   /* Updated the class to target the action-button */
@@ -107,4 +110,13 @@ p {
   /* Apply styles on button click */
   .popup-dialog-button:active {
     background-color: #333;
+  }
+
+  .a {
+    color: rgb(42, 125, 250);
+    cursor: pointer;
+  }
+
+  .a:hover{
+    color: rgb(104, 164, 255);
   }

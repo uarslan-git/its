@@ -9,12 +9,23 @@
       <button (click)="login(loginUsername.value, loginPassword.value)">Login</button>
     </div>
     <p>Don't have an account yet? You can <a (click)="setRegistering(true)"><u>register here!</u></a></p>
+    <div class="impressum"><p><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></p></div>
   </div>
   </div>
   
   <div class="login-container" *ngIf="registering">
     <div class="login-form">
       <h2>Register</h2>
+
+      <div class="course-selection">
+        <label for="courses">For Course:</label>
+        <select #courseSelection name="courses" id="cars">
+          <option value="none">no selection</option>
+          <option value="Intro_to_ML">Introduction to Machine Learning</option>
+          <option value="Intro_to_DM">Introduction to Data Mining</option>
+        </select>
+      </div>
+
       <input #registerUsername placeholder="Username" /><br />
       <input #registerPassword type="password" placeholder="Password" /><br />
 
@@ -42,9 +53,8 @@
       <hr>
 
     <div class="centered-button">
-      <button (click)="register(registerUsername.value, registerPassword.value, consentCheckboxYes.checked)">Register</button>
+      <button (click)="register(registerUsername.value, registerPassword.value, consentCheckboxYes.checked, courseSelection.value)">Register</button>
     </div>
       <p>Do you already have an account? If so, you can <a (click)="setRegistering(false)"><u>login here!</u></a></p>
     </div>
   </div>
-

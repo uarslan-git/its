@@ -19,8 +19,10 @@ interface AuthResponse {
 export class AuthComponent {
 
   @ViewChild('dataTermsPopupComponent', { static: false }) dataTermsPopupComponent!: DataTermsPopupComponent;
-  @ViewChild('consentCheckboxYes', {static: false}) consentCheckboxYes!: ElementRef
-  @ViewChild('consentCheckboxNo', {static: false}) consentCheckboxNo!: ElementRef
+  @ViewChild('consentCheckboxYes', {static: false}) consentCheckboxYes!: ElementRef;
+  @ViewChild('consentCheckboxNo', {static: false}) consentCheckboxNo!: ElementRef;
+  //TODO: Fetch availiable courses directly from database.
+  @ViewChild('courseSelection', {static: false}) courseSelection!: ElementRef;
 
   //showDataTermPopup: boolean = false;
   showDataTermPopup() {
@@ -70,14 +72,18 @@ export class AuthComponent {
     this.loginEvent.emit(this.loginStatus);
   }
 
-  register(username: string, password: string, dataCollectionConsent: boolean): void {
+  register(username: string, password: string, dataCollectionConsent: boolean, courseSelection: string): void {
     if(!this.consentCheckboxNo.nativeElement.checked && !this.consentCheckboxYes.nativeElement.checked){
       window.alert("Please select (Yes/No) whether we can use your data for scientific purposes.")
       return;
     }
+    if(courseSelection=='none') {
+      window.alert("Please select a course.")
+      return;
+    }
     const body = {"email": `${username}@anonym.de`,
                   "password": password, "tasks_completed": [], "tasks_attempted": [], 
-                  "enrolled_courses": ["test_course"], "courses_completed": [],
+                  "enrolled_courses": [courseSelection], "courses_completed": [],
                   "register_datetime": this.datetimeService.datetimeNow(),
                   "settings": {"dataCollection": dataCollectionConsent}
                 };

@@ -58,6 +58,14 @@ removed from the css-scope by Angular's encapsulation process. The ::ng-deep sel
     background: #181818;
 }
 
+.markdown-panel ::ng-deep a {
+    color: rgb(42, 125, 250);
+    cursor: pointer;
+  }
+
+ .markdown-panel ::ng-deep a:hover{
+    color: rgb(104, 164, 255);
+  }
 
 
 
