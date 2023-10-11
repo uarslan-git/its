@@ -2,63 +2,65 @@
 
 ## Introduction
 
-Welcome to [Your Research Project/Institution]! This document provides information about how we collect, process, and use your personal data for scientific purposes. We are dedicated to upholding privacy standards and complying with European data protection laws, including the General Data Protection Regulation (GDPR).
+Welcome to the prototype of the intelligent Tutoring System of the technical faculty! This document provides information about how we collect, process, and use your pseudomized data. Apart from necessary data collection for our core app features, we collect data for the sole purpose of scientific research. We are dedicated to upholding privacy standards and complying with European data protection laws.
 
-## 1. Data Controller
+## 1.Contact
 
 The data controller for your personal data is:
 
-[Your Research Project/Institution Name]
-[Address of Research Project/Institution]
-[Contact Information]
+AG Knowledge Representation and Machine Learning
+Universitaet Bielefeld
+Technische Fakultaet
+AG Machine Learning
+Postfach 10 01 31
+E-Mail [its@techfak.de](mailto:its@techfak.de)
 
 ## 2. Types of Data Collected
 
-We collect and process the following types of personal data for scientific research purposes:
+We collect the following types of pseudomised data in order to ensure the basic functionality of our application.
 
-- **Demographic Information:** Age, gender, and other relevant demographic data.
-- **Contact Information:** Email address and other contact details.
-- **Research-Related Data:** Data collected for the specific scientific research project.
+- **Profile Information** Username, enrolled courses, etc.
+- **Interaction Data** The last state of your attempt on each task.
+- **Submission Data** Your code submissions for verification of task completion.
+
+Depending on your selected preferences, we collect and process the following types of pseudomised data for scientific research purposes:
+
+- **Interaction Data** Intermediate states on your attempts for each task.
+- **Submission Data** Your code submissions and code runs.
 
 ## 3. Purposes of Data Collection
 
-We collect and process your personal data solely for the purpose of conducting scientific research. This includes:
+If you agree, we collect and process your personal data solely for the purpose of conducting scientific research on machine learning methods for educational software. This includes:
 
-- **Scientific Inquiry:** To contribute to advancements in knowledge and understanding.
-- **Contact:** To communicate important research-related information with participants.
+- Methods to select tasks that fit your individual skill profile.
+- Methods to generate individual feedback and hints to the solution of tasks.
+- Tutoring chatbots.
 
-## 4. Legal Basis for Processing
-
-We process your personal data based on the legal ground of:
-
-- **Consent:** Participants provide explicit consent for the collection and processing of their data for scientific research purposes.
-
-## 5. Data Sharing
+## 4. Data Sharing
 
 We may share anonymized or aggregated data with other researchers or institutions for the purpose of advancing scientific knowledge. Individual participants' identities will be protected.
 
-## 6. Data Security
+## 5. Data Security
 
-We prioritize the security of your data and have implemented measures to ensure its confidentiality. However, as with any data transmission, there are inherent risks.
+We prioritize the security of your data and have implemented measures to ensure its confidentiality. To maximise security, you should use a username for the prototype system, that cannot be linked back to you personally. 
 
-## 7. Your Rights
+## 6. Your Rights
 
 As a participant in our scientific research, you have the following rights:
 
 - **Access:** Request access to your personal data collected for research purposes.
 - **Rectification:** Request correction of inaccuracies in your data.
 - **Withdrawal of Consent:** You have the right to withdraw your consent at any time, and it will not affect the lawfulness of processing based on consent before withdrawal.
+- **Deletion:** Delete your all your account data. 
 
-To exercise these rights, please contact us at [contact@email.com].
+To exercise these rights, please contact us at [its@techfak.de](mailto:its@techfak.de).
 
-## 8. Changes to this Policy
+## 7. Changes to this Policy
 
-We may update this Scientific Data Collection Information to reflect changes in our research practices. Any updates will be posted on our website, and we recommend checking this page regularly.
+We may update this Scientific Data Collection Information to reflect changes in our research practises. Updates should not affect the data processing and usage of your data, if you are using the prototype system.
 
 ## Contact Information
 
-If you have any questions or concerns about this Scientific Data Collection Information, please contact us at [contact@email.com].
+If you have any questions or concerns about this Scientific Data Collection Information, please contact us at [its@techfak.de](mailto:its@techfak.de).
 
-Last Updated: [Date]
-
-[Link to Privacy Policy]
+Last Updated: 11.10.2023
