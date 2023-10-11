@@ -11,6 +11,7 @@ import { environment } from 'src/environments/environment';
 export class AppComponent {
   title = 'Tutoring System for Programming';
   pageName = 'loginView'
+  initTask?: string;
   //name = new FormControl('');
 
   constructor(private client: HttpClient,
@@ -38,6 +39,7 @@ export class AppComponent {
           this.pageName = 'loginView';
           break;
       case 'closedProfile':
+        this.initTask = sessionStorage.getItem("taskId")!;
         this.pageName = 'tutoringView';
         break;
       case 'profileRequest':
