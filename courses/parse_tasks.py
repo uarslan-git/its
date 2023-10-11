@@ -111,7 +111,7 @@ if __name__ == "__main__":
     directory = input()
     if db_import == "Y":
         client = MongoClient(host="localhost", port=27017)
-        db = client["its_db"]
+        db = client["its_db"] 
         parse_all_tasks(directory, db)
     elif db_import == "N":
         parse_all_tasks(directory)
