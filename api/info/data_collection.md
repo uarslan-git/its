@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome to the prototype of the intelligent Tutoring System of the technical faculty! This document provides information about how we collect, process, and use your pseudomized data. Apart from necessary data collection for our core app features, we collect data for the sole purpose of scientific research. We are dedicated to upholding privacy standards and complying with European data protection laws.
+Welcome to the prototype of the intelligent Tutoring System of the Technical Faculty! This document provides information about how we collect, process, and use your pseudomized data. Apart from necessary data collection for our core app features, we collect data for the sole purpose of scientific research. We are dedicated to upholding privacy standards and complying with European Data Protection Laws.
 
 ## 1.Contact
 
@@ -13,11 +13,12 @@ Universitaet Bielefeld
 Technische Fakultaet
 AG Machine Learning
 Postfach 10 01 31
+33501 Bielefeld
 E-Mail [its@techfak.de](mailto:its@techfak.de)
 
 ## 2. Types of Data Collected
 
-We collect the following types of pseudomised data in order to ensure the basic functionality of our application.
+We collect the following types of pseudonymised data in order to ensure the basic functionality of our application.
 
 - **Profile Information** Username, enrolled courses, etc.
 - **Interaction Data** The last state of your attempt on each task.
@@ -35,6 +36,7 @@ If you agree, we collect and process your personal data solely for the purpose o
 - Methods to select tasks that fit your individual skill profile.
 - Methods to generate individual feedback and hints to the solution of tasks.
 - Tutoring chatbots.
+- Other methods for learning experience improvement.
 
 ## 4. Data Sharing
 
