@@ -60,12 +60,11 @@ code = '''{0}'''
 run_result = capture_output(code)""".format(submission.code)
     else:
         raise Exception("Task type not known.")
-    if task_json.prefix == "": 
-        prefix_lines == []
-    else: 
+    if task_json.prefix == "":
+        prefix_lines = []
+    else:
         prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
     wrap_execute_code = lambda queue: execute_code(run_code, prefix_lines, queue)
-    check_user_code(run_code, prefix_lines)
     run_result = run_with_timeout(wrap_execute_code, timeout=4)
     #run_result = execute_code(run_code)
     evaluated_submission = Evaluated_run_code_submission(
