@@ -1,4 +1,4 @@
-#!function!#
+#!print!#
 #!prefix!#
 def greet(name):
     print(f"Hello {name}")

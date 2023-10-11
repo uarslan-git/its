@@ -28,9 +28,20 @@ f"Hello {name}"
 ```
 
 ## To Do
-Write a function named greet that prints "Hello {name}" where name is taken as the function parameter. Use the following signature:
+Write a function named greet that prints "Hello {name}" where name is taken as the function parameter. 
+Command **print()** can be used to print out the outputs. You can also add similar arguments directly in the function.
+For example: 
+```python
+print("Who is "+"Marla"+"?")
+print( 5+5 )
+```
+```
+Who is Marla?
+10
+```
+Use the following signature to say (print) "Hello" to an input name:
 
 ```python
 def greet(name):
-    ...
+ 
 ```

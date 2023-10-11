@@ -36,6 +36,19 @@ print(r)
 ```
 6
 ```
+You can also input and/or return several values:
+
+```python
+# Function with a return value
+def functionWithRetVals(x,y):
+    return x + 3, y + 6
+r = functionWithRetVals(5,1)
+print(r)
+
+```
+```
+(8, 7)
+```
 ## To Do 
 Define a function, that returns the square of a real input number.
 Use the folowing signature:

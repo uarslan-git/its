@@ -1,5 +1,5 @@
-#!function!#
+#!print!#
 #!prefix!#
-def what_are_you(n):
+def what_are_you(something):
     #function body
-    print (type(n))
+    print (type(something))

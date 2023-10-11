@@ -55,6 +55,6 @@ String with length 3
 Create a function that checks if a given list of numbers contains any negative numbers. The function should return True if there are negative numbers and False otherwise. (**HINT** you can use "any()" to check the list)
 
 ```python
-def contains_negative():
+def contains_negative(numbers):
     ...
 ```
