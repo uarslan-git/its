@@ -2,5 +2,5 @@
     "display_name": "Introduction to Machine Learning",
     "domain": "Simple Python",
     "sub_domains": [],
-    "curriculum": ["factorial", "square", "print_name", "scalar_multiplication"]
+    "curriculum": ["greet", "square", "what_are_you", "variables", "name_check", "shorten", "my_list", "list_copy", "breakfast", "contains_negative",  "second_sum", "factorial", "smallest_positive"]
 }
