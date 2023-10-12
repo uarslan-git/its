@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
 import { DataShareService } from '../shared/services/data-share.service';
@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 export class TaskPanelComponent {
 
   @ViewChild("courseCompleteDialog", {static: true}) courseCompleteDialog!: ElementRef<HTMLDialogElement>
+  @Input() initTask?: string | null = null;
 
   private eventSubscription: Subscription;
   task_markdown: string = '';
@@ -92,7 +93,12 @@ export class TaskPanelComponent {
  }
 
   ngOnInit(): void {
-    this.fetch_task();
+    if (this.initTask == null) {
+      this.fetch_task();
+    }
+    else {
+      this.fetch_task(this.initTask);
+    }
     this.client.get<any>(`${environment.apiUrl}/course/get`, {withCredentials: true}).subscribe(
       (data) => {
         this.course = {

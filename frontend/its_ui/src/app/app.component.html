@@ -6,7 +6,7 @@
     <div *ngSwitchCase="'profileView'"><app-profile (profileAction)="setView($event)" ></app-profile></div>
     <div *ngSwitchCase="'tutoringView'" class="tutoring-view grid-container">
         <div class="navbar"><app-navigation-bar (profileButtonClicked)="setView($event)"></app-navigation-bar></div>
-        <div class="task-panel"><app-task-panel></app-task-panel></div>
+        <div class="task-panel"><app-task-panel [initTask]="initTask"></app-task-panel></div>
         <div class="feedback-panel"><app-feedback-panel></app-feedback-panel></div>
         <div class="code-panel"><app-code-panel></app-code-panel></div>
     </div>
