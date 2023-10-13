@@ -30,6 +30,4 @@ Define a function, that will create a new list, containing the first and the las
 ```python
 def shorten(my_list):
     ...
-```
-```
 

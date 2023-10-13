@@ -15,7 +15,7 @@ I am a variable!
 ```
 ## To Do
 
-The command **type()** can help you determine the type of the variable in question. Write a function  **what_are_you** that will be printing out the type of input. 
+The command **type()** can help you determine the type of the variable in question. Write a function  **what_are_you** that will be printing out the type of input (please do not forget to use the **print()**)
 
 ```python
 def what_are_you(something):

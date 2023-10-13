@@ -1,7 +1,7 @@
 #!function!#
 import numpy as np 
 #!prefix!#
-def apply_and_invert_mask(input_array, mask):
+def apply_mask(input_array, mask):
     if input_array.shape != mask.shape:
         return None  # Return None for mismatched shapes
     

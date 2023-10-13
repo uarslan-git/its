@@ -10,4 +10,4 @@ def eigen_of_diagonal(matrix):
     
     return eigenvalues, eigenvectors
 
-    return("something")
+
