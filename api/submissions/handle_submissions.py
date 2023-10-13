@@ -201,7 +201,7 @@ def check_user_code(code, prefix_lines=[]):
                 func_id = node.func.id
             else:
                 func_id = node.func.attr
-                module_id = node.func.value.id
+                #module_id = node.func.value.id
             if func_id == "exec":
                 raise Exception("exec() is not allowed in this context")
             if func_id in ["eval", "open", "breakpoint", "callable",
