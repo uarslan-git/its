@@ -1,5 +1,5 @@
 #!function!#
-import numpy as np #Define requred imports here, be carefull abput allowing certain modules
+import numpy as np 
 #!prefix!#
 
 def custom_identity_matrix(n, value):

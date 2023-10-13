@@ -1,5 +1,5 @@
 #!function!#
-import numpy as np #Define requred imports here, be carefull abput allowing certain modules
+import numpy as np 
 #!prefix!#
 def my_arrays(n):
     if n <= 0:

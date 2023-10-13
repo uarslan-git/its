@@ -1,5 +1,5 @@
 #!function!#
-import numpy as np #Define requred imports here, be carefull abput allowing certain modules
+import numpy as np 
 #!prefix!#
 def reshape_and_sum(input_array, num_rows, num_columns):
     if num_rows * num_columns != input_array.size:

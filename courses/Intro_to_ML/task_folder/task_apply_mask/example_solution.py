@@ -1,5 +1,5 @@
 #!function!#
-import numpy as np #Define requred imports here, be carefull abput allowing certain modules
+import numpy as np 
 #!prefix!#
 def apply_and_invert_mask(input_array, mask):
     if input_array.shape != mask.shape:

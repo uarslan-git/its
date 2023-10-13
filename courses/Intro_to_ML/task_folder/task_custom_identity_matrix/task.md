@@ -1,10 +1,6 @@
 # Matrices
 ## Built in functions
-You can use paragraphs.
-Use Math expressions in math blocks with double-dollar-signs:
-\$\$ Y = \frac{1}{n} \sum_{i=1}^{n}x_i \$\$
-Inline Math is also possible \$ Y = \bar{X} \$
-It is also possible to use code blocks like so:
+The arrays do not have to be one dimensional. Rather, and array (you can also see ndarray in Numpy context) refers to an array of a deliberate dimensionality. A popular option for this are matrices: two-dimensional arrays.
 ```python
 import numpy as np 
 # Create arrays: Use build in functions

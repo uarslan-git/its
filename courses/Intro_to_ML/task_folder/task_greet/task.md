@@ -33,13 +33,13 @@ Command **print()** can be used to print out the outputs. You can also add simil
 For example: 
 ```python
 print("Who is "+"Marla"+"?")
-print( 5+5 )
+print( 5 + 5 )
 ```
 ```
 Who is Marla?
 10
 ```
-Use the following signature to say (print) "Hello" to an input name:
+Use the following signature to say (print) "Hello " to an input name:
 
 ```python
 def greet(name):

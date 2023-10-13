@@ -1,5 +1,5 @@
 #!function!#
-import math #Define requred imports here, be carefull abput allowing certain modules
+import math 
 #!prefix!#
 def largest_perfect_square(numbers):
     largest_square = None

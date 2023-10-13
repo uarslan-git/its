@@ -1,5 +1,5 @@
 #!function!#
-import numpy as np #Define requred imports here, be carefull abput allowing certain modules
+import numpy as np 
 #!prefix!#
 def get_corner_sums(array1, array2):
     if array1.shape != array2.shape:
