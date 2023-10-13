@@ -11,3 +11,4 @@ class AttemptState(Document):
     state_datetime: dict
     code: str
     submission_id: str
+    dataCollection: bool

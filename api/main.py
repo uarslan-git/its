@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request, Response, HTTPException
 from fastapi import APIRouter
 from submissions import handle_submissions
 from attempts import handle_attempts
@@ -18,6 +18,14 @@ from beanie import init_beanie
 from db import db_connector_beanie
 from users.schemas import User
 from config import config
+from runs import handle_runs
+from info import retrieve_info
+import time
+import asyncio
+from fastapi.responses import JSONResponse
+from starlette.status import HTTP_504_GATEWAY_TIMEOUT
+
+REQUEST_TIMEOUT_ERROR = 4  # Threshold
 
 
 #Api prefix
@@ -26,11 +34,29 @@ prefix = "/api"
 app = FastAPI(docs_url=f'{prefix}/docs',
               redoc_url=f'{prefix}/redoc',
               openapi_url=f'{prefix}/openapi.json')
+
+
+# Adding a middleware returning a 504 error if the request processing time is above a certain threshold
+@app.middleware("http")
+async def timeout_middleware(request: Request, call_next):
+    try:
+        start_time = time.time()
+        return await asyncio.wait_for(call_next(request), timeout=REQUEST_TIMEOUT_ERROR)
+
+    except asyncio.TimeoutError:
+        process_time = time.time() - start_time
+        return JSONResponse({'detail': 'Request processing time excedeed limit',
+                             'processing_time': process_time},
+                            status_code=HTTP_504_GATEWAY_TIMEOUT)
+
+
 app.include_router(handle_submissions.router, prefix=f"{prefix}")
 app.include_router(handle_tasks.router, prefix=f"{prefix}")
 app.include_router(handle_feedback.router, prefix=f"{prefix}")
 app.include_router(handle_attempts.router, prefix=f"{prefix}")
 app.include_router(handle_courses.router, prefix=f"{prefix}")
+app.include_router(handle_runs.router, prefix=f"{prefix}/run")
+app.include_router(retrieve_info.router, prefix=f"{prefix}/info")
 
 # User Router and database setup
 app.include_router(
@@ -76,7 +102,7 @@ async def on_startup():
 # TODO: Hiermit in Hinblick auf security auseinandersetzen!
 #origins = ["*"]
 origins = ["http://localhost:4200", "http://localhost:3000", 
-           "http://localhost", 
+           "http://localhost", "http://localhost:8080",
            "http://its.techfak.de", "https://its.techfak.de"]
 
 app.add_middleware(
@@ -100,7 +126,6 @@ async def get_status():
     parser.add_argument("--database-network", default="localhost", help="Specify the database network address")
     args = parser.parse_args()
     return args """
-
 
 if __name__ == "__main__":
     database_host = config.database_host

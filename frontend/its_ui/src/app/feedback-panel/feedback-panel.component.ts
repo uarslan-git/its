@@ -16,10 +16,12 @@ export class FeedbackPanelComponent {
   private submitSubscription: Subscription;
   private testReadySubscription: Subscription;
   private newTaskSubscription: Subscription;
+  private codeRunSubscription: Subscription;
+  private codeRunReadySubscription: Subscription;
 
   code_language: string = 'python';
   feedback_markdown: string = '';
-  feedback:  { test_results?: Array<any>; task_id?: string; submission_id?: string; valid_solution?: boolean} = {};
+  feedback:  { test_results?: Array<any>; task_id?: string; submission_id?: string; valid_solution?: boolean, output?: boolean} = {};
   submissionId: string = '';
   
 
@@ -29,13 +31,21 @@ export class FeedbackPanelComponent {
     this.submitSubscription = this.eventShareService.submitButtonClick$.subscribe((data) => {
       this.feedback_markdown = 'Code submitted, waiting for feedback...';
     });
-
     this.testReadySubscription = this.eventShareService.testReady$.subscribe((data) => {
       const submissionId = data
       this.fetchFeedback(submissionId);
     });
     this.newTaskSubscription = this.eventShareService.newTaskEvent$.subscribe(() => {
       this.feedback_markdown = '';
+    });
+    this.codeRunSubscription = this.eventShareService.runButtonClick$.subscribe(
+      () => {
+        this.feedback_markdown = 'Code Experiment started, waiting for results...'
+      }
+    );
+    this.codeRunReadySubscription = this.eventShareService.codeRunReady$.subscribe(
+      (run_id) => {
+        this.fetchRunExperiment(run_id);
     })
   }
 
@@ -67,6 +77,17 @@ export class FeedbackPanelComponent {
     return(feedback_markdown);
   }
 
+  fetchRunExperiment(runId: string) {
+    const submission_url = `${environment.apiUrl}/feedback/${runId}`
+    this.client.get<any>(submission_url, ).subscribe((data) => { 
+      this.feedback = {
+        output: data.run_output,
+        task_id: data.task_unique_name,
+    };
+    this.feedback_markdown = data.run_output;
+  });
+  }
+
   openValidSolutionDialog()
   {
     this.taskSolvedDialog.nativeElement.showModal();
@@ -85,5 +106,7 @@ export class FeedbackPanelComponent {
   ngOnDestroy() {
     this.submitSubscription.unsubscribe();
     this.testReadySubscription.unsubscribe();
+    this.newTaskSubscription.unsubscribe();
+    this.codeRunSubscription.unsubscribe();
   }
 }

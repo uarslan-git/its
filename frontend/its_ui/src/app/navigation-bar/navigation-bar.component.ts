@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { EventShareService } from '../shared/services/event-share.service';
-import { DataShareService } from '../shared/services/data-share.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -11,15 +12,20 @@ export class NavigationBarComponent {
 
   @Output() profileButtonClicked: EventEmitter<string> = new EventEmitter<string>;
 
+  @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>
+
+  aboutMarkdown: string = ''
+
   title: string = 'Tutoring System for Programming'
   task_name: string = ''
 
   constructor(
     private eventShareService: EventShareService,
-    private dataShareService: DataShareService){
-      this.dataShareService.taskIdShare$.subscribe(
-        (data) => {
-          this.task_name = data
+    private httpClient: HttpClient,
+    ){
+      this.eventShareService.newTaskFetched$.subscribe(
+        () => {
+          this.task_name = sessionStorage.getItem("taskId")!
         }
       )
     }
@@ -31,5 +37,13 @@ export class NavigationBarComponent {
   emitProfileButtonClicked() {
     //this.eventShareService.emitProfileButtonClick();
     this.profileButtonClicked.emit("profileRequest")
+  }
+
+  openAboutPopup() {
+    this.httpClient.get<any>(`${environment.apiUrl}/info/about`)
+        .subscribe(data => {
+          this.aboutMarkdown = data.about_markdown;
+        });
+    this.aboutPopup.nativeElement.showModal();
   }
 }

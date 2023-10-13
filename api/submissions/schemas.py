@@ -9,9 +9,11 @@ class Code_submission(Document):
     code: str
     log: str
     submission_time: dict
+    type: str
 
     class Settings:
         name = "Submission"
+        is_root=True
 
 class Tested_code_submission(Code_submission):
     valid_solution: bool

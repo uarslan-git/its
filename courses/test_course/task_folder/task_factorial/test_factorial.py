@@ -1,5 +1,5 @@
 from example_solution import factorial as factorial
-#!--!#
+#!cut_imports!#
 def test_factorial():
     # Test factorial of 0
     assert factorial(0) == 1, "Factorial of 0 is 1"

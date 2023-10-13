@@ -6,7 +6,9 @@ from typing import Optional
 from users.schemas import User
 from tasks.schemas import Task
 from attempts.schemas import Attempt
-from submissions.schemas import Tested_code_submission as Submission
+from submissions.schemas import Code_submission as Submission
+from runs.schemas import Evaluated_run_code_submission as Run_submission
+from tasks.schemas import Task
 from beanie import PydanticObjectId
 
 
@@ -39,7 +41,9 @@ class database():
         #    raise Exception("Multiple Tasks with same ID present")
         
     async def get_submission(self, submission_id):
-        submission = await Submission.find_one(Submission.id == PydanticObjectId(submission_id))
+        submission = await Submission.find_one(Submission.id == PydanticObjectId(submission_id), with_children=True)
+        if submission.type == "run":
+            submission = await Run_submission.find_one(Run_submission.id == PydanticObjectId(submission_id))
         return(submission)
 
     async def get_user(self, user_id): 
@@ -68,4 +72,3 @@ class database():
 
     async def create_attempt(self, attempt: Attempt): 
         await attempt.insert()
-

@@ -68,3 +68,14 @@
     transform: rotate(135deg);
     -webkit-transform: rotate(135deg);
   }
+
+  .impressum a{
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: rgb(42, 125, 250);
+    cursor: pointer;
+  }
+
+  .impressum a:hover{
+    color: rgb(104, 164, 255);
+  }

@@ -26,14 +26,14 @@ export class CodePanelComponent {
   code_language = 'python';
   @ViewChild(CodeEditorComponent)
   codeEditorComponent!: CodeEditorComponent;
-
+  lastSavedCode!: string;
 
   //Submit Button
   submitButtonClicked() {
-    this.submitted_code = this.codeEditorComponent.contentControl;
+    this.submitted_code = this.codeEditorComponent.userContentControl;
     this.client.post<any>(`${environment.apiUrl}/code_submit`, 
           {task_unique_name: this.current_task_id, code: this.submitted_code, 
-            log: "True",
+            log: "True", type: "submission",
             submission_time: this.datetimeService.datetimeNow()
           },
             {withCredentials: true}).subscribe((data) => {
@@ -42,24 +42,36 @@ export class CodePanelComponent {
     });
   }
 
-  taskIdSubscription: Subscription;
+  //Run Button
+  handleRunEvent(parameters: any) {
+    var runCode = this.codeEditorComponent.userContentControl;
+    const body = {task_unique_name: this.current_task_id, code: runCode,
+                log: "True", 
+                submission_time: this.datetimeService.datetimeNow(),
+                run_arguments: parameters, type: "run"};
+    this.client.post<any>(`${environment.apiUrl}/run/run_code`, body, {withCredentials: true}).subscribe(
+      (data) => {
+        this.eventShareService.emitCodeRunReadyEvent(data.run_id);
+      }
+    );
+  }
+
+  taskFetchedSubscription: Subscription;
   current_task_id: string = "";
 
   constructor(
-/*       private prismService: PrismHighlightService,
-      private fb: FormBuilder,
-      private renderer: Renderer2, */
       private client: HttpClient,
       private dataShareService: DataShareService,
       private eventShareService: EventShareService,
       public datePipe: DatePipe,
       private datetimeService: DatetimeService,
     ) {
-      this.taskIdSubscription = this.dataShareService.taskIdShare$.subscribe(
-        (data) => {this.current_task_id = data;
+      this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe(
+        (data) => {this.current_task_id = sessionStorage.getItem("taskId")!;
+                  console.log(this.current_task_id);
                   this.getCurrentAttemptState();}
       );
-    }
+  }
 
     // Tracking Users Coding process, also functionality to save and restore attempts.
 
@@ -70,25 +82,42 @@ export class CodePanelComponent {
       this.client.get<any>(`${environment.apiUrl}/attempt/get_state/${this.current_task_id}`, {withCredentials: true}).subscribe(
         (data) => {
           this.currentAttemptId = data.attempt_id;
-          this.codeEditorComponent.form.setValue({'content': data.code});
+          this.codeEditorComponent.form.setValue({'content': sessionStorage.getItem('taskPrefix') + data.code});
           this.contentReloaded = true;
+          this.lastSavedCode = data.code;
         }
       )
     }
 
     recordChanges(newContent: string, submissionId: string='') {
+      /* newContent = this.codeEditorComponent.userContentControl; */
+      const prefix = sessionStorage.getItem("taskPrefix")!;
+      if (newContent.startsWith(prefix)) {
+        newContent = newContent.slice(prefix.length);
+      } 
       if ((!this.contentReloaded) || (this.current_task_id=='course completed')) {
+        //ensure that code has changed
+        if((this.lastSavedCode == newContent) && (submissionId == '')) {return};
         const body = {
           'attempt_id': this.currentAttemptId,
           'code': newContent, 
           'state_datetime': this.datetimeService.datetimeNow(),
-          'submission_id': submissionId};
+          'submission_id': submissionId,
+          'dataCollection': sessionStorage.getItem('dataCollection')};
         this.client.post<any>(`${environment.apiUrl}/attempt/log`, body, {withCredentials: true}).subscribe(
           () => {
-            console.log("State logged");
+            console.log("State saved");
           }
         )
       }
         this.contentReloaded = false;
+        this.lastSavedCode = newContent;
     }
+
+    ngOnDestroy(){
+    if(this.codeEditorComponent.contentControl != this.lastSavedCode) {
+      this.recordChanges(this.codeEditorComponent.contentControl);
+    }
+    this.taskFetchedSubscription.unsubscribe();
+   }
 }

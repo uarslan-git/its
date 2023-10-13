@@ -5,8 +5,20 @@
       <!-- <li><a href="#" (click)="newTaskButtonClicked('personal')">New Task</a></li> -->
       <li><a>{{task_name}}</a></li>
       <li><a (click)="newTaskButtonClicked('next')"><i class="arrow right" role="button"></i></a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Contact</a></li>
+      <li><a (click)="openAboutPopup()" href="#">About</a></li>
+      <li><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></li>
       <li><a href="#" (click)="emitProfileButtonClicked()">Profile</a></li>
     </ul>
   </nav>
+  
+  <dialog #aboutPopup class="popup-dialog-container">
+    <div class="popup-dialog">
+      <app-markdown-panel [markdownString]="aboutMarkdown"></app-markdown-panel>
+      <div class="impressum"><p><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></p></div>
+        <div class="ok-button-container">
+          <button class="popup-dialog-button" (click)="aboutPopup.close()">
+            Close
+         </button>
+        </div>
+    </div>
+  </dialog>

@@ -13,7 +13,7 @@
                 </tr>
                 <tr>
                     <th>Registered for</th>
-                    <td>Introduction to ML</td>
+                    <td>{{enrolledCourse}}</td>
                 </tr>
                 <tr>
                     <th>Registered since</th>
@@ -21,8 +21,21 @@
                 </tr>
             </table>
         </div>
-<!--       <input #profileUsername placeholder="Username" /><br />
-      <input #profilePassword type="password" placeholder="Password" /><br /> -->
+
+        <hr>
+        <div class="checkbox-container" (click)="updateSettings()">
+              <input class="data-checkbox" id="data-checkbox" type="checkbox" #consentCheckbox checked/> 
+              <label class="consent-label" for="data-checkbox">I consent to anonymized data collection for purely scientific purposes.</label>
+        </div>
+        <div class="checkbox-info">
+          <div class="invisible-checkbox"></div>
+          <p>
+            <a (click)="showDataTermsPopup()">Learn more about the data we gather and its potential uses.</a>
+          </p>
+          <app-data-terms-popup #dataTermsPopupComponent></app-data-terms-popup>
+        </div>
+        <hr>
+
       <div class="centered-button">
         <button (click)="closeProfile()">Close Profile</button>
       </div>

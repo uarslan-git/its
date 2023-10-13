@@ -1,5 +1,5 @@
 from example_solution import square as square
-#!--!#
+#!cut_imports!#
 def test_square():
     # Test square of 0
     assert square(0) == 0, "Square of 0 is 0"

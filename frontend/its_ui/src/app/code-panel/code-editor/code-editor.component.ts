@@ -20,10 +20,16 @@ export class CodeEditorComponent {
   timer: any; 
 
 
+  // The Timer is set every time the user code changes, if it changes again,
+  // the timer is reset
   emitCodeChangeEventTimer(newVal: string) {
     this.timer = setTimeout(
       () => {
-        this.codeChangeEvent.emit(newVal);
+        const prefix = sessionStorage.getItem('taskPrefix')!;
+        if (newVal.startsWith(prefix)) {
+          console.log("prefix sliced!");
+          this.codeChangeEvent.emit(newVal.slice(prefix.length));
+        }
       }
     , 1000) //Milliseconds timeout
   }
@@ -65,8 +71,19 @@ get contentControl(): string {
   return content != null ? content : '';
 }
 
+get userContentControl() {
+  const content: any = this.form.get('content')?.value;
+  if (content.startsWith(this.prefix)) {
+    return content.slice(this.prefix.length);
+  }
+  else {
+   console.error("Code prefix not present!") 
+  }
+}
+
 newTaskSubscription: Subscription;
 current_task_id: string = "";
+prefix: string = "";
 
 constructor(
   private prismService: PrismHighlightService,
@@ -75,21 +92,29 @@ constructor(
   private dataShareService: DataShareService,
   private eventShareService: EventShareService,
 ) {
-  this.newTaskSubscription = this.eventShareService.newTaskEvent$.subscribe(
+  this.newTaskSubscription = this.eventShareService.newTaskFetched$.subscribe(
     () => {
-      console.log("Editor Content reset!");     
-/*       this.textArea.nativeElement.content = '';
-           this.codeContent.nativeElement.content = '';
-           this.editorForm.nativeElement.content = ''; */
-           this.form.setValue({'content': ''});
+            //TODO: Bettr control time of execution, because codePanel is also listening to newTaskFetched!
+            console.log("Editor Content reset!");
+            if (typeof this.prefix !== 'undefined') {
+              this.prefix = sessionStorage.getItem('taskPrefix')!;
+            }
+            else {
+              this.codeChangeEvent.emit(this.userContentControl);
+              this.prefix = sessionStorage.getItem('taskPrefix')!;
+            }
+            this.form.setValue({'content': ''});
           }
   );
 }
 
+
 ngOnInit(): void {
   this.listenForm()
-  /* this.synchronizeScroll(); */
+  // This subscription runs code every time the user changes the code.
+  //TODO: onTextareaKeydown does the same in principal. Check if this should be handled in same method.
   this.form.controls.content.valueChanges.subscribe((newValue) => {
+    newValue = this.ensurePrefix(newValue!);
     this.synchronizedTextareaGrow();
     this.clearCodeChangeTimer();
     this.emitCodeChangeEventTimer(newValue!);
@@ -109,6 +134,16 @@ ngAfterViewChecked() {
 
 ngOnDestroy() {
   this.sub?.unsubscribe();
+}
+
+private ensurePrefix(newContent: string){
+  const prefix = sessionStorage.getItem("taskPrefix")!
+  if(!(newContent.startsWith(prefix))) {
+    console.log("Ensuring prefix");
+    newContent = prefix + newContent.slice(prefix.length);
+    this.form.setValue({'content': newContent});
+  }
+  return(newContent);
 }
 
 private synchronizedTextareaGrow() {
@@ -134,19 +169,30 @@ private listenForm() {
 onTextareaKeyDown(event: KeyboardEvent): void {
   if (event.key === 'Tab') {
     event.preventDefault(); // Prevent the default tab behavior
-    this.form.setValue({'content': this.contentControl + '    '});
-    //const textarea: HTMLTextAreaElement = event.target as HTMLTextAreaElement;
-/*     const selectionStart = this.textArea.nativeElement.selectionStart;
-    const selectionEnd = this.textArea.nativeElement.selectionEnd;
-    const currentValue = this.textArea.nativeElement.textValue;
-    const newValue =
-      currentValue.substring(0, selectionStart) +
-      '    ' + // Four spaces
-      currentValue.substring(selectionEnd);
-    this.textArea.nativeElement.textValue = newValue;
-    // Move cursor forward by 4 spaces
-    this.textArea.nativeElement.setSelectionRange(selectionStart + 4, selectionStart + 4); */
+    const start = this.textArea.nativeElement.selectionStart;
+    const end = this.textArea.nativeElement.selectionEnd;
+  
+    // Get the current content of the textarea
+    const currentContent = this.contentControl;
+
+    // Insert four spaces at the current cursor position
+    const newContent = currentContent.substring(0, start) + '    ' + currentContent.substring(end);
+
+    this.form.setValue({'content': newContent});
+
+    // Move the cursor to the end of the inserted spaces
+    const newCursorPosition = start + 4;
+    this.textArea.nativeElement.setSelectionRange(newCursorPosition, newCursorPosition);
+  }
+}
+
+onSelect(event: Event) {
+  const start = this.textArea.nativeElement.selectionStart;
+  const end = this.textArea.nativeElement.selectionEnd;
+  if (start == end) {
+    if (start <= this.prefix.length) {
+      this.textArea.nativeElement.setSelectionRange(this.prefix.length+1, this.prefix.length+1);
+    }
   }
 }
 }
-

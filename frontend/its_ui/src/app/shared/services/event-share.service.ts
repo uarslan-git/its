@@ -29,12 +29,36 @@ export class EventShareService {
     this.testReadySubject.next(submissionId);
   }
 
+  //run button click
+  private runButtonClickSubject = new Subject<void>();
+  runButtonClick$ = this.runButtonClickSubject.asObservable();
+
+  emitRunButtonClick() {
+    this.runButtonClickSubject.next();
+  }
+
+  // Code Run ready Event
+  private codeRunReadySubject = new Subject<string>();
+  codeRunReady$ = this.codeRunReadySubject.asObservable();
+
+  emitCodeRunReadyEvent(codeRunId: string) {
+    this.codeRunReadySubject.next(codeRunId);
+  }
+
   //New Task Event
   private newTaskEventSubject = new Subject<string>();
   newTaskEvent$ = this.newTaskEventSubject.asObservable();
 
   emitNewTaskEvent(direction: string) {
     this.newTaskEventSubject.next(direction);
+  }
+
+  //New Task Event
+  private newTaskFetchedSubject = new Subject<void>();
+  newTaskFetched$ = this.newTaskFetchedSubject.asObservable();
+
+  emitNewTaskFetchedEvent() {
+    this.newTaskFetchedSubject.next();
   }
 
   //View Change Event
