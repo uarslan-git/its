@@ -11,7 +11,6 @@ The data controller for your personal data is:
 AG Knowledge Representation and Machine Learning
 Universitaet Bielefeld
 Technische Fakultaet
-AG Machine Learning
 Postfach 10 01 31
 33501 Bielefeld
 E-Mail [its@techfak.de](mailto:its@techfak.de)
@@ -53,7 +52,7 @@ As a participant in our scientific research, you have the following rights:
 - **Access:** Request access to your personal data collected for research purposes.
 - **Rectification:** Request correction of inaccuracies in your data.
 - **Withdrawal of Consent:** You have the right to withdraw your consent at any time, and it will not affect the lawfulness of processing based on consent before withdrawal.
-- **Deletion:** Delete your all your account data. 
+- **Deletion:** Delete your all your account data. Please note, that we can only delete the data that contains your username information. Once the data is extracted and anonymized for research purposes, we will not be able to delete the data from the anonymized database. 
 
 To exercise these rights, please contact us at [its@techfak.de](mailto:its@techfak.de).
 
