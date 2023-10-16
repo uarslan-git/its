@@ -27,7 +27,6 @@ export class CodeEditorComponent {
       () => {
         const prefix = sessionStorage.getItem('taskPrefix')!;
         if (newVal.startsWith(prefix)) {
-          console.log("prefix sliced!");
           this.codeChangeEvent.emit(newVal.slice(prefix.length));
         }
       }
@@ -94,8 +93,7 @@ constructor(
 ) {
   this.newTaskSubscription = this.eventShareService.newTaskFetched$.subscribe(
     () => {
-            //TODO: Bettr control time of execution, because codePanel is also listening to newTaskFetched!
-            console.log("Editor Content reset!");
+            //TODO: Better control time of execution, because codePanel is also listening to newTaskFetched!
             if (typeof this.prefix !== 'undefined') {
               this.prefix = sessionStorage.getItem('taskPrefix')!;
             }

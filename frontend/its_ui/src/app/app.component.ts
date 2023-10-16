@@ -25,7 +25,6 @@ export class AppComponent {
 
   ngOnInit(): void {
     this.client.get<any>(`${environment.apiUrl}/status`).subscribe((data) =>  {
-      console.log(environment.apiUrl);
       console.log(data["message"]);
     });
   }

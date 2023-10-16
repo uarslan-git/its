@@ -52,7 +52,6 @@ export class ProfileComponent {
         this.name = this.user.email!.split("@")[0];
         this.registeredDatetime = this.user.register_datetime["local"];
         this.enrolledCourse = this.user.enrolled_courses![0];
-        console.log("enrolled");
         if(this.user.settings.dataCollection) {
           this.consentCheckbox.nativeElement.checked = true;
         }

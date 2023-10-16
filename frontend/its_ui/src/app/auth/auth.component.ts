@@ -47,8 +47,8 @@ export class AuthComponent {
     formData.append('username', `${username}@anonym.de`); //At some later point we may want to prefer e-mail based login
     formData.append('password', password);
 
-    this.http.post<Response>(`${this.apiUrl}/auth/jwt/login`, formData, { withCredentials: true, observe: 'response'}).subscribe(
-      response => {
+    this.http.post<any>(`${this.apiUrl}/auth/jwt/login`, formData, { withCredentials: true}).subscribe(
+      () => {
           // Handle successful login
           this.loginStatus = "loggedIn";
           this.emitLoginEvent();

@@ -22,14 +22,18 @@ export class ActionPanelComponent {
               private fb: FormBuilder){}
 
   ngOnInit() {
-    this.runParametersForm = this.fb.group({
+/*      this.runParametersForm = this.fb.group({
       fields: this.fb.array(this.parameterFormArrayControls())
-    });
+    }); */
   }
 
   parameterFormArrayControls() {
     const controls: FormGroup[] = [];
+
     const argArray: string[] = JSON.parse(sessionStorage.getItem("taskArguments")!);
+    if (!argArray) {
+      console.error("taskArguments is not present in sessionStorage.");
+    }
     for (let i = 0; i < argArray.length; i++) {
       controls.push(this.fb.group({
         // You can add any validators or default values here
