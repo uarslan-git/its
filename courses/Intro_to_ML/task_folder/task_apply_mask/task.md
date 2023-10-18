@@ -27,7 +27,7 @@ print(mat[mask]) # Select all items/entries for which the expression yields True
 ```
 ## Evaluating a boolean expression
 
-Create a function that takes a NumPy array and a mask array as inputs. The function should return a new array containing elements from the original array that correspond to False values in the mask array. (**HINT** it can be useful to invert the input mask for this )
+Create a function that takes a NumPy array and a mask array as inputs. The function should return a new array containing elements from the original array that correspond to False values in the mask array. (**HINT** it can be useful to invert the input mask for this). Please return None if the mask does not math the array.
 ```python
 def apply_mask(input_array, mask):
     ...

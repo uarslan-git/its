@@ -50,6 +50,26 @@ print(c)
 2
 3
 ```
+```python
+# Slicing tuples
+my_tuple =(1,2,3,4,5)
+print(my_tuple[2:]) #Print elements from index 2 to end 
+```
+```
+(3, 4, 5)
+```
+## Typecasting tuples
+
+Similarly to previous exercises, you can typecast tuples.
+
+```python
+a = 'ITS'
+print (tuple(a))
+```
+```
+('I', 'T', 'S')
+```
+
 ## To Do
 
 Create a function in the following format: 
@@ -60,11 +80,10 @@ def name_check(my_name):
 ```
 For the name given, this function should: 
 1. Create a tuple containing the letters of your name from a string.
-2. Check whether or not x is in the name
+2. Check whether or not x is in the name. ()
 3. Create tuple containing all but the first letter in `my_name`
 
 > Desired output for the name `"Riza"`:
 ```
 False, ('i', 'z', 'a')
 ```
-### 

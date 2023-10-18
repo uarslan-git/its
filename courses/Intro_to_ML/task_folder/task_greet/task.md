@@ -1,9 +1,20 @@
 # Welcome!
+
+## Before you start
+
+It is pleasure to welcome you to our Intelligent Tutoring System! While we hope that you will have a great experience with it, we would also like to mention that 
+this ITS is in its pre-alpha stage, so not all the intended functionality is yet available. 
+Before you start slovint the tasks, we would like to ask you to complete a short questionnare: 
+
+- [Learning Preferences ](https://utfragen.uni-bielefeld.de/index.php/594985?lang=en) 
+
+This will help us immensely to understand what methods are the best for the further improvement of the ITS. 
+
 ## This is the very beginning of the Introduction to Python
 
-This is a short introduction to the Python programming language. It focuses on usage and not on theory or underlying concepts. The content is chosen in order to *prepare you for the programming exercises*.
+This is a short introduction to the Python programming language. It focuses on usage and not on theory or underlying concepts. The content is chosen in order to **prepare you for the programming exercises**.
 
-**The course does NOT claim completness and does NOT replace a "proper" (complete) introduction to the Python programming language.**
+**The ITS does NOT claim completness and does NOT replace a "proper" (complete) introduction to the Python programming language.**
 
 Additional material:
 - [https://www.tutorialspoint.com/python/index.html](https://www.tutorialspoint.com/python/index.html)  
@@ -43,5 +54,6 @@ Use the following signature to say (print) "Hello " to an input name:
 
 ```python
 def greet(name):
+    ...
  
 ```

@@ -1,6 +1,6 @@
 #!function!#
-#!prefix!#
 def variables(n):
+#!prefix!#
     a = str(n)
     b = int(n)
     c = float(n)

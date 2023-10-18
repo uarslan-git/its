@@ -3,7 +3,7 @@
 There are many ways to create a list, here are a couple of them:
 
 ```python
-# Create a list by using range  (ATTENTION: range is lazy!)
+# Create a list by using range 
 z = list(range(0, 10))
 print(z)
 print(range(0, 10))

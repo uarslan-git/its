@@ -1,8 +1,8 @@
 #!function!#
 import numpy as np 
+def custom_identity_matrix(n, value):
 #!prefix!#
 
-def custom_identity_matrix(n, value):
     if n <= 0:
         return None  # Return None for invalid input
     

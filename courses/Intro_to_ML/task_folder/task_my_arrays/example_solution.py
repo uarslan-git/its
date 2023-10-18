@@ -1,7 +1,7 @@
 #!function!#
 import numpy as np 
-#!prefix!#
 def my_arrays(n):
+#!prefix!#
     if n <= 0:
         return None  # Return None for invalid input
     

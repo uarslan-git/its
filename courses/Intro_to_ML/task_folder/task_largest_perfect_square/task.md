@@ -15,10 +15,10 @@ $$ s=\sqrt{25} $$
 
 ```python
 from math import sqrt  # Import the function 'sqrt' from the module 'math'
-print(sqrt(4))   # NOTE: We do not need to specify the module any more! (Be aware of naming conflicts)
+print(sqrt(25))   # NOTE: We do not need to specify the module any more! (Be aware of naming conflicts)
 ```
 ```
-2
+5
 ```
 In there introductory modules, we will be importing the packages for you, but please be aware that for coding outside the ITS you would have to install and call them before using!
 

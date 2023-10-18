@@ -1,7 +1,7 @@
 #!function!#
 import numpy as np 
-#!prefix!#
 def trigonometry(angle_array):
+#!prefix!#
     # Convert degrees to radians
     angle_radians = np.deg2rad(angle_array)
     

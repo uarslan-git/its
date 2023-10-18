@@ -1,6 +1,6 @@
 #!function!#
-#!prefix!#
 def smallest_positive(numbers, threshold):
+#!prefix!#
     smallest_positive = None
 
     for num in numbers:

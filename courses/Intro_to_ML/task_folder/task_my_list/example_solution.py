@@ -1,6 +1,6 @@
 #!function!#
-#!prefix!#
 def my_list(n):
+#!prefix!#
     if n < 0:
         raise ValueError("n must be a non-negative integer")
 

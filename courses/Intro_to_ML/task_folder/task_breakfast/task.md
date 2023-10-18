@@ -9,7 +9,7 @@ def breakfast(sentence):
 ```
 As an input ("sentence") you will be receiving a string with products, like: "ham, fruit, orange juice". 
 Within your function: 
-1. Translate the string into a list of products (**hint**: split the string by comma)
+1. Translate the string into a list of products (**hint**: split the string by comma with **split()** function)
 2. Append an irreplacable product ("coffee") to the breakfast list with .append()
 3. Extend the list to accomodate people who prefer leftovers from the previous evening ["pizza", "noodles"] with .extend()
 4. Find out the length of the product list you have created. 
@@ -20,6 +20,6 @@ Within your function:
 For the input in the example above, the following output is expected: 
 
 ```
-5, 8, ["coffee", "ham", "fruit"] 
+6, 8, ["coffee", "ham", "fruit"] 
 ```
-You will mention, that there is 6 products mentioned in the task, but there is only 5 expect as an output. Why would it be so?
+Would you like to run this function to try what happens if the input string is empty?

@@ -1,7 +1,7 @@
 #!function!#
 import numpy as np 
-#!prefix!#
 def eigen_of_diagonal(matrix):
+#!prefix!#
     # Extract the diagonal elements
     diagonal = np.diag(np.diag(matrix))
     

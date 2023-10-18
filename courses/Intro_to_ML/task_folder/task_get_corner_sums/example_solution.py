@@ -1,9 +1,7 @@
 #!function!#
 import numpy as np 
-#!prefix!#
 def get_corner_sums(array1, array2):
-    if array1.shape != array2.shape:
-        return None  # Return None for arrays with different shapes
+#!prefix!#
 
     n1, m1 = array1.shape
     n2, m2 = array2.shape

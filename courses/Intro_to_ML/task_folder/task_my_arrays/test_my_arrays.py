@@ -16,7 +16,7 @@ def test_my_arrays():
     # Test case 2: Check if the function handles n <= 0 by returning None
     n2 = -3
     result2 = my_arrays(n2)
-    assert result2 is None, "The function does not return None for negative integers. Please accound for this case!"
+    assert result2 is None, "The function does not return None for negative integers. Please account for this case!"
 
 test_my_arrays()
 

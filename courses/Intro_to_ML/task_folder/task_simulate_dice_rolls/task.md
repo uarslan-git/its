@@ -1,6 +1,6 @@
 # Random samples
-## numpy.random()
-**numpy.random()** is another subpackage, which can be used to generate random elements. 
+## numpy.random
+**numpy.random** is another subpackage, which can be used to generate random elements. 
 ```python
 import numpy as np
 die_rolls = np.random.randint(1, 50) # generate a random integer between 1 and 50

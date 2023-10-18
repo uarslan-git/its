@@ -1,7 +1,6 @@
 from example_solution import get_corner_sums as get_corner_sums
 import numpy as np
 #!cut_imports!#
-import numpy as np
 
 def test_get_corner_sums():
     # Test case 1: Check if the function correctly computes corner sums
@@ -23,4 +22,5 @@ def test_get_corner_sums():
                        [11, 12, 13, 14]])
 
     result2 = get_corner_sums(array3, array4)
-    assert result2 is None, "It seems that the case of the matrices having different shapes is not accounted for."
+    expected_result2 = (15, 13)
+    assert result2 == expected_result2, "It seems that the case of matrices of different sizes is not accounted for."

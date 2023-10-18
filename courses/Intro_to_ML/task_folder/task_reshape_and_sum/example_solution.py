@@ -1,7 +1,7 @@
 #!function!#
 import numpy as np 
-#!prefix!#
 def reshape_and_sum(input_array, num_rows, num_columns):
+#!prefix!#
     if num_rows * num_columns != input_array.size:
         return None  # Return None for incompatible dimensions
 

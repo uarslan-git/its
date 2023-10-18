@@ -1,6 +1,6 @@
 #!function!#
-#!prefix!#
 def shorten(my_list):
+#!prefix!#
     # Check if the input list is empty
     if not my_list:
         return []  # Return an empty list if the input list is empty

@@ -1,5 +1,5 @@
 #!print!#
-#!prefix!#
 def what_are_you(something):
+#!prefix!#
     #function body
     print (type(something))

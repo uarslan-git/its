@@ -1,6 +1,6 @@
 #!function!#
-#!prefix!#
 def list_copy(my_list):
+#!prefix!#
     # Check if the input list has at least two elements
     if len(my_list) < 2:
         return []  # Return an empty list if there are fewer than two elements in the input list
