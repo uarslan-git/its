@@ -17,9 +17,10 @@ async def get_user_db():
 
 class database():
     
-    def __init__(self, database_host: str) -> None:
-        #mongodb
-        DATABASE_URL = f"mongodb://{database_host}:27017"
+    def __init__(self, database_host: str, database_user: str, database_pwd: str, database_port: str=27017) -> None:
+        #mo
+        DATABASE_URL = f"mongodb://{database_user}:{database_pwd}@{database_host}:{database_port}/?authSource=admin"
+        #DATABASE_URL = f"mongodb://{database_host}:27017"
         client = motor.motor_asyncio.AsyncIOMotorClient(
             DATABASE_URL, uuidRepresentation="standard"
         )

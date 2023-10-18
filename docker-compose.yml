@@ -23,12 +23,19 @@ services:
 
   mongodb:
     image: mongo:4.4.6
+    environment:
+      #Credentials for The root user of the db
+      - MONGO_INITDB_ROOT_USERNAME=useradmin
+      - MONGO_INITDB_ROOT_PASSWORD=${DB_ROOT_PW}
+      - DB_SERVICE_PW=${DB_SERVICE_PW}
     volumes:
       - mongodb_data:/data/db
+      - ./database/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
     ports:
       - "27017:27017"
     networks:
       - its_network
+    command: [--auth]
 
 networks:
   its_network:
