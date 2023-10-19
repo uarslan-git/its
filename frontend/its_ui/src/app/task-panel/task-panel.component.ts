@@ -5,6 +5,8 @@ import { DataShareService } from '../shared/services/data-share.service';
 import { Subscription, delay } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
+import { MarkdownPanelComponent } from '../shared/components/markdown-panel/markdown-panel.component';
+
 @Component({
   selector: 'app-task-panel',
   templateUrl: './task-panel.component.html',
@@ -12,7 +14,8 @@ import { environment } from 'src/environments/environment';
 })
 export class TaskPanelComponent {
 
-  @ViewChild("courseCompleteDialog", {static: true}) courseCompleteDialog!: ElementRef<HTMLDialogElement>
+  @ViewChild("courseCompleteDialog", {static: true}) courseCompleteDialog!: ElementRef<HTMLDialogElement>;
+  @ViewChild(MarkdownPanelComponent) markdownPanelComponent!: MarkdownPanelComponent;
   @Input() initTask?: string | null = null;
 
   private eventSubscription: Subscription;
@@ -89,6 +92,8 @@ export class TaskPanelComponent {
     sessionStorage.setItem("taskArguments", JSON.stringify(this.task['arguments']!));
     sessionStorage.setItem("taskPrefix", this.task['prefix']!);
     this.eventShareService.emitNewTaskFetchedEvent();
+    this.markdownPanelComponent.resetScroll();
+
   });
  }
 

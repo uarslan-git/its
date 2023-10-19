@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-markdown-panel',
@@ -7,4 +7,11 @@ import { Component, Input } from '@angular/core';
 })
 export class MarkdownPanelComponent {
   @Input() markdownString: string="";
+  @ViewChild("markdownContainer", {static: true}) markdownContainer!: ElementRef;
+
+
+
+  resetScroll(){
+    this.markdownContainer.nativeElement.scrollTop = 0;
+  }
 }

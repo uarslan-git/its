@@ -22,6 +22,8 @@ def parse_arguments():
     # Add the --database-network argument with a default value of "localhost"
     parser.add_argument("--database-host", default="localhost", help="Specify the database network address")
     parser.add_argument("--database-port", default="27017", help="Specify the database network address")
+    parser.add_argument("--user", default="backend_service_user", help="Specify your db username")
+    parser.add_argument("--pwd", default="SECRET", help="Specify your db password")
     parser.add_argument("--tasks", default="true", help="Specify whether to parse a task folder")
 
     args = parser.parse_args()
@@ -32,7 +34,9 @@ if __name__ == "__main__":
     args = parse_arguments()
     print("Please give directory of the course folder to add to db:")
     directory = input()
-    client = MongoClient(host=args.database_host, port=int(args.database_port))
+    #client = MongoClient(host=args.database_host, port=int(args.database_port))
+    DATABASE_URL = f"mongodb://{args.user}:{args.pwd}@{args.database_host}:{args.database_port}/?authSource=admin"
+    client = MongoClient(DATABASE_URL)
     db = client["its_db"]
     parse_course(directory, db)
     if args.tasks == "true":
