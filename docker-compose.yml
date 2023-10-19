@@ -3,17 +3,21 @@ version: '3.8'
 services:
   angular-app:
     build: ./frontend
-    #image: nginx:latest
-    #volumes:
-    #  - ./frontend/its_ui/dist/its_ui:/usr/share/nginx/html
     ports:
       - "8080:80"
     networks:
       - its_network
 
   fastapi-backend:
+    #google: fastapi reload after crash.
+    restart: always
+    #deploy:
+    #  mode: replicated
+    #  replicas: 3
     build: ./api
     command: python main.py
+    environment:
+      db_pwd: ${DB_SERVICE_PW?}
     ports:
       - "8888:8000"
     depends_on:
@@ -25,17 +29,19 @@ services:
     image: mongo:4.4.6
     environment:
       #Credentials for The root user of the db
-      - MONGO_INITDB_ROOT_USERNAME=useradmin
-      - MONGO_INITDB_ROOT_PASSWORD=${DB_ROOT_PW}
-      - DB_SERVICE_PW=${DB_SERVICE_PW}
+      #Store credenials in a file called .env
+      MONGO_INITDB_ROOT_USERNAME: useradmin
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PW?}
+      DB_SERVICE_PW: ${DB_SERVICE_PW?}
     volumes:
       - mongodb_data:/data/db
-      - ./database/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - ./database/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+    command:
+      - mongod
     ports:
       - "27017:27017"
     networks:
       - its_network
-    command: [--auth]
 
 networks:
   its_network:
