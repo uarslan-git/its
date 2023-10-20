@@ -12,7 +12,7 @@ myFunction()
 ```
 Hello from inside myFunction!
 ```
-Youe function can be either called on itself (as in the example above), or it can have some arguments: 
+Your function can be either called on itself (as in the example above), or it can have some arguments: 
 
 ```python
 # A simple function with argument(s)
@@ -57,3 +57,5 @@ Use the folowing signature:
 def square(x):
     ...
 ```
+
+**Note:** To recall arithmetic operators that can be used in Python, [click here](https://www.w3schools.com/python/gloss_python_arithmetic_operators.asp). 

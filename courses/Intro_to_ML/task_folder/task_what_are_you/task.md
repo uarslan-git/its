@@ -21,3 +21,4 @@ The command **type()** can help you determine the type of the variable in questi
 def what_are_you(something):
     ...
 ```
+Now, try out your function on "chocolate", 542, 40.666, True
