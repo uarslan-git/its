@@ -35,7 +35,7 @@ def parse_argument_types(arg_dict):
             return {}, "Invalid argument"
         return run_arguments, "Success"
 
-
+#TODO: prevent disk overflow through malicious users
 @router.post("/run_code")
 async def run_code(submission: Run_code_submission, user: User = Depends(current_active_user)):
     user_id = user.id
