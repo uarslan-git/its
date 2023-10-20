@@ -6,7 +6,7 @@ database="its_db"
 user="backend_service_user"
 password="SECRET"
 authDatabase="admin"
-storageLocation="./"
+storageLocation="/home/its/db_backup/"
 
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
