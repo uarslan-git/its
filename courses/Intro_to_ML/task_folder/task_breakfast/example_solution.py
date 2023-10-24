@@ -22,4 +22,4 @@ def breakfast(sentence):
     # Step 7: Add "coffee" to the beginning of the new list
     new_list.insert(0, "coffee")
     
-    return length_of_products, new_list, sum_of_lengths
+    return length_of_products, sum_of_lengths, new_list

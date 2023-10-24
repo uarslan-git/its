@@ -26,7 +26,7 @@ list
 ```
 # To Do
 
-Define a function, that will create a new list, containing the first and the last value of the input list 
+Define a function, that will create and return a new list, containing the first and the last value of the input list.
 ```python
 def shorten(my_list):
     ...

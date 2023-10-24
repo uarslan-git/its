@@ -38,3 +38,4 @@ def my_arrays(n):
 4. Return None for negative **n**.
 
 (**HINT** np.zeros(), np.ones() can be quite useful here)
+**Note** This pre-alpha version can only use primitive python types as argumrnts for "run". Please provide the arguments as list and transform them in your function body via np.array().

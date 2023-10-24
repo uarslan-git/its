@@ -189,7 +189,7 @@ onSelect(event: Event) {
   const end = this.textArea.nativeElement.selectionEnd;
   if (start == end) {
     if (start <= this.prefix.length) {
-      this.textArea.nativeElement.setSelectionRange(this.prefix.length+1, this.prefix.length+1);
+      this.textArea.nativeElement.setSelectionRange(this.prefix.length, this.prefix.length);
     }
   }
 }

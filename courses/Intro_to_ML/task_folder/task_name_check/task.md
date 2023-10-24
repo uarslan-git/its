@@ -87,3 +87,4 @@ For the name given, this function should:
 ```
 False, ('i', 'z', 'a')
 ```
+**Note:** You can check whether something is included in a tuple (or list) by using the keyword "in", e.g: (var in tuple)

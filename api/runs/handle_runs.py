@@ -56,8 +56,8 @@ run_result = {2}(**{3})""".format(task_json.prefix, submission.code, task_json.f
             run_code = "raise Exception('{0}')".format(arg_message)
     elif task_type == "print":
         run_code = """
-code = '''{0}'''
-run_result = capture_output(code)""".format(submission.code)
+code = '''{0}{1}'''
+run_result = capture_output(code)""".format(task_json.prefix, submission.code)
     else:
         raise Exception("Task type not known.")
     if task_json.prefix == "":

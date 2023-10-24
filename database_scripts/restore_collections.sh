@@ -6,7 +6,7 @@ collections=""
 user="useradmin"
 password="SECRET"
 authDatabase="admin"
-dump_location="/home/its/db_backup/"
+dump_location="/home/its/db_backup"
 
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
