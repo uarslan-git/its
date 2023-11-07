@@ -18,6 +18,8 @@ async def get_attempt_state(task_unique_name, user: User = Depends(current_activ
     else:
         return(attempt.state_log[-1])
 
+#TODO: state-log id is none
+#TODO: upate tasks attempted field in user document (missing entries)
 @router.post("/log")
 async def log_attempt_state(state: AttemptState, user: User = Depends(current_active_user)):
     attempt = await database.get_attempt(state.attempt_id)
