@@ -3,7 +3,6 @@ from typing import Any
 from fastapi import APIRouter, Depends
 # from fastapi.encoders import jsonable_encoder
 import asyncio
-
 from os import path
 import ast
 from users.handle_users import current_active_user
@@ -12,48 +11,64 @@ from db.db_connector_beanie import User
 from submissions.schemas import Code_submission, Tested_code_submission
 from tasks.schemas import Task
 
-import multiprocessing
-
 # import motor.motor_asyncio
 import db
-from io import StringIO
-#TODO: Discuss how this can be prohibited!
-import sys as unsafe_sys_import
 from sys import __stdout__
+import aiohttp
+import json
 
 router = APIRouter()
 
-def run_with_timeout(func, timeout):
-    # Create a multiprocessing Queue for communication
-    result_queue = multiprocessing.Queue()
 
-    # Create a multiprocessing Process
-    process = multiprocessing.Process(target=func, args=(result_queue,))
+async def execute_code_judge0(code_payload, url="http://localhost:2358"):
+    """Execute a code snippet in judge0 and wait for the result to return.
 
-    try:
-        # Start the process
-        process.start()
+    Args:
+        code_payload (str): string containing an executable python program
+        url (str, optional): Url of the Judge0 server. Defaults to "http://localhost:2358".
 
-        # Wait for the process to finish or timeout
-        process.join(timeout)
+    Raises:
+        Exception: _description_
 
-        # If the process is still alive, terminate it
-        if process.is_alive():
-            #active = multiprocessing.active_children()
-            #for child in active: 
-            #    child.terminate()
-            #    child.kill()
-            process.terminate()
-            process.kill()
-            process.join()
-            print("Process terminated due to timeout.")
-        else:
-            # Get the result value after the process has finished
-            result = result_queue.get(timeout=1)
-            print(f"Process completed within the timeout. Result: {result}")
-            return(result)
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    Returns:
+        _type_: _description_
+    """
+    #TODO: Ergebnis als BASE64 abfragen, weil sonst ungültige Zeichen zurückkommen können!
+    async with aiohttp.ClientSession() as session:
+        payload = {
+            #"expected_output": "null",
+            "language_id": 10,
+            #"max_file_size": "null",
+            #"max_processes_and_or_threads": "null",
+            #"memory_limit": "null",
+            "source_code": code_payload,
+            #"stack_limit": "null",
+            #"stdin": "null",
+            #"wall_time_limit": "null"
+            }
+        async with session.post(f"{url}/submissions", data=payload) as response:
+            run_token = await response.text()
+            run_token = json.loads(run_token)["token"]
+            #run_token = eval(run_token)["token"]
+        max_iter = 100
+        for i in range(0, max_iter): #max_iter for querying the status
+            async with session.get(f"{url}/submissions/{run_token}") as response:
+                run_result = await response.text()
+                run_result = json.loads(run_result)
+                if run_result["status"]["description"] not in ["In Queue"]:
+                    #run_result = json.loads(run_result)["stdout"]
+                    return run_result["stdout"]
+                #run_result = eval(run_result)["stdout"]
+                await asyncio.sleep(0.2)
+        raise Exception("Code Sandbox status frozen!")
+
+json_serialize = """
+def json_serialize(obj):
+    if isinstance(obj, np.ndarray):
+        #return obj.tolist()
+        return np.array2string(obj)
+    return obj"""
+
 
 # task schema
 """ class task(BaseModel):
@@ -64,6 +79,11 @@ def run_with_timeout(func, timeout):
 
 @router.post("/code_submit")
 async def handle_code_submission(submission: Code_submission, user: User = Depends(current_active_user)):
+    """Preprocess coda and run a series of test cases on a code submission.
+
+    Args:
+        submission (Code_submission): Submission object as defined in schemas.py
+    """
     user_id = user.id
     task_id = submission.task_unique_name
     task_json = await db.database.get_task(str(task_id))
@@ -72,8 +92,9 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
     valid_solution = True
     for i, test_name in enumerate(tests.keys()):
         prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
-        wrap_get_test_result = lambda queue: get_test_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines, queue=queue)
-        test_result = run_with_timeout(wrap_get_test_result, 5)
+        #wrap_get_test_result = lambda queue: get_test_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines, queue=queue)
+        #test_result = run_with_timeout(wrap_get_test_result, 5)
+        test_result = await get_test_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines)
         if test_result is None:
             submission.type = "timed_out_submission"
             await db.database.log_code_submission(submission)
@@ -100,8 +121,10 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
     return  {"submission_id": str(tested_submission.id)}
 
 
-def get_test_result(test_code, test_name, submission_code, prefix_lines, queue):
+async def get_test_result(test_code, test_name, submission_code, prefix_lines):
+    """Run a single test case in an isolated environment and output the test.reults as a dict"""
     run_test_code = """
+import json
 try:
     {0}()
     test_result = 1
@@ -110,16 +133,23 @@ except AssertionError as e:
     test_result = 0
     test_message = str(e)
     print(e)""".format(test_name)
+    ##########################################################
     test_submission_code = """
+import sys as unsafe_sys_import
+from sys import __stdout__
+from io import StringIO
 submission_captured_output = StringIO()
 unsafe_sys_import.stdout = submission_captured_output
 {0}
 unsafe_sys_import.stdout = __stdout__
 submission_captured_output = submission_captured_output.getvalue().strip()
 {1}
-
 {2}
-    """.format(submission_code, test_code, run_test_code)
+{3}
+##!serialization!##
+print(json.dumps({{'test_message': test_message, 'test_result': test_result}}, default=json_serialize))
+##!serialization!##
+    """.format(submission_code, test_code, run_test_code, json_serialize)
     #print(test_submission_code)
     #exec(test_submission_code, globals())
     global test_result
@@ -129,15 +159,19 @@ submission_captured_output = submission_captured_output.getvalue().strip()
         save = check_user_code(submission_code, prefix_lines)
         if save:
             #exec(compile(parsed_ast, filename="<parsed_ast>", mode="exec"), globals())
-            exec(test_submission_code, globals())
+            #exec(test_submission_code, globals())
+            result_string = await execute_code_judge0(test_submission_code)
+            result_dict = json.loads(result_string)
+            test_message = result_dict["test_message"]
+            test_result = result_dict["test_result"]
             result_message = "Test success" if test_result else "Test failure:"
-        queue.put({"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()})
+        #queue.put({"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()})
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}   
     except BaseException as e:
         test_result = 0
         result_message = "Error or Exception:"
         test_message = str(e)
-        queue.put({"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()})
+        #queue.put({"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()})
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}
 
 

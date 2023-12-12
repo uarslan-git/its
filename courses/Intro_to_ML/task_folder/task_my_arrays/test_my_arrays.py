@@ -18,6 +18,4 @@ def test_my_arrays():
     result2 = my_arrays(n2)
     assert result2 is None, "The function does not return None for negative integers. Please account for this case!"
 
-test_my_arrays()
-
 

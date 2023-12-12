@@ -46,3 +46,4 @@ if __name__ == "__main__":
         print("Not parsing tasks due to settings")
     else:
         raise Exception("Invalid commandline argument tasks, choose true or false")
+

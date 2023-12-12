@@ -108,5 +108,6 @@ export class FeedbackPanelComponent {
     this.testReadySubscription.unsubscribe();
     this.newTaskSubscription.unsubscribe();
     this.codeRunSubscription.unsubscribe();
+    this.codeRunReadySubscription.unsubscribe();
   }
 }
