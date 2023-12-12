@@ -11,7 +11,6 @@ import sys as unsafe_sys_import
 from io import StringIO
 import json
 
-
 router = APIRouter()
 
 def capture_output(code):
@@ -32,12 +31,15 @@ def parse_argument_types(arg_dict):
         return {}, "Illegal argument"
     else:
         try:
-            run_arguments= dict([(entry[0], eval(entry[1])) for entry in run_arguments])
+            run_argument_string = dict([(entry[0], f'#$eval(##{entry[1]}##)$#') for entry in run_arguments])
+            run_argument_string = json.dumps(run_argument_string)
+            run_argument_string = run_argument_string.replace('"#$', "")
+            run_argument_string = run_argument_string.replace('$#"', "")
+            run_argument_string = run_argument_string.replace('##', '"')
         except BaseException as e:
             return {}, "Invalid argument"
-        return run_arguments, "Success"
+        return run_argument_string, "Success"
 
-#TODO: prevent disk overflow through malicious users
 @router.post("/run_code")
 async def run_code(submission: Run_code_submission, user: User = Depends(current_active_user)):
     user_id = user.id
@@ -48,8 +50,8 @@ async def run_code(submission: Run_code_submission, user: User = Depends(current
         run_arguments, arg_message = parse_argument_types(submission.run_arguments)
         if arg_message == "Success":
             run_code = """{0}{1}
-run_result = {2}(**{3})
 ##!user-code-end!##
+run_result = {2}(**{3})
 import json
 {4}
 return_dict = {{"run_result": run_result}}
@@ -66,8 +68,6 @@ print("##!serialization!##")""".format(task_json.prefix, submission.code, task_j
         prefix_lines = []
     else:
         prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
-    #wrap_execute_code = lambda queue: execute_code(run_code, prefix_lines, queue)
-    #run_result = run_with_timeout(wrap_execute_code, timeout=4)
     run_result = await execute_code(run_code, prefix_lines)
     evaluated_submission = Evaluated_run_code_submission(
         code = submission.code, submission_time=submission.submission_time, run_arguments=submission.run_arguments,
@@ -76,14 +76,10 @@ print("##!serialization!##")""".format(task_json.prefix, submission.code, task_j
     await database.log_code_submission(evaluated_submission)
     return  {"run_id": str(evaluated_submission.id)}
 
-
 async def execute_code(code, prefix_lines):
-    global run_result
     try:
-        #parsed_ast = ast.parse(run_code)
         save = check_user_code(code.split("##!user-code-end!##")[0], prefix_lines)
         if save:
-            #exec(code, globals())
             run_result = await execute_code_judge0(code_payload=code)
     except BaseException as e:
         run_result = f"Error or Exception: {str(e)}"

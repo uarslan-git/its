@@ -1,4 +1,4 @@
-from _ast import Call, Del, Delete, Global, Interactive, Load, Nonlocal, Store
+from _ast import Call, Del, Delete, Global, Interactive, Load, Nonlocal, Store, Name
 from typing import Any
 from fastapi import APIRouter, Depends
 # from fastapi.encoders import jsonable_encoder
@@ -6,7 +6,6 @@ import asyncio
 from os import path
 import ast
 from users.handle_users import current_active_user
-
 from db.db_connector_beanie import User
 from submissions.schemas import Code_submission, Tested_code_submission
 from tasks.schemas import Task
@@ -37,14 +36,17 @@ async def execute_code_judge0(code_payload, url="http://localhost:2358"):
     async with aiohttp.ClientSession() as session:
         payload = {
             #"expected_output": "null",
-            "language_id": 10,
-            #"max_file_size": "null",
-            #"max_processes_and_or_threads": "null",
-            #"memory_limit": "null",
+            "language_id": "10",
+            "max_file_size": "1000", #kb
+            #"max_processes_and_or_threads": "1",
+            "memory_limit": 100000, #kb
             "source_code": code_payload,
             #"stack_limit": "null",
             #"stdin": "null",
-            #"wall_time_limit": "null"
+            "wall_time_limit": "10", #sec
+            "cpu_time_limit": "10", #sec
+            "enable_network": "false",
+            "redirect_stderr_to_stdout": "true",
             }
         async with session.post(f"{url}/submissions", data=payload) as response:
             run_token = await response.text()
@@ -92,8 +94,6 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
     valid_solution = True
     for i, test_name in enumerate(tests.keys()):
         prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
-        #wrap_get_test_result = lambda queue: get_test_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines, queue=queue)
-        #test_result = run_with_timeout(wrap_get_test_result, 5)
         test_result = await get_test_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines)
         if test_result is None:
             submission.type = "timed_out_submission"
@@ -150,28 +150,22 @@ submission_captured_output = submission_captured_output.getvalue().strip()
 print(json.dumps({{'test_message': test_message, 'test_result': test_result}}, default=json_serialize))
 ##!serialization!##
     """.format(submission_code, test_code, run_test_code, json_serialize)
-    #print(test_submission_code)
-    #exec(test_submission_code, globals())
-    global test_result
-    global test_message
     try:
         
         save = check_user_code(submission_code, prefix_lines)
         if save:
-            #exec(compile(parsed_ast, filename="<parsed_ast>", mode="exec"), globals())
-            #exec(test_submission_code, globals())
             result_string = await execute_code_judge0(test_submission_code)
+            result_sting = result_string.split("##!serialization!##")[1]
+            result_string = result_string.split("##!serialization!##")[0]
             result_dict = json.loads(result_string)
             test_message = result_dict["test_message"]
             test_result = result_dict["test_result"]
             result_message = "Test success" if test_result else "Test failure:"
-        #queue.put({"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()})
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}   
     except BaseException as e:
         test_result = 0
         result_message = "Error or Exception:"
         test_message = str(e)
-        #queue.put({"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()})
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}
 
 
@@ -245,6 +239,18 @@ def check_user_code(code, prefix_lines=[]):
                                  "staticmethod", "vars", "__import__"]:
                 raise Exception(f"{func_id}() is not allowed in this context")
             self.generic_visit(node)
+
+        def visit_Name(self, node: Name) -> Any:
+            bad_func_list = ["exec", "eval", "open", "breakpoint", "callable",
+                                 "delattr", "dir", "getattr", "globals",
+                                 "hasattr", "help", "id", "input", "locals", 
+                                 "memoryview", "property", "setattr", 
+                                 "staticmethod", "vars", "__import__"]
+            id = node.id
+            if id in bad_func_list:
+                raise Exception(f"Name {id} is not allowed in this context")
+            self.generic_visit(node)
+
 
     ast_tree = ast.parse(code)
     visitor = ImportVisitor(prefix_lines=prefix_lines)
