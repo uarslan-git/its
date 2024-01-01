@@ -68,7 +68,7 @@ run_result = capture_output(code)""".format(task_json.prefix, submission.code)
     run_result = run_with_timeout(wrap_execute_code, timeout=4)
     #run_result = execute_code(run_code)
     evaluated_submission = Evaluated_run_code_submission(
-        code = submission.code, submission_time=submission.submission_time, run_arguments=submission.run_arguments,
+        code = submission.code, selected_choices = [], submission_time=submission.submission_time, run_arguments=submission.run_arguments,
         run_output=str(run_result), task_unique_name=submission.task_unique_name, log=submission.log, type="run", user_id=user_id
     )
     await database.log_code_submission(evaluated_submission)

@@ -1,4 +1,4 @@
-import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild, EventEmitter, Output, HostListener } from '@angular/core';
+import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnDestroy, OnInit, ViewChild, EventEmitter, Output, HostListener, Input, ViewChildren, QueryList } from '@angular/core';
 
 //Prism
 import { FormBuilder } from '@angular/forms'
@@ -14,11 +14,9 @@ import { EventShareService } from 'src/app/shared/services/event-share.service';
   styleUrls: ['./code-editor.component.css']
 })
 export class CodeEditorComponent {
-
-
+  
   @Output() codeChangeEvent : EventEmitter<string> = new EventEmitter<string>();
   timer: any; 
-
 
   // The Timer is set every time the user code changes, if it changes again,
   // the timer is reset
@@ -36,7 +34,6 @@ export class CodeEditorComponent {
   private clearCodeChangeTimer(): void {
     clearTimeout(this.timer);
   }
-
 
 // Text Area with syntax highlighting and line numbers
 // At this point, the solution is not very stable.
@@ -91,19 +88,17 @@ constructor(
   private dataShareService: DataShareService,
   private eventShareService: EventShareService,
 ) {
-  this.newTaskSubscription = this.eventShareService.newTaskFetched$.subscribe(
-    () => {
-            //TODO: Better control time of execution, because codePanel is also listening to newTaskFetched!
-            if (typeof this.prefix !== 'undefined') {
-              this.prefix = sessionStorage.getItem('taskPrefix')!;
-            }
-            else {
-              this.codeChangeEvent.emit(this.userContentControl);
-              this.prefix = sessionStorage.getItem('taskPrefix')!;
-            }
-            this.form.setValue({'content': ''});
-          }
-  );
+  this.newTaskSubscription = this.eventShareService.newTaskFetched$.subscribe(() => {
+      //TODO: Better control time of execution, because codePanel is also listening to newTaskFetched!
+      if (typeof this.prefix !== 'undefined') {
+        this.prefix = sessionStorage.getItem('taskPrefix')!;
+      }
+      else {
+        this.codeChangeEvent.emit(this.userContentControl);
+        this.prefix = sessionStorage.getItem('taskPrefix')!;
+      }
+      this.form.setValue({'content': ''});
+  });
 }
 
 
@@ -112,6 +107,9 @@ ngOnInit(): void {
   // This subscription runs code every time the user changes the code.
   //TODO: onTextareaKeydown does the same in principal. Check if this should be handled in same method.
   this.form.controls.content.valueChanges.subscribe((newValue) => {
+    if(this.prefix.length <= 0) {
+      this.prefix = sessionStorage.getItem("taskPrefix")!;  
+    }
     newValue = this.ensurePrefix(newValue!);
     this.synchronizedTextareaGrow();
     this.clearCodeChangeTimer();
@@ -158,7 +156,7 @@ private synchronizedTextareaGrow() {
 
 private listenForm() {
   this.sub = this.form.valueChanges.subscribe((val) => {
-/*     const modifiedContent = this.prismService.convertHtmlIntoString(val.content!); */
+    // const modifiedContent = this.prismService.convertHtmlIntoString(val.content!);
     this.renderer.setProperty(this.codeContent.nativeElement, 'innerHTML', val.content!);
     this.highlighted = true;
   });

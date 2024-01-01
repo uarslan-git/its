@@ -1,7 +1,7 @@
 #!function!#
 import numpy as np 
-#!prefix!#
 def simulate_dice_rolls(num_rolls, random_seed=None):
+#!prefix!#
     # Set the random seed if provided
     if random_seed is not None:
         np.random.seed(random_seed)

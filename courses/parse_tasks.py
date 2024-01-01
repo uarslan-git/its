@@ -77,6 +77,18 @@ def task_to_json(dir, task_unique_name, outfile, db=None):
                 task_dict["function_name"] = get_function_names(file_path)[0] #TODO: Secure for example solutions with multiple functions.
                 arguments = extract_argument_names(task_dict["prefix"] + "\n" + task_dict["example_solution"])
                 task_dict["arguments"] = arguments
+        elif file_name == "multiple_choice.py":
+            task_dict["type"] = "multiple_choice"
+            task_dict["prefix"] = "no_prefix"
+            task_dict["example_solution"] = "no_example_solution"
+
+            json_section = content_docstring.split("#!json!#")[1]
+            mc_json = json.loads(json_section)
+
+            task_dict["possible_choices"] = mc_json["possible_choices"]
+            task_dict["correct_choices"] = mc_json["correct_choices"]
+            task_dict["choice_explanations"] = mc_json["choice_explanations"]
+
     task_dict["tests"] = tests
     if db is None:
         print(task_dict)

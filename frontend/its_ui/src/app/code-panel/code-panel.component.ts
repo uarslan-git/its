@@ -13,6 +13,7 @@ import { CodeEditorComponent } from './code-editor/code-editor.component';
 import { DatetimeService } from '../shared/services/datetime.service';
 
 import { environment } from 'src/environments/environment';
+import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.component';
 
 
 @Component({
@@ -28,18 +29,41 @@ export class CodePanelComponent {
   codeEditorComponent!: CodeEditorComponent;
   lastSavedCode!: string;
 
+  @ViewChild(MultipleChoiceComponent)
+  multipleChoiceComponent!: MultipleChoiceComponent;
+  isMultipleChoice: boolean = false;
+
   //Submit Button
   submitButtonClicked() {
-    this.submitted_code = this.codeEditorComponent.userContentControl;
-    this.client.post<any>(`${environment.apiUrl}/code_submit`, 
-          {task_unique_name: this.current_task_id, code: this.submitted_code, 
-            log: "True", type: "submission",
-            submission_time: this.datetimeService.datetimeNow()
-          },
-            {withCredentials: true}).subscribe((data) => {
-              this.recordChanges(this.submitted_code, data.submission_id);
-              this.eventShareService.emitTestReadyEvent(data.submission_id);
-    });
+    if(this.isMultipleChoice) {
+      this.client.post<any>(`${environment.apiUrl}/mc_submit`, 
+        {
+          selected_choices: this.multipleChoiceComponent.checked,
+          task_unique_name: this.current_task_id, 
+          code: this.submitted_code,
+          log: "True", 
+          type: "submission",
+          submission_time: this.datetimeService.datetimeNow()
+        },
+        {withCredentials: true}).subscribe((data) => {
+          this.recordChanges(this.submitted_code, data.submission_id);
+          this.eventShareService.emitTestReadyEvent(data.submission_id);
+        }
+      );
+    }
+    else {
+      this.submitted_code = this.codeEditorComponent.userContentControl;
+      this.client.post<any>(`${environment.apiUrl}/code_submit`, 
+            {task_unique_name: this.current_task_id, code: this.submitted_code, 
+              log: "True", type: "submission",
+              selected_choices: [],
+              submission_time: this.datetimeService.datetimeNow()
+            },
+              {withCredentials: true}).subscribe((data) => {
+                this.recordChanges(this.submitted_code, data.submission_id);
+                this.eventShareService.emitTestReadyEvent(data.submission_id);
+      });
+    }
   }
 
   //Run Button
@@ -47,6 +71,7 @@ export class CodePanelComponent {
     var runCode = this.codeEditorComponent.userContentControl;
     const body = {task_unique_name: this.current_task_id, code: runCode,
                 log: "True", 
+                selected_choices: [],
                 submission_time: this.datetimeService.datetimeNow(),
                 run_arguments: parameters, type: "run"};
     this.client.post<any>(`${environment.apiUrl}/run/run_code`, body, {withCredentials: true}).subscribe(
@@ -66,11 +91,13 @@ export class CodePanelComponent {
       public datePipe: DatePipe,
       private datetimeService: DatetimeService,
     ) {
-      this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe(
-        (data) => {this.current_task_id = sessionStorage.getItem("taskId")!;
-                  console.log(this.current_task_id);
-                  this.getCurrentAttemptState();}
-      );
+      this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe((data) => {
+        this.current_task_id = sessionStorage.getItem("taskId")!;
+        // console.log("this.current_task_id: ", this.current_task_id);
+        // console.log("sessionStorage.getItem('taskType'): ", sessionStorage.getItem('taskType'));
+        this.getCurrentAttemptState();
+        this.isMultipleChoice = sessionStorage.getItem("taskType")! == "multiple_choice";
+      });
   }
 
     // Tracking Users Coding process, also functionality to save and restore attempts.
@@ -82,7 +109,13 @@ export class CodePanelComponent {
       this.client.get<any>(`${environment.apiUrl}/attempt/get_state/${this.current_task_id}`, {withCredentials: true}).subscribe(
         (data) => {
           this.currentAttemptId = data.attempt_id;
-          this.codeEditorComponent.form.setValue({'content': sessionStorage.getItem('taskPrefix') + data.code});
+          if(this.isMultipleChoice) {
+            let choices = sessionStorage.getItem('taskPossibleChoices')!.split(',');
+            this.multipleChoiceComponent.choices = choices;
+          }
+          else {
+            this.codeEditorComponent.form.setValue({'content': sessionStorage.getItem('taskPrefix') + data.code});
+          }
           this.contentReloaded = true;
           this.lastSavedCode = data.code;
         }
