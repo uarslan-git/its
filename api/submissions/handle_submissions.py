@@ -1,7 +1,6 @@
 from _ast import Call, Del, Delete, Global, Interactive, Load, Nonlocal, Store, Name
 from typing import Any
 from fastapi import APIRouter, Depends
-# from fastapi.encoders import jsonable_encoder
 import asyncio
 from os import path
 import ast
@@ -10,7 +9,6 @@ from db.db_connector_beanie import User
 from submissions.schemas import Code_submission, Tested_code_submission
 from tasks.schemas import Task
 
-# import motor.motor_asyncio
 import db
 from sys import __stdout__
 import aiohttp
@@ -32,7 +30,6 @@ async def execute_code_judge0(code_payload, url="http://localhost:2358"):
     Returns:
         _type_: _description_
     """
-    #TODO: Ergebnis als BASE64 abfragen, weil sonst ungültige Zeichen zurückkommen können!
     async with aiohttp.ClientSession() as session:
         payload = {
             #"expected_output": "null",
@@ -48,7 +45,7 @@ async def execute_code_judge0(code_payload, url="http://localhost:2358"):
             "enable_network": "false",
             "redirect_stderr_to_stdout": "true",
             }
-        async with session.post(f"{url}/submissions", data=payload) as response:
+        async with session.post(f"{url}/submissions/?base64_encoded=false", data=payload) as response:
             run_token = await response.text()
             run_token = json.loads(run_token)["token"]
             #run_token = eval(run_token)["token"]
@@ -146,16 +143,16 @@ submission_captured_output = submission_captured_output.getvalue().strip()
 {1}
 {2}
 {3}
-##!serialization!##
+print("##!serialization!##")
 print(json.dumps({{'test_message': test_message, 'test_result': test_result}}, default=json_serialize))
-##!serialization!##
+print("##!serialization!##")
     """.format(submission_code, test_code, run_test_code, json_serialize)
     try:
         
         save = check_user_code(submission_code, prefix_lines)
         if save:
             result_string = await execute_code_judge0(test_submission_code)
-            result_sting = result_string.split("##!serialization!##")[1]
+            result_string = result_string.split("##!serialization!##")[1]
             result_string = result_string.split("##!serialization!##")[0]
             result_dict = json.loads(result_string)
             test_message = result_dict["test_message"]

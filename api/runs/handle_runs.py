@@ -7,21 +7,21 @@ from users.handle_users import current_active_user
 import ast
 from submissions.handle_submissions import check_user_code, json_serialize, execute_code_judge0
 #TODO: secure this:
-import sys as unsafe_sys_import 
-from io import StringIO
+#import sys as unsafe_sys_import 
+#from io import StringIO
 import json
 
 router = APIRouter()
 
-def capture_output(code):
-    # Redirect stdout to capture the output
-    original_stdout = unsafe_sys_import.stdout
-    unsafe_sys_import.stdout = StringIO()
-    exec(code)
-    # Get the captured output
-    output = unsafe_sys_import.stdout.getvalue()
-    unsafe_sys_import.stdout = original_stdout
-    return output
+#def capture_output(code):
+#    # Redirect stdout to capture the output
+#    original_stdout = unsafe_sys_import.stdout
+#    unsafe_sys_import.stdout = StringIO()
+#    exec(code)
+#    # Get the captured output
+#    output = unsafe_sys_import.stdout.getvalue()
+#    unsafe_sys_import.stdout = original_stdout
+#    return output
 
 def parse_argument_types(arg_dict):
     run_arguments = [(key, arg_dict[key]) for key in arg_dict.keys()]
