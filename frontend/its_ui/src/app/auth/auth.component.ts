@@ -77,6 +77,12 @@ export class AuthComponent {
       window.alert("Please select (Yes/No) whether we can use your data for scientific purposes.")
       return;
     }
+
+    let useremail_valid = username.split("@")[1] == "uni-bielefeld.de"
+    if(useremail_valid) {
+      window.alert("Email must be a '@uni-bielefeld.de' address.")
+      return;
+    }
     if(courseSelection=='none') {
       window.alert("Please select a course.")
       return;

@@ -19,5 +19,3 @@ def test_eigen_of_diagonal():
     
     assert np.allclose(eigenvalues1, expected_eigenvalues1), "Test case 1 (eigenvalues) failed"
     assert np.allclose(eigenvectors1, expected_eigenvectors1), "Test case 1 (eigenvectors) failed"
-
-test_eigen_of_diagonal()

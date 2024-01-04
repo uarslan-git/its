@@ -84,6 +84,9 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
+            "staging": {
+              "browserTarget": "its_ui:build:staging"
+            },
             "production": {
               "browserTarget": "its_ui:build:production"
             },

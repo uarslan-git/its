@@ -100,10 +100,17 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
         if test_results[i]["status"] == 0:
             valid_solution = False
     # Log code submit to database
-    tested_submission = Tested_code_submission(log = submission.log, task_unique_name = submission.task_unique_name, 
-                                               code = submission.code, test_results = test_results,
-                                               user_id=user_id, type="submission",
-                                               submission_time=submission.submission_time, valid_solution=valid_solution)
+    tested_submission = Tested_code_submission(log = submission.log, 
+                                               task_unique_name = submission.task_unique_name, 
+                                               code = submission.code,
+                                               possible_choices = [],
+                                               correct_choices = [],
+                                               selected_choices = [],  
+                                               test_results = test_results,
+                                               user_id=user_id, 
+                                               type="submission",
+                                               submission_time=submission.submission_time, 
+                                               valid_solution=valid_solution)
     #TODO: implement student model for this.
     if valid_solution and (not submission.task_unique_name in user.tasks_completed):
         user.tasks_completed.append(submission.task_unique_name)
@@ -117,6 +124,61 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
         await db.database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
+@router.post("/mc_submit")
+async def handle_mc_submission(submission: Code_submission, user: User = Depends(current_active_user)):
+    user_id = user.id
+    task_id = submission.task_unique_name
+    task_json = await db.database.get_task(str(task_id))
+    
+    test_results = []
+    valid_solution = True
+
+    possible_choices = task_json.possible_choices
+    correct_choices = task_json.correct_choices
+    selected_choices = submission.selected_choices
+    choice_explanations = task_json.choice_explanations
+
+    # Check which choices were made
+    answers = [element in selected_choices for element in possible_choices]
+    # Check which choices are correct
+    results = [a == b for a, b in zip(answers, correct_choices)]
+    # Check if all choices are correct
+    valid_solution = all(results)
+    
+    success_text = "Test success:" if valid_solution else "Test failure:"
+    result_msg = f"{success_text} \n"
+
+    for choice, correct, explanation in zip(possible_choices, results, choice_explanations):
+        correct_choice_msg = "correct" if correct else f"incorrect Reason: \n{explanation}"
+        result_msg = f"{result_msg}{choice} is {correct_choice_msg}\n\n"
+
+    test_result = {"test_name": "test_for_mc", "status": valid_solution, "message": result_msg}
+    test_results.append(test_result)
+
+    # Log code submit to database
+    tested_submission = Tested_code_submission(log = submission.log, 
+                                               task_unique_name = submission.task_unique_name, 
+                                               code = submission.code, 
+                                               possible_choices = possible_choices,
+                                               correct_choices = correct_choices,
+                                               selected_choices = selected_choices, 
+                                               test_results = test_results,
+                                               user_id=user_id, 
+                                               type="submission",
+                                               submission_time=submission.submission_time, 
+                                               valid_solution=valid_solution)
+    #TODO: implement student model for this.
+    if valid_solution and (not submission.task_unique_name in user.tasks_completed):
+        user.tasks_completed.append(submission.task_unique_name)
+        course = await db.database.get_course(unique_name=user.enrolled_courses[0])
+        if course.curriculum == user.tasks_completed:
+            if user.enrolled_courses[0] not in user.courses_completed:
+                user.courses_completed.append(user.enrolled_courses[0]) #TODO: Unsafe, secure this
+        await db.database.update_user(user)
+    #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
+    if (submission.log == "True"):
+        await db.database.log_code_submission(tested_submission)
+    return  {"submission_id": str(tested_submission.id)}
 
 async def get_test_result(test_code, test_name, submission_code, prefix_lines):
     """Run a single test case in an isolated environment and output the test.reults as a dict"""

@@ -1,0 +1,20 @@
+This folder contains the tasks for the Intro to DM exam preparation. 
+The tasks are separated into different topics: 
+ST - statistical testing; main probabilistic concepts and methods. 
+FA - factor analysis; comprises PCA, FA, Clustering and GMM
+IRT - item response theory; main models, parameters, concepts.
+KT - knowledge tracing; performance factor analysis, BKT, etc. 
+ML - machine learning; components from VAE, deep learning, pytorch competencies. autoregressive models? 
+RS - Recommender Systems; concepts, collaborative filtering, matrix factorization, counterfactual learning (maybe)
+Critical Thinking: applying the knowledge acquired to problems and assessing suitability of the chosen method
+
+NB: we need to ensure the similar difficulty distr in the first section, to investigate the novelty effect. 
+
+
+ST competencies: NLL optimization, signed rank test, conditional probability, non-linear (spearman) correlation. 
+FA competencies: differences between PCA and Factor Analysis, latent space prediction, agglomerative clustering, silhouette score interpretation, GMM algorithm
+IRT competencies: logistic regression, models and parameters, building ICC, interpret results
+KT competencies: Hidden Markov Models, PFA, assessing plausibility of the predictions, EM algorithm
+ML: differences between AE and VAE, RNN vs LSTM, convert data for DKT format
+RS: cosine similarity, collaborative filtering (item-wise), matrix factorization aspects
+CT: assess problems with a specific approach/suggest a methods to work with the data. (MC based)

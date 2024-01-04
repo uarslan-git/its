@@ -70,7 +70,7 @@ print("##!serialization!##")""".format(task_json.prefix, submission.code, task_j
         prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
     run_result = await execute_code(run_code, prefix_lines)
     evaluated_submission = Evaluated_run_code_submission(
-        code = submission.code, submission_time=submission.submission_time, run_arguments=submission.run_arguments,
+        code = submission.code, selected_choices = [], submission_time=submission.submission_time, run_arguments=submission.run_arguments,
         run_output=str(run_result), task_unique_name=submission.task_unique_name, log=submission.log, type="run", user_id=user_id
     )
     await database.log_code_submission(evaluated_submission)
