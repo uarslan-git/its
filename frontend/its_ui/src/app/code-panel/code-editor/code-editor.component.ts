@@ -130,6 +130,7 @@ ngAfterViewChecked() {
 
 ngOnDestroy() {
   this.sub?.unsubscribe();
+  this.newTaskSubscription.unsubscribe();
 }
 
 private ensurePrefix(newContent: string){

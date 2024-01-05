@@ -100,20 +100,24 @@ export class TaskPanelComponent {
  }
 
   ngOnInit(): void {
-    if (this.initTask == null) {
-      this.fetch_task();
-    }
-    else {
-      this.fetch_task(this.initTask);
-    }
-    this.client.get<any>(`${environment.apiUrl}/course/get`, {withCredentials: true}).subscribe(
-      (data) => {
-        this.course = {
-          unique_name: data.unique_name,
-          curriculum: data.curriculum,
-        }
+    // Fetch the first task with timeout in order to load the whole app.
+    setTimeout(()=>{                           
+      if (this.initTask == null) {
+        this.fetch_task();
       }
-    );
+      else {
+        this.fetch_task(this.initTask);
+      }
+      this.client.get<any>(`${environment.apiUrl}/course/get`, {withCredentials: true}).subscribe(
+        (data) => {
+          this.course = {
+            unique_name: data.unique_name,
+            curriculum: data.curriculum,
+          }
+        }
+      );
+  }, 300);
+
   }
 
   ngOnDestroy() {

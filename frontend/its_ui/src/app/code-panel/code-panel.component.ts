@@ -7,7 +7,6 @@ import { fromEvent, Subscription } from 'rxjs';
 import { PrismHighlightService } from '../shared/services/prism-highlight.service'
 import { HttpClient } from '@angular/common/http';
 
-import { DataShareService } from '../shared/services/data-share.service';
 import { EventShareService } from '../shared/services/event-share.service';
 import { CodeEditorComponent } from './code-editor/code-editor.component';
 import { DatetimeService } from '../shared/services/datetime.service';
@@ -25,6 +24,8 @@ export class CodePanelComponent {
 
   submitted_code: string = ''
   code_language = 'python';
+
+  //TODO: the editor is initialized and listens for changes even for MC-Questions.
   @ViewChild(CodeEditorComponent)
   codeEditorComponent!: CodeEditorComponent;
   lastSavedCode!: string;
@@ -81,23 +82,26 @@ export class CodePanelComponent {
     );
   }
 
-  taskFetchedSubscription: Subscription;
+  taskFetchedSubscription?: Subscription;
   current_task_id: string = "";
 
   constructor(
       private client: HttpClient,
-      private dataShareService: DataShareService,
       private eventShareService: EventShareService,
       public datePipe: DatePipe,
       private datetimeService: DatetimeService,
     ) {
-      this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe((data) => {
-        this.current_task_id = sessionStorage.getItem("taskId")!;
-        // console.log("this.current_task_id: ", this.current_task_id);
-        // console.log("sessionStorage.getItem('taskType'): ", sessionStorage.getItem('taskType'));
-        this.getCurrentAttemptState();
-        this.isMultipleChoice = sessionStorage.getItem("taskType")! == "multiple_choice";
-      });
+
+  }
+
+  ngAfterViewInit(){
+    this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe((data) => {
+      this.current_task_id = sessionStorage.getItem("taskId")!;
+      // console.log("this.current_task_id: ", this.current_task_id);
+      // console.log("sessionStorage.getItem('taskType'): ", sessionStorage.getItem('taskType'));
+      this.getCurrentAttemptState();
+      this.isMultipleChoice = sessionStorage.getItem("taskType")! == "multiple_choice";
+    });
   }
 
     // Tracking Users Coding process, also functionality to save and restore attempts.
@@ -110,7 +114,8 @@ export class CodePanelComponent {
         (data) => {
           this.currentAttemptId = data.attempt_id;
           if(this.isMultipleChoice) {
-            let choices = sessionStorage.getItem('taskPossibleChoices')!.split(',');
+            console.log("current attempt state:")
+            let choices = sessionStorage.getItem('taskChoices')!.split(',');
             this.multipleChoiceComponent.choices = choices;
           }
           else {
@@ -151,6 +156,7 @@ export class CodePanelComponent {
     if(this.codeEditorComponent.contentControl != this.lastSavedCode) {
       this.recordChanges(this.codeEditorComponent.contentControl);
     }
-    this.taskFetchedSubscription.unsubscribe();
+    this.taskFetchedSubscription?.unsubscribe();
    }
+
 }

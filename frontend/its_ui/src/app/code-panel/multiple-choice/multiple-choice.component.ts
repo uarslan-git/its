@@ -36,6 +36,7 @@ export class MultipleChoiceComponent {
   }
 
   ngOnDestroy() {
+    this.newTaskSubscription.unsubscribe();
   }
 
   getCheckbox(checkbox: MatCheckbox) {
