@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter, ElementRef, ViewChild, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { EventShareService } from 'src/app/shared/services/event-share.service';
 
@@ -17,6 +17,8 @@ export class ActionPanelComponent {
   submissionId: string = '';
 
   runParametersForm!: FormGroup;
+
+  @Input() showRunButton: boolean = true;
 
   constructor(private eventShareService: EventShareService,
               private fb: FormBuilder){}

@@ -53,18 +53,18 @@ export class FeedbackPanelComponent {
     const submission_url = `${environment.apiUrl}/feedback/${submission_id}`
     this.client.get<any>(submission_url, ).subscribe((data) => { 
       this.feedback = {
-        test_results: data.test_results,
-        task_id: data.task_unique_name,
-        submission_id: data.submission_id,
-        valid_solution: data.valid_solution,
-    };
-    this.feedback_markdown = this.renderTestResults(this.feedback["test_results"]!, this.feedback["task_id"]!);
-    if(this.feedback["valid_solution"]) {
-      this.openValidSolutionDialog();
-    }
-    //this.evaluateFeedback(this.feedback["valid_solution"]!);
-    //this.feedback_string = JSON.stringify(this.feedback);
-  });
+          test_results: data.test_results,
+          task_id: data.task_unique_name,
+          submission_id: data.submission_id,
+          valid_solution: data.valid_solution,
+      };
+      this.feedback_markdown = this.renderTestResults(this.feedback["test_results"]!, this.feedback["task_id"]!);
+      if(this.feedback["valid_solution"]) {
+        this.openValidSolutionDialog();
+      }
+      //this.evaluateFeedback(this.feedback["valid_solution"]!);
+      //this.feedback_string = JSON.stringify(this.feedback);
+    });
   }
 
   renderTestResults(feedback_array: Array<any>, task_name: string) {
@@ -108,5 +108,6 @@ export class FeedbackPanelComponent {
     this.testReadySubscription.unsubscribe();
     this.newTaskSubscription.unsubscribe();
     this.codeRunSubscription.unsubscribe();
+    this.codeRunReadySubscription.unsubscribe();
   }
 }

@@ -23,7 +23,7 @@ export class TaskPanelComponent {
   code_language: string = 'python';
 
   course: {unique_name?: string; curriculum?: string[]} = {}
-  task: { unique_name?: string; task?: string; type?: string, prefix?: string, arguments?: string[]} = {};
+  task: { unique_name?: string; task?: string; type?: string, prefix?: string, arguments?: string[], possible_choices?: string} = {};
 
   constructor(
     private client: HttpClient,
@@ -77,6 +77,7 @@ export class TaskPanelComponent {
         type: data.type,
         prefix: data.prefix,
         arguments: data.arguments,
+        possible_choices: data.possible_choices,
     };
     console.log("new task request")
     if (this.task['unique_name'] == "course completed") {
@@ -91,6 +92,7 @@ export class TaskPanelComponent {
     sessionStorage.setItem("taskType", this.task['type']!);
     sessionStorage.setItem("taskArguments", JSON.stringify(this.task['arguments']!));
     sessionStorage.setItem("taskPrefix", this.task['prefix']!);
+    sessionStorage.setItem("taskChoices", this.task['possible_choices']!);
     this.eventShareService.emitNewTaskFetchedEvent();
     this.markdownPanelComponent.resetScroll();
 
@@ -98,20 +100,24 @@ export class TaskPanelComponent {
  }
 
   ngOnInit(): void {
-    if (this.initTask == null) {
-      this.fetch_task();
-    }
-    else {
-      this.fetch_task(this.initTask);
-    }
-    this.client.get<any>(`${environment.apiUrl}/course/get`, {withCredentials: true}).subscribe(
-      (data) => {
-        this.course = {
-          unique_name: data.unique_name,
-          curriculum: data.curriculum,
-        }
+    // Fetch the first task with timeout in order to load the whole app.
+    setTimeout(()=>{                           
+      if (this.initTask == null) {
+        this.fetch_task();
       }
-    );
+      else {
+        this.fetch_task(this.initTask);
+      }
+      this.client.get<any>(`${environment.apiUrl}/course/get`, {withCredentials: true}).subscribe(
+        (data) => {
+          this.course = {
+            unique_name: data.unique_name,
+            curriculum: data.curriculum,
+          }
+        }
+      );
+  }, 300);
+
   }
 
   ngOnDestroy() {
