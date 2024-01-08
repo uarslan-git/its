@@ -17,12 +17,12 @@ import json
 router = APIRouter()
 
 
-async def execute_code_judge0(code_payload, url="http://localhost:2358"):
+async def execute_code_judge0(code_payload, url="http://j0-server:2358"):
     """Execute a code snippet in judge0 and wait for the result to return.
 
     Args:
         code_payload (str): string containing an executable python program
-        url (str, optional): Url of the Judge0 server. Defaults to "http://localhost:2358".
+        url (str, optional): Url of the Judge0 server. Defaults to "http://j0-server".
 
     Raises:
         Exception: _description_
