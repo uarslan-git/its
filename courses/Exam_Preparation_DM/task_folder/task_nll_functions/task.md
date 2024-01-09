@@ -1,8 +1,5 @@
 # Negative Log likelihood. 
 
-## Descriptive statistics
-# Probability Density Functions and Negative Log Likelihood
-
 ## Poisson Distribution
 
 The Poisson distribution models the number of events that occur in a fixed interval of time or space. 
