@@ -25,7 +25,7 @@ import asyncio
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 
-REQUEST_TIMEOUT_ERROR = 4  # Threshold
+REQUEST_TIMEOUT_ERROR = 20  # Threshold
 
 
 #Api prefix
