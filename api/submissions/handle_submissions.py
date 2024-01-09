@@ -58,6 +58,8 @@ async def execute_code_judge0(code_payload, url="http://j0-server:2358"):
                     # In case of unexpected return status, return an informative error
                     if (run_result["stdout"] is None) and (run_result["status"]["description"] != "Accepted"):
                         raise Exception("Empty run result: execution status: {0}".format(run_result))
+                    elif (run_result["stdout"] is None) and (run_result["status"]["description"] == "Accepted"):
+                        run_result["stdout"] = ""
                     return run_result["stdout"]
                 #run_result = eval(run_result)["stdout"]
                 await asyncio.sleep(0.2)
