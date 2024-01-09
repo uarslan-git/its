@@ -19,7 +19,7 @@ services:
   angular-app:
     build: 
       context: ./frontend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
       - "4200:4200"

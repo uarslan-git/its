@@ -32,3 +32,7 @@ DB_SERVICE_PW="SECRET"
 2. Initialize Judge0 by "cd judge0" && "docker-compose up -d"
 
 3. Initialize app by running "docker-compose up -d --build" in the main app folder
+
+Potential Problems:
+
+- You might have to downgrade your cgroups version to V1, if your system runs on V2 and Judge0 does return an Internal Error.

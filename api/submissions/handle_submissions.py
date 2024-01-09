@@ -22,7 +22,7 @@ async def execute_code_judge0(code_payload, url="http://j0-server:2358"):
 
     Args:
         code_payload (str): string containing an executable python program
-        url (str, optional): Url of the Judge0 server. Defaults to "http://j0-server".
+        url (str, optional): Url of the Judge0 server. Defaults to "http://j0-server:2358".
 
     Raises:
         Exception: _description_
@@ -54,8 +54,10 @@ async def execute_code_judge0(code_payload, url="http://j0-server:2358"):
             async with session.get(f"{url}/submissions/{run_token}") as response:
                 run_result = await response.text()
                 run_result = json.loads(run_result)
-                if run_result["status"]["description"] not in ["In Queue"]:
-                    #run_result = json.loads(run_result)["stdout"]
+                if run_result["status"]["description"] not in ["In Queue", "Processing"]:
+                    # In case of unexpected return status, return an informative error
+                    if (run_result["stdout"] is None) and (run_result["status"]["description"] != "Accepted"):
+                        raise Exception("Empty run result: execution status: {0}".format(run_result))
                     return run_result["stdout"]
                 #run_result = eval(run_result)["stdout"]
                 await asyncio.sleep(0.2)
