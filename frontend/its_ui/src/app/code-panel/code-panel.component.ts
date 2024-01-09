@@ -2,9 +2,7 @@ import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnD
 import { DatePipe } from '@angular/common';
 
 //Prism
-import { FormBuilder } from '@angular/forms'
 import { fromEvent, Subscription } from 'rxjs';
-import { PrismHighlightService } from '../shared/services/prism-highlight.service'
 import { HttpClient } from '@angular/common/http';
 
 import { EventShareService } from '../shared/services/event-share.service';
@@ -97,8 +95,6 @@ export class CodePanelComponent {
   ngAfterViewInit(){
     this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe((data) => {
       this.current_task_id = sessionStorage.getItem("taskId")!;
-      // console.log("this.current_task_id: ", this.current_task_id);
-      // console.log("sessionStorage.getItem('taskType'): ", sessionStorage.getItem('taskType'));
       this.getCurrentAttemptState();
       this.isMultipleChoice = sessionStorage.getItem("taskType")! == "multiple_choice";
     });
@@ -114,7 +110,6 @@ export class CodePanelComponent {
         (data) => {
           this.currentAttemptId = data.attempt_id;
           if(this.isMultipleChoice) {
-            console.log("current attempt state:")
             let choices = sessionStorage.getItem('taskChoices')!.split(',');
             this.multipleChoiceComponent.choices = choices;
           }

@@ -11,7 +11,7 @@ services:
   angular-app:
     build: 
       context: ./frontend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
       - "4200:4200"
@@ -22,11 +22,7 @@ services:
       - its_network
 
   fastapi-backend:
-    #google: fastapi reload after crash.
     restart: always
-    #deploy:
-    #  mode: replicated
-    #  replicas: 3
     build: ./api
     command: python main.py
     environment:
@@ -45,6 +41,7 @@ services:
       #Store credenials in a file called .env
       MONGO_INITDB_ROOT_USERNAME: useradmin
       MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PW?}
+      # Service pw will be known by the backend
       DB_SERVICE_PW: ${DB_SERVICE_PW?}
     volumes:
       - mongodb_data:/data/db

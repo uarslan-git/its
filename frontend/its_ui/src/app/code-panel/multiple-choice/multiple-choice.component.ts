@@ -31,7 +31,6 @@ export class MultipleChoiceComponent {
     });
   }
 
-
   ngOnInit(): void {
   }
 
