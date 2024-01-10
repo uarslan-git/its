@@ -20,6 +20,9 @@ def wilcoxon_signed_rank_test(sample1, sample2, alpha=0.05):
     if len(sample1) != len(sample2):
         raise ValueError("Samples must have the same size for the Wilcoxon signed-rank test.")
     
+    if alpha < 0 or alpha > 1:
+        raise ValueError("Alpha must be in the interval [0,1]")
+    
     # Perform the Wilcoxon signed-rank test
     result = wilcoxon(sample1, sample2)
 
