@@ -8,8 +8,10 @@ class Base_pedagogical_model():
     feedback_generator: Base_feedback_generator
     task_selector: Base_task_selector
 
+    #Outer Loop
     def select_task():
         raise Exception("Not implemented")
     
+    #Inner Loop
     def give_feedback():
         raise Exception("Not implemented")

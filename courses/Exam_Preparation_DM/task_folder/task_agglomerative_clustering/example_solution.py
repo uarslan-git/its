@@ -22,34 +22,36 @@ def find_closest_clusters(clusters, distances):
 
     return closest_clusters
 
+def flatten_list(items):
+    for i, x in enumerate(items):
+        while i < len(items) and isinstance(items[i], (list, tuple)):
+            items[i:i+1] = items[i]
+    return items
 
 def agglomerative_clustering(data):
 #!prefix!#
     # Initialize clusters
-    clusters = [[point] for point in data]
+    clusters = [point for point in data]
 
-    # Calculate pairwise Euclidean distances
+    # Calculate pairwise Ward linkages
     distances = np.zeros((len(clusters), len(clusters)))
     for i in range(len(clusters)):
         for j in range(i + 1, len(clusters)):
-            distances[i, j] = euclidean_distance(np.mean(clusters[i], axis=0), np.mean(clusters[j], axis=0))
+            distances[i, j] = euclidean_distance(np.mean(clusters[i], axis=0), np.mean(clusters[j], axis=0))**2
             distances[j, i] = distances[i, j]
 
     # Main loop for agglomerative clustering
     while len(clusters) > 1:
         i, j = find_closest_clusters(clusters, distances)
-        clusters[i].extend(clusters[j])
+        clusters[i] = [clusters[i], clusters[j]] 
         del clusters[j]
+        distances = np.delete(distances, j, 0)
+        distances = np.delete(distances, j, 1)
 
         # Update distances matrix
         for k in range(len(clusters)):
             if k != i:
-                distances[i, k] = ward_linkage(clusters[i], clusters[k])
+                distances[i, k] = ward_linkage(flatten_list(clusters[i].copy()), flatten_list(clusters[k].copy()))
                 distances[k, i] = distances[i, k]
 
-    # Assign cluster labels
-    labels = np.zeros(len(data), dtype=int)
-    for i, cluster in enumerate(clusters):
-        labels[cluster] = i
-
-    return labels
+    return clusters
