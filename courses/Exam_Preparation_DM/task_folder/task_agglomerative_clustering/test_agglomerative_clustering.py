@@ -1,6 +1,5 @@
 from example_solution import agglomerative_clustering
 #!cut_imports!#
-
 def test_optimal_gmm_clusters():
     import numpy as np
     # Generate synthetic 2D data with three clusters
