@@ -22,4 +22,5 @@ CT: assess problems with a specific approach/suggest a methods to work with the 
 
 ST tasks: mean_and_std, pooled_variance, nll_functions, pearson, wilcoxon
 FA tasks: pca_fa, agglomerative_clustering, gaussian_mixture_clusters, gmm_vs_kmeans, 
-IRT/KT tasks: IRT_logreg, param1_2, bkt
+IRT/KT tasks: IRT_logreg, param1_2, bkt, case_kt
+RS: collaborative_filtering, nDCG
