@@ -6,6 +6,10 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
 
     def __init__(self):
         self.task_selector = Prototype_task_selector
+        self.feedback_method = "LLM-next-step"
 
     async def select_task(self, user: User):
         return await self.task_selector.select(user)
+    
+    async def give_feedback():
+        return("Feedback")
