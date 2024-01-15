@@ -9,6 +9,7 @@ from attempts.schemas import Attempt
 from submissions.schemas import Code_submission as Submission
 from runs.schemas import Evaluated_run_code_submission as Run_submission
 from tasks.schemas import Task
+from feedback.schemas import Evaluated_feedback_submission as Feedback_submission
 from beanie import PydanticObjectId
 
 
@@ -45,6 +46,8 @@ class database():
         submission = await Submission.find_one(Submission.id == PydanticObjectId(submission_id), with_children=True)
         if submission.type == "run":
             submission = await Run_submission.find_one(Run_submission.id == PydanticObjectId(submission_id))
+        elif submission.type == "feedback_request":
+            submission = await Feedback_submission.find_one(Feedback_submission.id == PydanticObjectId(submission_id))
         return(submission)
 
     async def get_user(self, user_id): 

@@ -2,7 +2,7 @@
     background-color: #616161;
     color: #fff;
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 1fr;  */
+    grid-template-columns: 1fr 1fr 1fr;
     align-items: center;
     padding: 0.8rem;
     max-width: 100%;

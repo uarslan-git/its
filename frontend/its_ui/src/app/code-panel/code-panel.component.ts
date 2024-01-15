@@ -147,6 +147,27 @@ export class CodePanelComponent {
         this.lastSavedCode = newContent;
     }
 
+    handleFeedbackEvent() {
+      console.log("Feedback requested")
+      if(!this.isMultipleChoice) {
+        this.submitted_code = this.codeEditorComponent.userContentControl;
+        this.client.post<any>(`${environment.apiUrl}/feedback`, 
+          {
+            // TODO: check the payload!
+            selected_choices: [],
+            task_unique_name: this.current_task_id, 
+            code: this.submitted_code,
+            log: "True", 
+            type: "feedback_request",
+            submission_time: this.datetimeService.datetimeNow()
+          },
+          {withCredentials: true}).subscribe((data) => {
+            this.eventShareService.emitFeedbackReadyEvent(data.feedback_id);
+          }
+        );
+      }
+    }
+
     ngOnDestroy(){
     if(this.codeEditorComponent.contentControl != this.lastSavedCode) {
       this.recordChanges(this.codeEditorComponent.contentControl);

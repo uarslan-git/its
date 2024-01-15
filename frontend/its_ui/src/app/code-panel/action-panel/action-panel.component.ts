@@ -11,6 +11,7 @@ export class ActionPanelComponent {
 
   @Output() runEvent: EventEmitter<string> = new EventEmitter<any>();
   @Output() submitEvent : EventEmitter<string> = new EventEmitter<string>();
+  @Output() feedbackEvent : EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChild("runDialog", {static: true}) runDialog!: ElementRef<HTMLDialogElement>
 
@@ -85,5 +86,11 @@ export class ActionPanelComponent {
   submitButtonClicked() {
     this.submitEvent.emit();
     this.eventShareService.emitSubmitButtonClick();
+  }
+
+  // Feedback Button
+  feedbackButtonClicked() {
+    this.feedbackEvent.emit();
+    this.eventShareService.emitFeedbackButtonClick();
   }
 }
