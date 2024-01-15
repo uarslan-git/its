@@ -6,6 +6,8 @@ def bkt(x, pstart, pslip, pguess, ptrans):
     # initialize p
     p  = pstart
     for t in range(len(x)):
+        if x[t] not in [0,1]:
+            raise Exception("Data should be 0, 1 encoded")
         # compute q[t]
         if x[t] > 0.5:
             q = p * (1 - pslip) / (p * (1 - pslip) + (1 - p) * pguess)

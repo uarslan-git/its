@@ -1,6 +1,5 @@
 #!function!#
 import numpy as np
-
 def ndcg_at_k(actual, predicted, k):
 #!prefix!#
     """

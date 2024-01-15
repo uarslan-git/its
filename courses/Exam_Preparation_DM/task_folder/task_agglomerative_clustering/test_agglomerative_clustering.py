@@ -43,6 +43,3 @@ def test_optimal_gmm_clusters():
     true_res = [[[[np.array((10,10)), np.array((12,11))], np.array((100,100))], np.array((10000,10000))]]
     clusters = agglomerative_clustering(data)
     assert str(clusters)==str(true_res), f"For the second small dataset your output did not match the desired result. {clusters}"
-
-""" if __name__ == "__main__":
-    test_optimal_gmm_clusters() """
