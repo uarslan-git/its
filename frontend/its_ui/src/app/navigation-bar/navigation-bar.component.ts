@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { EventShareService } from '../shared/services/event-share.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
@@ -16,6 +16,8 @@ export class NavigationBarComponent {
 
   aboutMarkdown: string = ''
 
+  apiUrl: string = environment.apiUrl;
+  user_name: string = "INVALID_EMAIL";
   title: string = 'Tutoring System for Programming'
   task_name: string = ''
 
@@ -29,6 +31,17 @@ export class NavigationBarComponent {
         }
       )
     }
+
+  ngAfterViewInit() {
+    this.show_profile()
+  }
+
+  show_profile() {
+    this.httpClient.get<any>(`${this.apiUrl}/users/me`, {"withCredentials": true}).subscribe(
+      (data)  => {
+        this.user_name = data.email!.split("@")[0];
+    });
+  }
 
   newTaskButtonClicked(direction: string){
     this.eventShareService.emitNewTaskEvent(direction);
