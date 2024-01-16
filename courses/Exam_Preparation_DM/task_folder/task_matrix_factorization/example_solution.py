@@ -1,8 +1,6 @@
 #!function!#
 import numpy as np
-
 def matrix_factorization_sgd(R, K, learning_rate=0.01, reg_param=0.01, epochs=100):
-
 #!prefix!#
     """
     Perform matrix factorization using stochastic gradient descent (SGD).
@@ -17,6 +15,8 @@ def matrix_factorization_sgd(R, K, learning_rate=0.01, reg_param=0.01, epochs=10
     Returns:
     - User and item matrices (U, V).
     """
+
+    if K <=0: raise Exception("K should be positive")
 
     num_users, num_items = R.shape
 
