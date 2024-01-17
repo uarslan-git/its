@@ -1,6 +1,6 @@
 from example_solution import mean_and_std
 #!cut_imports!#
-def test_mean_and_sd():
+def test_mean_and_std():
     x = [1,1,1,1,1,1]
     res = mean_and_std(x)
 
