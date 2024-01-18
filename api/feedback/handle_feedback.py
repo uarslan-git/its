@@ -5,6 +5,7 @@ from db import database
 from users.handle_users import current_active_user
 from db.db_connector_beanie import User
 from submissions.handle_submissions import run_tests
+from feedback.schemas import Url
 
 from models import manager
 
@@ -50,4 +51,13 @@ async def handle_handle_feedback_request(submission: Feedback_submission, user: 
         await database.log_code_submission(evaluated_feedback_submission)
     return {"feedback_id": str(evaluated_feedback_submission.id)}
 
-    
+
+@router.post("/feedback/set_llm_url")
+async def set_llm_url(url: Url, user: User = Depends(current_active_user)):
+    url = url.url
+    #Test if user is admin
+    if "admin" in user.roles:
+        await database.update_settings({"ollama_url": url})
+        return {"response": "Url was set"}
+    else:
+        return {"response": "No permission"}

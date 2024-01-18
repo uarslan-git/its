@@ -4,6 +4,8 @@ from fastapi_users import schemas
 from typing import Optional
 from fastapi_users.db import BeanieBaseUser
 from beanie import Document
+from pymongo import IndexModel
+from pymongo.collation import Collation
 
 
 class User(BeanieBaseUser, Document):
@@ -15,7 +17,20 @@ class User(BeanieBaseUser, Document):
     courses_completed: list
     register_datetime: dict
     settings: dict
+    roles: Optional[list] = None
     #estimated_compentency: Optional[list]
+    class Settings:
+        """Here we are overwriting the settings class from BeanieBaseUser in order to allow for the optional roles field.
+        Basically this allows us to exclude roles from the UserCreate schema in order to avoid security breaches.
+        """
+        keep_nulls = False
+        email_collation = Collation("en", strength=2)
+        indexes = [
+            IndexModel("email", unique=True),
+            IndexModel(
+                "email", name="case_insensitive_email_index", collation=email_collation
+            ),
+        ]
     pass
 
 class UserRead(schemas.BaseUser[PydanticObjectId]):
@@ -27,6 +42,7 @@ class UserRead(schemas.BaseUser[PydanticObjectId]):
     courses_completed: list
     register_datetime: dict
     settings: dict
+    roles: Optional[list] = None
     pass
     #estimated_compentency: Optional[list]
 
@@ -40,6 +56,7 @@ class UserCreate(schemas.BaseUserCreate):
     courses_completed: list
     register_datetime: dict
     settings: dict
+    #roles: Optional[list]
     pass
     #username: str
     #estimated_compentency: Optional[list]

@@ -52,6 +52,17 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
                 feedback = json.loads(feedback)
         return(feedback["response"])
     
+    def set_ollama_url(self, ollama_url):
+        database.update_settings({"olama_url": ollama_url})
+    
+    def get_feedback_available(self, task_type):
+        ollama_url = database.get_settings()
+        if ollama_url == "" and task_type in ["function", "print"]:
+            return False
+        else:
+            return True
+
+    
     def create_instruction(self, previous_step, task_ins="Consider the following programming task:", task="",
                                  inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Also there should be only the edited code and no further explanations. The current program state is:", 
                                 b_inst="[INST]", e_inst="[/INST]"):

@@ -1,4 +1,5 @@
 from submissions.schemas import Code_submission
+from beanie import Document
 
 class Feedback_submission(Code_submission):
 
@@ -12,3 +13,7 @@ class Evaluated_feedback_submission(Feedback_submission):
 
     class Settings: 
         name = "Submission"
+
+class Url(Document):
+    
+    url: str
