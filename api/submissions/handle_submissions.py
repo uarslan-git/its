@@ -18,12 +18,20 @@ import json
 router = APIRouter()
 
 
+<<<<<<< 60876a878d8269253d4152caa5c7200469537da8
 async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:2358"):
+=======
+async def execute_code_judge0(code_payload, url="http://localhost:2358"):
+>>>>>>> 202ec19a9af7fe50cb0b7a8a25cfdf7dd4b8eef6
     """Execute a code snippet in judge0 and wait for the result to return.
 
     Args:
         code_payload (str): string containing an executable python program
+<<<<<<< 60876a878d8269253d4152caa5c7200469537da8
         url (str, optional): Url of the Judge0 server. Defaults to "http://host:2358".
+=======
+        url (str, optional): Url of the Judge0 server. Defaults to "http://localhost:2358".
+>>>>>>> 202ec19a9af7fe50cb0b7a8a25cfdf7dd4b8eef6
 
     Raises:
         Exception: _description_
@@ -55,12 +63,8 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
             async with session.get(f"{url}/submissions/{run_token}") as response:
                 run_result = await response.text()
                 run_result = json.loads(run_result)
-                if run_result["status"]["description"] not in ["In Queue", "Processing"]:
-                    # In case of unexpected return status, return an informative error
-                    if (run_result["stdout"] is None) and (run_result["status"]["description"] != "Accepted"):
-                        raise Exception("Empty run result: execution status: {0}".format(run_result))
-                    elif (run_result["stdout"] is None) and (run_result["status"]["description"] == "Accepted"):
-                        run_result["stdout"] = ""
+                if run_result["status"]["description"] not in ["In Queue"]:
+                    #run_result = json.loads(run_result)["stdout"]
                     return run_result["stdout"]
                 #run_result = eval(run_result)["stdout"]
                 await asyncio.sleep(0.2)

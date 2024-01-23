@@ -1,10 +1,16 @@
 .action-buttons {
     background-color: #616161;
     color: #fff;
+<<<<<<< 60876a878d8269253d4152caa5c7200469537da8
     display: grid;
     align-content: center;
     display: flex;
     grid-template-columns: 1fr 1fr 1fr; 
+=======
+    align-content: center;
+    display: flex;
+    grid-template-columns: 1fr 1fr; /* 1fr;  */
+>>>>>>> 202ec19a9af7fe50cb0b7a8a25cfdf7dd4b8eef6
     align-items: center;
     padding: 0.8rem;
     max-width: 100%;
