@@ -2,7 +2,7 @@
 #!json!#
 {
     "possible_choices": ["Biases can appear at each stage of user interaction with their recommendtions: from the data, behaviour of algorithm, or user responses themselves.",  
-                         "Biases tend to ahve lesser impact over time.",  
+                         "Biases tend to have lesser impact over time.",  
                          "Popular choices of the majority of users are usually good recommendation candidates.",
                          "Defining a recommendation target goal in a complex task in the educational context.",
                          "The nDCG is the best metric to evaluate the efficiency of recommendations."],
