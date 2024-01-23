@@ -55,12 +55,17 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
             async with session.get(f"{url}/submissions/{run_token}") as response:
                 run_result = await response.text()
                 run_result = json.loads(run_result)
-                if run_result["status"]["description"] not in ["In Queue"]:
-                    #run_result = json.loads(run_result)["stdout"]
+                if run_result["status"]["description"] not in ["In Queue", "Processing"]:
+                    # In case of unexpected return status, return an informative error
+                    if (run_result["stdout"] is None) and (run_result["status"]["description"] != "Accepted"):
+                        raise Exception("Empty run result: execution status: {0}".format(run_result))
+                    elif (run_result["stdout"] is None) and (run_result["status"]["description"] == "Accepted"):
+                        run_result["stdout"] = ""
                     return run_result["stdout"]
                 #run_result = eval(run_result)["stdout"]
                 await asyncio.sleep(0.2)
         raise Exception("Code Sandbox status frozen!")
+
 
 json_serialize = """
 def json_serialize(obj):
