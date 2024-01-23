@@ -1,6 +1,9 @@
 {
-    "display_name": "Introduction to Data Mining",
-    "domain": "Simple Python",
-    "sub_domains": [],
-    "curriculum": []
+    "display_name": "Course Name",
+    "domain": "Course Domain",
+    "sub_domains": ["Sub domain 1", "Sub domain 2"],
+    "curriculum": ["mean_and_std","pooled_variance", "nll_functions", "pearson", "wilcoxon", 
+                   "pca_fa", "agglomerative_clustering", "optimal_gmm_clusters", "gmm_vs_kmeans", 
+                   "IRT_logreg", "param1_2", "bkt", "case_kt", 
+                   "user_similarity", "ndcg_at_k", "bias_rs", "markov_models", "deep_learning","critical_thinking"]
 }
