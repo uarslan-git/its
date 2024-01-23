@@ -20,6 +20,9 @@ export class ActionPanelComponent {
   runParametersForm!: FormGroup;
 
   @Input() showRunButton: boolean = true;
+  @Input() showFeedbackButton!: boolean;
+
+  inCooldown: boolean = false;
 
   constructor(private eventShareService: EventShareService,
               private fb: FormBuilder){}
@@ -90,7 +93,17 @@ export class ActionPanelComponent {
 
   // Feedback Button
   feedbackButtonClicked() {
-    this.feedbackEvent.emit();
-    this.eventShareService.emitFeedbackButtonClick();
+    if (!this.inCooldown) {
+      this.feedbackEvent.emit();
+      this.eventShareService.emitFeedbackButtonClick();
+      // Set cooldown for 30 seconds
+      this.inCooldown = true;
+      setTimeout(() => {
+        this.inCooldown = false;
+      }, 30000); // 30 seconds cooldown
+    }
+    else {
+      window.alert("New Feedback will not available for a short time. Please Try to implement the suggestions of the last feedback first or try a new approach.")
+    }
   }
 }

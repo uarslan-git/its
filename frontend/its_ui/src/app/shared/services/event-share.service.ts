@@ -47,7 +47,7 @@ export class EventShareService {
 
   //Feedback button click
   private feedbackButtonClickSubject = new Subject<void>();
-  feedbackButtonClick$ = this.runButtonClickSubject.asObservable();
+  feedbackButtonClick$ = this.feedbackButtonClickSubject.asObservable();
 
   emitFeedbackButtonClick() {
     this.feedbackButtonClickSubject.next();

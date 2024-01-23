@@ -237,11 +237,15 @@ print("##!serialization!##")
         save = check_user_code(submission_code, prefix_lines)
         if save:
             result_string = await execute_code_judge0(test_submission_code)
-            result_string = result_string.split("##!serialization!##")[1]
-            result_string = result_string.split("##!serialization!##")[0]
-            result_dict = json.loads(result_string)
-            test_message = result_dict["test_message"]
-            test_result = result_dict["test_result"]
+            if "##!serialization!##" in result_string:
+                result_string = result_string.split("##!serialization!##")[1]
+                result_string = result_string.split("##!serialization!##")[0]
+                result_dict = json.loads(result_string)
+                test_message = result_dict["test_message"]
+                test_result = result_dict["test_result"]
+            else:
+                test_result = 0
+                test_message = result_string
             result_message = "Test success" if test_result else "Test failure:"
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}   
     except BaseException as e:

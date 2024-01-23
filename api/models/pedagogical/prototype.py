@@ -16,14 +16,14 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
     async def select_task(self, user: User):
         return await self.task_selector.select(user)
     
-    async def give_feedback(self, submission: Code_submission, ollama_url="http://localhost:11434"):
+    async def give_feedback(self, submission: Code_submission):
         """This implementation of give_feedback uses the ollama API to receive llm-generated next-step feedback.
 
         Args:
             submission (Code_submission): The users code submission
-            api_url (str, optional): Ollama API url to be used for requests. Defaults to "http://localhost:11434".
         """
         #Retrieve task info and create prompt.
+        ollama_url = await self.get_ollama_url()
         task_json = await database.get_task(submission.task_unique_name)
         previous_step = task_json.prefix+submission.code
         task = task_json.task
@@ -41,23 +41,28 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
     #             self.task_summaries[submission.task_unique_name] = summary
             instruction = self.create_instruction(previous_step, task="Task should be here") #TODO: get short version of tasks or differentiate between local and server.
             payload = {
-                    "model": "codellama-7b-nxt",
+                    #"model": "codellama-7b-nxt",
+                    "model": "codellama:13b",
                     "prompt": instruction,
                     "stream": False,
                     "options": {"num_predict": 100,
                                 "stop": ["<s>", "</s>", "[INST]", "[/INST]", "<<SYS>>", "<</SYS>>"]}
                 }
-            async with session.post(f"{ollama_url}/api/generate", json=payload) as response:
+            async with session.post(f"{ollama_url}api/generate", json=payload) as response:
                 feedback = await response.text()
                 feedback = json.loads(feedback)
         return(feedback["response"])
     
-    def set_ollama_url(self, ollama_url):
-        database.update_settings({"olama_url": ollama_url})
+    async def set_ollama_url(self, ollama_url):
+        await database.update_settings({"olama_url": ollama_url})
+
+    async def get_ollama_url(self):
+        settings = await database.get_settings()
+        return settings.ollama_url
     
-    def get_feedback_available(self, task_type):
-        ollama_url = database.get_settings()
-        if ollama_url == "" and task_type in ["function", "print"]:
+    async def get_feedback_available(self, task_type):
+        settings = await database.get_settings()
+        if settings.ollama_url == "" or task_type in ["multiple_choice"]:
             return False
         else:
             return True

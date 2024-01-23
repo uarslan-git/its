@@ -32,6 +32,8 @@ export class CodePanelComponent {
   multipleChoiceComponent!: MultipleChoiceComponent;
   isMultipleChoice: boolean = false;
 
+  feedbackAvailable!: boolean;
+
   //Submit Button
   submitButtonClicked() {
     if(this.isMultipleChoice) {
@@ -97,6 +99,7 @@ export class CodePanelComponent {
       this.current_task_id = sessionStorage.getItem("taskId")!;
       this.getCurrentAttemptState();
       this.isMultipleChoice = sessionStorage.getItem("taskType")! == "multiple_choice";
+      this.feedbackAvailable = sessionStorage.getItem("feedbackAvailable") == "true" 
     });
   }
 

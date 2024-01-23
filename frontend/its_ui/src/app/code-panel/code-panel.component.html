@@ -8,6 +8,7 @@
   <div class="actionPanel">
     <app-action-panel 
     [showRunButton]="!isMultipleChoice" (submitEvent)="submitButtonClicked()" 
+    [showFeedbackButton]="feedbackAvailable"
     (runEvent)="handleRunEvent($event)" (feedbackEvent)="handleFeedbackEvent()" 
     ></app-action-panel>
   </div>

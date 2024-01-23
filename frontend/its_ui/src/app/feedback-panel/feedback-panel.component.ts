@@ -56,6 +56,7 @@ export class FeedbackPanelComponent {
     // Subscriptions for feedback requests
     this.feedbackRequestSubscription = this.eventShareService.feedbackButtonClick$.subscribe(
       () => {
+        console.log("Request arrived")
         this.feedback_markdown = 'Feedback requested, waiting for results...'
       }
     );

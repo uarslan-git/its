@@ -15,6 +15,7 @@ class Model_manager():
     def pedagogical_model(self, user: User):
         return self.prototype
     
+    #TODO: Maybe that is not necesessary
     def domain_model(self):
         raise Exception("Not implemented!")
     

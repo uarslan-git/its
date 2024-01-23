@@ -3,7 +3,6 @@ import numpy as np
 from sklearn.mixture import GaussianMixture
 
 def optimal_gmm_clusters(data, max_clusters=10):
-
 #!prefix!#
 
     """

@@ -8,7 +8,7 @@
     sleep 7
 
     #load the custom model
-    ollama create codellama-7b-nxt -f /home/Modelfile
+    ollama create codellama-7b-nxt -f /workspace/Modelfile
 ) &
 
 #Start the server in foreground
