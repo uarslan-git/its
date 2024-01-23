@@ -1,5 +1,13 @@
 version: '3.8'
 
+x-logging:
+  &default-logging
+  logging:
+    driver: json-file
+    options:
+      max-size: 100m
+
+
 services:
   # angular-app:
   #   build: ./frontend
@@ -53,9 +61,61 @@ services:
     networks:
       - its_network
 
+  #Judge0 Sevices
+  j0-server:
+    image: judge0/judge0:1.13.0-extra
+    volumes:
+      - ./judge0/judge0.conf:/judge0.conf:ro
+    ports:
+      - "2358:2358"
+    privileged: true
+    <<: *default-logging
+    restart: always
+    networks:
+      - its_network
+
+  j0-workers:
+    image: judge0/judge0:1.13.0-extra
+    command: ["./scripts/workers"]
+    volumes:
+      - ./judge0/judge0.conf:/judge0.conf:ro
+    privileged: true
+    <<: *default-logging
+    restart: always
+    networks:
+      - its_network
+
+  db:
+    image: postgres:13.0
+    env_file: judge0/judge0.conf
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/
+    <<: *default-logging
+    restart: always
+    networks:
+      - its_network
+
+  redis:
+    image: redis:6.0
+    command: [
+      "bash", "-c",
+      'docker-entrypoint.sh --appendonly yes --requirepass "$$REDIS_PASSWORD"'
+    ]
+    env_file: judge0/judge0.conf
+    volumes:
+      - redis-data:/data
+    <<: *default-logging
+    restart: always
+    networks:
+      - its_network
+
 networks:
   its_network:
     driver: bridge
 
 volumes:
   mongodb_data:
+  postgres-data:
+  redis-data:
+
+
