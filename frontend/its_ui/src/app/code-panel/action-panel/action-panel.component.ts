@@ -1,5 +1,6 @@
 import { Component, Output, EventEmitter, ElementRef, ViewChild, Input } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { EventShareService } from 'src/app/shared/services/event-share.service';
 
 @Component({
@@ -13,6 +14,7 @@ export class ActionPanelComponent {
   @Output() submitEvent : EventEmitter<string> = new EventEmitter<string>();
   @Output() feedbackEvent : EventEmitter<string> = new EventEmitter<string>();
 
+  taskFetchedSubscription?: Subscription;
   @ViewChild("runDialog", {static: true}) runDialog!: ElementRef<HTMLDialogElement>
 
   submissionId: string = '';
@@ -25,7 +27,15 @@ export class ActionPanelComponent {
   inCooldown: boolean = false;
 
   constructor(private eventShareService: EventShareService,
-              private fb: FormBuilder){}
+              private fb: FormBuilder){
+                this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe((data) => {
+                  this.inCooldown = true;
+                  setTimeout(() => {
+                    this.inCooldown = false;
+                  }, 60000); // 60 seconds initial timeout
+                }
+                );
+              }
 
   ngOnInit() {
 /*      this.runParametersForm = this.fb.group({
@@ -103,7 +113,7 @@ export class ActionPanelComponent {
       }, 30000); // 30 seconds cooldown
     }
     else {
-      window.alert("New Feedback will not available for a short time. Please Try to implement the suggestions of the last feedback first or try a new approach.")
+      window.alert("New Feedback will not be available for a short time. Please Try to implement the suggestions of the last feedback first or try a new approach.")
     }
   }
 }

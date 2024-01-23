@@ -27,11 +27,8 @@ from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 from schemas import Settings
 from feedback.schemas import Url
 
-<<<<<<< 60876a878d8269253d4152caa5c7200469537da8
+
 REQUEST_TIMEOUT_ERROR = 30  # Threshold
-=======
-REQUEST_TIMEOUT_ERROR = 4  # Threshold
->>>>>>> 202ec19a9af7fe50cb0b7a8a25cfdf7dd4b8eef6
 
 
 #Api prefix
