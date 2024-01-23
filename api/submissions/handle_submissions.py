@@ -137,7 +137,7 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
         if course.curriculum == user.tasks_completed:
             if user.enrolled_courses[0] not in user.courses_completed:
                 user.courses_completed.append(user.enrolled_courses[0]) #TODO: Unsafe, secure this
-        await database.update_user(user)
+        await database.update_user(user, {"courses_completed": user.courses_completed, "tasks_completed": user.tasks_completed})
     #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
     if (submission.log == "True"):
         await database.log_code_submission(tested_submission)
@@ -193,7 +193,7 @@ async def handle_mc_submission(submission: Code_submission, user: User = Depends
         if course.curriculum == user.tasks_completed:
             if user.enrolled_courses[0] not in user.courses_completed:
                 user.courses_completed.append(user.enrolled_courses[0]) #TODO: Unsafe, secure this
-        await database.update_user(user)
+        await database.update_user(user, {"courses_completed": user.courses_completed, "tasks_completed": user.tasks_completed})
     #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
     if (submission.log == "True"):
         await database.log_code_submission(tested_submission)

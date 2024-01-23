@@ -3,7 +3,8 @@ from fastapi_users.authentication import JWTStrategy
 from fastapi import Depends, Request, Response
 from fastapi_users import BaseUserManager, FastAPIUsers
 from typing import Optional
-from db.db_connector_beanie import User
+#from db.db_connector_beanie import User
+from users.schemas import User
 from db import User, get_user_db, database
 from beanie import PydanticObjectId
 from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
@@ -22,8 +23,9 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     verification_token_secret = SECRET
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
-        user.roles = ["student"]
-        await database.update_user(user)
+        #user.roles = ["student"]
+        update_dict = {"roles": ["student"]}
+        await database.update_user(user, update_dict)
         print(f"User {user.id} has registered.")
 
     async def on_after_forgot_password(

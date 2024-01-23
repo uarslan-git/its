@@ -56,9 +56,11 @@ class database():
         user = await get_user_db.get(user_id)
         return(user)
 
-    async def update_user(self, user: User):
+    async def update_user(self, user: User, update_dict):
+        #TODO: Uset .update after new versions of MongoDB run on the server.
         #await get_user_db().update(user)
-        await user.save()
+        await user.update({"$set": update_dict})
+        #await user.save()
 
     async def get_course(self, unique_name):
         course = await Course.find_one(Course.unique_name == unique_name)
