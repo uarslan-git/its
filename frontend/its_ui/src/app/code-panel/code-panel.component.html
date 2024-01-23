@@ -6,7 +6,11 @@
   </div>
   
   <div class="actionPanel">
-    <app-action-panel [showRunButton]="!isMultipleChoice" (submitEvent)="submitButtonClicked()" (runEvent)="handleRunEvent($event)"></app-action-panel>
+    <app-action-panel 
+    [showRunButton]="!isMultipleChoice" (submitEvent)="submitButtonClicked()" 
+    [showFeedbackButton]="feedbackAvailable"
+    (runEvent)="handleRunEvent($event)" (feedbackEvent)="handleFeedbackEvent()" 
+    ></app-action-panel>
   </div>
 
 </div>

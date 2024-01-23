@@ -32,6 +32,8 @@ export class CodePanelComponent {
   multipleChoiceComponent!: MultipleChoiceComponent;
   isMultipleChoice: boolean = false;
 
+  feedbackAvailable!: boolean;
+
   //Submit Button
   submitButtonClicked() {
     if(this.isMultipleChoice) {
@@ -97,6 +99,7 @@ export class CodePanelComponent {
       this.current_task_id = sessionStorage.getItem("taskId")!;
       this.getCurrentAttemptState();
       this.isMultipleChoice = sessionStorage.getItem("taskType")! == "multiple_choice";
+      this.feedbackAvailable = sessionStorage.getItem("feedbackAvailable") == "true" 
     });
   }
 
@@ -145,6 +148,27 @@ export class CodePanelComponent {
       }
         this.contentReloaded = false;
         this.lastSavedCode = newContent;
+    }
+
+    handleFeedbackEvent() {
+      console.log("Feedback requested")
+      if(!this.isMultipleChoice) {
+        this.submitted_code = this.codeEditorComponent.userContentControl;
+        this.client.post<any>(`${environment.apiUrl}/feedback`, 
+          {
+            // TODO: check the payload!
+            selected_choices: [],
+            task_unique_name: this.current_task_id, 
+            code: this.submitted_code,
+            log: "True", 
+            type: "feedback_request",
+            submission_time: this.datetimeService.datetimeNow()
+          },
+          {withCredentials: true}).subscribe((data) => {
+            this.eventShareService.emitFeedbackReadyEvent(data.feedback_id);
+          }
+        );
+      }
     }
 
     ngOnDestroy(){

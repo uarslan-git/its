@@ -4,7 +4,7 @@ from fastapi import Depends, Request, Response
 from fastapi_users import BaseUserManager, FastAPIUsers
 from typing import Optional
 from db.db_connector_beanie import User
-from db import User, get_user_db
+from db import User, get_user_db, database
 from beanie import PydanticObjectId
 from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
 import os
@@ -17,10 +17,13 @@ with open(os.path.join(filedir,"SECRET.txt")) as f:
     SECRET = f.readline()
 
 class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
+    #TODO: Implement reset password and verification and choose some save tokens.
     reset_password_token_secret = SECRET
     verification_token_secret = SECRET
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
+        user.roles = ["student"]
+        await database.update_user(user)
         print(f"User {user.id} has registered.")
 
     async def on_after_forgot_password(
@@ -41,11 +44,10 @@ async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
 
 
-#TODO: make cookie valid for two hours
-cookie_transport = CookieTransport(cookie_max_age=6400, cookie_secure=True, cookie_samesite='none', cookie_httponly=False)
+cookie_transport = CookieTransport(cookie_max_age=7200, cookie_secure=True, cookie_samesite='none', cookie_httponly=False)
 
 def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=SECRET, lifetime_seconds=6400)
+    return JWTStrategy(secret=SECRET, lifetime_seconds=7200)
 
 
 auth_backend = AuthenticationBackend(

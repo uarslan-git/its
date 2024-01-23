@@ -24,8 +24,14 @@ import time
 import asyncio
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
+from schemas import Settings
+from feedback.schemas import Url
 
+<<<<<<< 60876a878d8269253d4152caa5c7200469537da8
+REQUEST_TIMEOUT_ERROR = 30  # Threshold
+=======
 REQUEST_TIMEOUT_ERROR = 4  # Threshold
+>>>>>>> 202ec19a9af7fe50cb0b7a8a25cfdf7dd4b8eef6
 
 
 #Api prefix
@@ -95,9 +101,10 @@ async def on_startup():
     await init_beanie(
         database=db_connection_beanie.db,
         document_models=[
-            User, Code_submission, Tested_code_submission, Course, Task, Attempt, AttemptState
+            User, Code_submission, Tested_code_submission, Course, Task, Attempt, AttemptState, Settings, Url
         ],
     )
+    await initialize_settings(db_connection_beanie)
 
 # TODO: Hiermit in Hinblick auf security auseinandersetzen!
 #origins = ["*"]
@@ -119,6 +126,9 @@ async def get_status():
     print("Status requested")
     return {"message": "Connected!"}
 
+async def initialize_settings(database):
+    settings = Settings(ollama_url="")
+    await database.create_settings(settings)
 
 """ def parse_cl_arguments():
     parser = argparse.ArgumentParser(description="Command-line argument parser for database network.")

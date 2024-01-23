@@ -32,7 +32,13 @@
 <!-- Action Panel with action buttons -->
 <div class="action-buttons"> <!-- Added a new container for action buttons -->
     <button class="action-button" (click)="runButtonClicked()" *ngIf="showRunButton">Run</button>
-    <!-- <button class="action-button">Feedback</button> -->
+
+    <button
+
+      [ngClass]="{'cooldown-action-button': inCooldown, 'action-button': !inCooldown}"
+      (click)="feedbackButtonClicked()" *ngIf="showFeedbackButton">Feedback
+    </button>
+
     <button class="action-button" (click)="submitButtonClicked()">Submit</button>
 </div>
 

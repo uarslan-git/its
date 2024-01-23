@@ -9,6 +9,8 @@ from attempts.schemas import Attempt
 from submissions.schemas import Code_submission as Submission
 from runs.schemas import Evaluated_run_code_submission as Run_submission
 from tasks.schemas import Task
+from feedback.schemas import Evaluated_feedback_submission as Feedback_submission
+from schemas import Settings
 from beanie import PydanticObjectId
 
 
@@ -45,6 +47,8 @@ class database():
         submission = await Submission.find_one(Submission.id == PydanticObjectId(submission_id), with_children=True)
         if submission.type == "run":
             submission = await Run_submission.find_one(Run_submission.id == PydanticObjectId(submission_id))
+        elif submission.type == "feedback_request":
+            submission = await Feedback_submission.find_one(Feedback_submission.id == PydanticObjectId(submission_id))
         return(submission)
 
     async def get_user(self, user_id): 
@@ -73,3 +77,16 @@ class database():
 
     async def create_attempt(self, attempt: Attempt): 
         await attempt.insert()
+
+    async def get_settings(self):
+        settings = await Settings.find_one()
+        return settings
+
+    async def create_settings(self, settings: Settings):
+        old_settings = await Settings.find().to_list()
+        if len(old_settings) == 0:
+            await settings.insert()
+
+    async def update_settings(self, update_dict):
+        settings = await self.get_settings()
+        await settings.update({"$set": update_dict})

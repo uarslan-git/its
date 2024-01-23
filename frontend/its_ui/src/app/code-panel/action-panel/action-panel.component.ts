@@ -11,6 +11,7 @@ export class ActionPanelComponent {
 
   @Output() runEvent: EventEmitter<string> = new EventEmitter<any>();
   @Output() submitEvent : EventEmitter<string> = new EventEmitter<string>();
+  @Output() feedbackEvent : EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChild("runDialog", {static: true}) runDialog!: ElementRef<HTMLDialogElement>
 
@@ -19,6 +20,9 @@ export class ActionPanelComponent {
   runParametersForm!: FormGroup;
 
   @Input() showRunButton: boolean = true;
+  @Input() showFeedbackButton!: boolean;
+
+  inCooldown: boolean = false;
 
   constructor(private eventShareService: EventShareService,
               private fb: FormBuilder){}
@@ -85,5 +89,21 @@ export class ActionPanelComponent {
   submitButtonClicked() {
     this.submitEvent.emit();
     this.eventShareService.emitSubmitButtonClick();
+  }
+
+  // Feedback Button
+  feedbackButtonClicked() {
+    if (!this.inCooldown) {
+      this.feedbackEvent.emit();
+      this.eventShareService.emitFeedbackButtonClick();
+      // Set cooldown for 30 seconds
+      this.inCooldown = true;
+      setTimeout(() => {
+        this.inCooldown = false;
+      }, 30000); // 30 seconds cooldown
+    }
+    else {
+      window.alert("New Feedback will not available for a short time. Please Try to implement the suggestions of the last feedback first or try a new approach.")
+    }
   }
 }

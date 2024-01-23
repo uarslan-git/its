@@ -18,26 +18,32 @@ export class FeedbackPanelComponent {
   private newTaskSubscription: Subscription;
   private codeRunSubscription: Subscription;
   private codeRunReadySubscription: Subscription;
+  private feedbackRequestSubscription: Subscription;
+  private feedbackReadySubscription: Subscription;
 
   code_language: string = 'python';
   feedback_markdown: string = '';
-  feedback:  { test_results?: Array<any>; task_id?: string; submission_id?: string; valid_solution?: boolean, output?: boolean} = {};
+  feedback:  { test_results?: Array<any>; task_id?: string; submission_id?: string; 
+    valid_solution?: boolean, output?: boolean, feedback?: string} = {};
   submissionId: string = '';
   
 
   constructor(
     private eventShareService: EventShareService,
     private client: HttpClient,){
+    //Subscriptions for code submit
     this.submitSubscription = this.eventShareService.submitButtonClick$.subscribe((data) => {
       this.feedback_markdown = 'Code submitted, waiting for feedback...';
     });
     this.testReadySubscription = this.eventShareService.testReady$.subscribe((data) => {
       const submissionId = data
-      this.fetchFeedback(submissionId);
+      this.fetchSubmissionFeedback(submissionId);
     });
+    // New Task subscription
     this.newTaskSubscription = this.eventShareService.newTaskEvent$.subscribe(() => {
       this.feedback_markdown = '';
     });
+    // Subscriptions for code run
     this.codeRunSubscription = this.eventShareService.runButtonClick$.subscribe(
       () => {
         this.feedback_markdown = 'Code Experiment started, waiting for results...'
@@ -47,11 +53,22 @@ export class FeedbackPanelComponent {
       (run_id) => {
         this.fetchRunExperiment(run_id);
     })
+    // Subscriptions for feedback requests
+    this.feedbackRequestSubscription = this.eventShareService.feedbackButtonClick$.subscribe(
+      () => {
+        console.log("Request arrived")
+        this.feedback_markdown = 'Feedback requested, waiting for results...'
+      }
+    );
+    this.feedbackReadySubscription = this.eventShareService.feedbackReady$.subscribe(
+      (feedback_id) => {
+        this.fetchRequestedFeedback(feedback_id);
+    })
   }
 
-  fetchFeedback(submission_id: string) {
-    const submission_url = `${environment.apiUrl}/feedback/${submission_id}`
-    this.client.get<any>(submission_url, ).subscribe((data) => { 
+  fetchSubmissionFeedback(submission_id: string) {
+    const endpoint_url = `${environment.apiUrl}/submission/feedback/${submission_id}`;
+    this.client.get<any>(endpoint_url, ).subscribe((data) => { 
       this.feedback = {
           test_results: data.test_results,
           task_id: data.task_unique_name,
@@ -78,13 +95,24 @@ export class FeedbackPanelComponent {
   }
 
   fetchRunExperiment(runId: string) {
-    const submission_url = `${environment.apiUrl}/feedback/${runId}`
-    this.client.get<any>(submission_url, ).subscribe((data) => { 
+    const endpoint_url = `${environment.apiUrl}/submission/feedback/${runId}`;
+    this.client.get<any>(endpoint_url, ).subscribe((data) => { 
       this.feedback = {
         output: data.run_output,
         task_id: data.task_unique_name,
     };
     this.feedback_markdown = data.run_output;
+  });
+  }
+
+  fetchRequestedFeedback(feedbackID: string) {
+    const endpoint_url = `${environment.apiUrl}/submission/feedback/${feedbackID}`;
+    this.client.get<any>(endpoint_url, ).subscribe((data) => { 
+      this.feedback = {
+        feedback: data.feedback,
+        task_id: data.task_unique_name,
+    };
+    this.feedback_markdown = data.feedback;
   });
   }
 
@@ -109,5 +137,7 @@ export class FeedbackPanelComponent {
     this.newTaskSubscription.unsubscribe();
     this.codeRunSubscription.unsubscribe();
     this.codeRunReadySubscription.unsubscribe();
+    this.feedbackRequestSubscription.unsubscribe();
+    this.feedbackReadySubscription.unsubscribe();
   }
 }

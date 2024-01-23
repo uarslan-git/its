@@ -25,8 +25,9 @@ export class ProfileComponent {
   email: string = '';
   name: string = '';
   registeredDatetime: string = '';
-  user: {email?: string, register_datetime?: any, settings?: any, enrolled_courses?: string[]} = {};
+  user: {email?: string, register_datetime?: any, settings?: any, enrolled_courses?: string[], roles?: string[]} = {};
   enrolledCourse: string = '';
+  displayApiSettings: boolean = false;
 
   constructor(private http: HttpClient,
     private eventShareService: EventShareService) {
@@ -47,6 +48,7 @@ export class ProfileComponent {
           register_datetime: data.register_datetime,
           settings: data.settings,
           enrolled_courses: data.enrolled_courses,
+          roles: data.roles
         };
         this.email = this.user.email!;
         this.name = this.user.email!.split("@")[0];
@@ -57,6 +59,9 @@ export class ProfileComponent {
         }
         else {
           this.consentCheckbox.nativeElement.checked = false;
+        }
+        if(data.roles.includes("admin")){
+          this.displayApiSettings = true;
         }
       });
     }
@@ -79,5 +84,13 @@ export class ProfileComponent {
         this.http.patch<any>(`${this.apiUrl}/users/me`, this.user, {withCredentials: true}).subscribe();
         sessionStorage.setItem('dataCollection', this.consentCheckbox.nativeElement.checked)
       }
+    }
+
+    saveApiUrl(url: string) {
+      this.http.post(`${this.apiUrl}/feedback/set_llm_url`,{"url": url}, {withCredentials: true}).subscribe(
+        (data) => {
+
+        }
+      );
     }
 }
