@@ -45,6 +45,22 @@ export class EventShareService {
     this.codeRunReadySubject.next(codeRunId);
   }
 
+  //Feedback button click
+  private feedbackButtonClickSubject = new Subject<void>();
+  feedbackButtonClick$ = this.feedbackButtonClickSubject.asObservable();
+
+  emitFeedbackButtonClick() {
+    this.feedbackButtonClickSubject.next();
+  }
+
+  // Feedback ready Event
+  private feedbackReadySubject = new Subject<string>();
+  feedbackReady$ = this.feedbackReadySubject.asObservable();
+
+  emitFeedbackReadyEvent(feedbackId: string) {
+    this.feedbackReadySubject.next(feedbackId);
+  }
+
   //New Task Event
   private newTaskEventSubject = new Subject<string>();
   newTaskEvent$ = this.newTaskEventSubject.asObservable();

@@ -11,7 +11,7 @@
                             "This statement is not correct. Biases tend to amplify within the feedback loop, rendering their effects more severe over time.", 
                             "This statement is not completely correct. This is the reason behind the popularity bias, and it often leads to the discrimination of smaller user subgroups, or underrepresentation of new items.",
                             "This statement is correct. It is often challending to choose what exactly a recommender should optimize: skill growth, task completion, number of courses taken, etc.",
-                            "This statement is not correct. While nDCG is indeed a very popular and useful metric, it is important to note that the evaluation metric should first of all correspond to your recommendation and optimization target.",]
+                            "This statement is not correct. While nDCG is indeed a very popular and useful metric, it is important to note that the evaluation metric should first of all correspond to your recommendation and optimization target."]
 }
 #!json!#
 '''

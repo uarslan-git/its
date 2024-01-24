@@ -15,14 +15,17 @@ class Config:
         if env == "development":
             self.database_host = "localhost"
             self.database_port = 27017
+            self.judge0_host = "localhost"
 
         elif env == "production":
             self.database_host = "mongodb"
             self.database_port = 27017
+            self.judge0_host = "j0-server"
 
         elif env == "staging":
             self.database_host = "mongodb"
             self.database_port = 27017
+            self.judge0_host = "j0-server"
 
         else:
             raise ValueError("Invalid 'env' value. Supported values are 'development', 'production', and 'staging'.")

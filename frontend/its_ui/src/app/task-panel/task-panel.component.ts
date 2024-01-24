@@ -23,7 +23,8 @@ export class TaskPanelComponent {
   code_language: string = 'python';
 
   course: {unique_name?: string; curriculum?: string[]} = {}
-  task: { unique_name?: string; task?: string; type?: string, prefix?: string, arguments?: string[], possible_choices?: string} = {};
+  task: { unique_name?: string; task?: string; type?: string, prefix?: string, 
+    arguments?: string[], possible_choices?: string, feedback_available?: string} = {};
 
   constructor(
     private client: HttpClient,
@@ -78,6 +79,7 @@ export class TaskPanelComponent {
         prefix: data.prefix,
         arguments: data.arguments,
         possible_choices: data.possible_choices,
+        feedback_available: data.feedback_available,
     };
     console.log("new task request")
     if (this.task['unique_name'] == "course completed") {
@@ -93,6 +95,7 @@ export class TaskPanelComponent {
     sessionStorage.setItem("taskArguments", JSON.stringify(this.task['arguments']!));
     sessionStorage.setItem("taskPrefix", this.task['prefix']!);
     sessionStorage.setItem("taskChoices", JSON.stringify(this.task['possible_choices']!));
+    sessionStorage.setItem("feedbackAvailable", this.task["feedback_available"]!);
     this.eventShareService.emitNewTaskFetchedEvent();
     this.markdownPanelComponent.resetScroll();
 
@@ -117,7 +120,6 @@ export class TaskPanelComponent {
         }
       );
   }, 300);
-
   }
 
   ngOnDestroy() {

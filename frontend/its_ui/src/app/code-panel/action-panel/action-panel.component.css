@@ -1,9 +1,10 @@
 .action-buttons {
     background-color: #616161;
     color: #fff;
+    display: grid;
     align-content: center;
     display: flex;
-    grid-template-columns: 1fr 1fr; /* 1fr;  */
+    grid-template-columns: 1fr 1fr 1fr; 
     align-items: center;
     padding: 0.8rem;
     max-width: 100%;
@@ -40,4 +41,18 @@
   .argumentFields {
     margin-top: 1rem;
     margin-bottom: 1rem;
+  }
+
+  .action-buttons .cooldown-action-button {
+    flex: 1;
+    border: none;
+    background-color: #555;
+    color: #fff;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s;
+    margin-right: 0.5rem;
+    font-size: 1rem;
   }

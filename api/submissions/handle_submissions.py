@@ -8,8 +8,9 @@ from users.handle_users import current_active_user
 from db.db_connector_beanie import User
 from submissions.schemas import Code_submission, Tested_code_submission
 from tasks.schemas import Task
+from config import config
 
-import db
+from db import database
 from sys import __stdout__
 import aiohttp
 import json
@@ -17,12 +18,12 @@ import json
 router = APIRouter()
 
 
-async def execute_code_judge0(code_payload, url="http://localhost:2358"):
+async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:2358"):
     """Execute a code snippet in judge0 and wait for the result to return.
 
     Args:
         code_payload (str): string containing an executable python program
-        url (str, optional): Url of the Judge0 server. Defaults to "http://localhost:2358".
+        url (str, optional): Url of the Judge0 server. Defaults to "http://host:2358".
 
     Raises:
         Exception: _description_
@@ -54,12 +55,17 @@ async def execute_code_judge0(code_payload, url="http://localhost:2358"):
             async with session.get(f"{url}/submissions/{run_token}") as response:
                 run_result = await response.text()
                 run_result = json.loads(run_result)
-                if run_result["status"]["description"] not in ["In Queue"]:
-                    #run_result = json.loads(run_result)["stdout"]
+                if run_result["status"]["description"] not in ["In Queue", "Processing"]:
+                    # In case of unexpected return status, return an informative error
+                    if (run_result["stdout"] is None) and (run_result["status"]["description"] != "Accepted"):
+                        raise Exception("Empty run result: execution status: {0}".format(run_result))
+                    elif (run_result["stdout"] is None) and (run_result["status"]["description"] == "Accepted"):
+                        run_result["stdout"] = ""
                     return run_result["stdout"]
                 #run_result = eval(run_result)["stdout"]
                 await asyncio.sleep(0.2)
         raise Exception("Code Sandbox status frozen!")
+
 
 json_serialize = """
 def json_serialize(obj):
@@ -76,6 +82,23 @@ def json_serialize(obj):
     example_solution: str
     tests: list """
 
+async def run_tests(task_json, submission):
+    tests = task_json.tests
+    test_results = []
+    valid_solution = True
+    for i, test_name in enumerate(tests.keys()):
+        prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
+        test_result = await get_test_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines)
+        #TODO: After using Judge0, do we need to change this in order to log all timed out submissions?
+        if test_result is None:
+            submission.type = "timed_out_submission"
+            await database.log_code_submission(submission)
+            raise asyncio.TimeoutError
+        test_results.append(test_result)
+        if test_results[i]["status"] == 0:
+            valid_solution = False
+    return test_results, valid_solution
+
 @router.post("/code_submit")
 async def handle_code_submission(submission: Code_submission, user: User = Depends(current_active_user)):
     """Preprocess coda and run a series of test cases on a code submission.
@@ -85,8 +108,9 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
     """
     user_id = user.id
     task_id = submission.task_unique_name
-    task_json = await db.database.get_task(str(task_id))
-    tests = task_json.tests
+    task_json = await database.get_task(str(task_id))
+    test_results, valid_solution = await run_tests(task_json, submission)
+    """     tests = task_json.tests
     test_results = []
     valid_solution = True
     for i, test_name in enumerate(tests.keys()):
@@ -94,11 +118,11 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
         test_result = await get_test_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines)
         if test_result is None:
             submission.type = "timed_out_submission"
-            await db.database.log_code_submission(submission)
+            await database.log_code_submission(submission)
             raise asyncio.TimeoutError
         test_results.append(test_result)
         if test_results[i]["status"] == 0:
-            valid_solution = False
+            valid_solution = False """
     # Log code submit to database
     tested_submission = Tested_code_submission(log = submission.log, 
                                                task_unique_name = submission.task_unique_name, 
@@ -114,21 +138,21 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
     #TODO: implement student model for this.
     if valid_solution and (not submission.task_unique_name in user.tasks_completed):
         user.tasks_completed.append(submission.task_unique_name)
-        course = await db.database.get_course(unique_name=user.enrolled_courses[0])
+        course = await database.get_course(unique_name=user.enrolled_courses[0])
         if course.curriculum == user.tasks_completed:
             if user.enrolled_courses[0] not in user.courses_completed:
                 user.courses_completed.append(user.enrolled_courses[0]) #TODO: Unsafe, secure this
-        await db.database.update_user(user)
+        await database.update_user(user, {"courses_completed": user.courses_completed, "tasks_completed": user.tasks_completed})
     #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
     if (submission.log == "True"):
-        await db.database.log_code_submission(tested_submission)
+        await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
 @router.post("/mc_submit")
 async def handle_mc_submission(submission: Code_submission, user: User = Depends(current_active_user)):
     user_id = user.id
     task_id = submission.task_unique_name
-    task_json = await db.database.get_task(str(task_id))
+    task_json = await database.get_task(str(task_id))
     
     test_results = []
     valid_solution = True
@@ -170,14 +194,14 @@ async def handle_mc_submission(submission: Code_submission, user: User = Depends
     #TODO: implement student model for this.
     if valid_solution and (not submission.task_unique_name in user.tasks_completed):
         user.tasks_completed.append(submission.task_unique_name)
-        course = await db.database.get_course(unique_name=user.enrolled_courses[0])
+        course = await database.get_course(unique_name=user.enrolled_courses[0])
         if course.curriculum == user.tasks_completed:
             if user.enrolled_courses[0] not in user.courses_completed:
                 user.courses_completed.append(user.enrolled_courses[0]) #TODO: Unsafe, secure this
-        await db.database.update_user(user)
+        await database.update_user(user, {"courses_completed": user.courses_completed, "tasks_completed": user.tasks_completed})
     #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
     if (submission.log == "True"):
-        await db.database.log_code_submission(tested_submission)
+        await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
 async def get_test_result(test_code, test_name, submission_code, prefix_lines):
@@ -214,11 +238,15 @@ print("##!serialization!##")
         save = check_user_code(submission_code, prefix_lines)
         if save:
             result_string = await execute_code_judge0(test_submission_code)
-            result_string = result_string.split("##!serialization!##")[1]
-            result_string = result_string.split("##!serialization!##")[0]
-            result_dict = json.loads(result_string)
-            test_message = result_dict["test_message"]
-            test_result = result_dict["test_result"]
+            if "##!serialization!##" in result_string:
+                result_string = result_string.split("##!serialization!##")[1]
+                result_string = result_string.split("##!serialization!##")[0]
+                result_dict = json.loads(result_string)
+                test_message = result_dict["test_message"]
+                test_result = result_dict["test_result"]
+            else:
+                test_result = 0
+                test_message = result_string
             result_message = "Test success" if test_result else "Test failure:"
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}   
     except BaseException as e:
@@ -227,6 +255,10 @@ print("##!serialization!##")
         test_message = str(e)
         return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}
 
+@router.get("/submission/feedback/{submission_id}")
+async def send_feedback(submission_id):
+    feedback = await database.get_submission(str(submission_id))
+    return(feedback)
 
 def check_user_code(code, prefix_lines=[]):
     class ImportVisitor(ast.NodeVisitor):
