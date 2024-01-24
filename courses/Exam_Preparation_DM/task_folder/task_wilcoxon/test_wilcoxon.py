@@ -28,5 +28,3 @@ def test_wilcoxon():
     true_res = wilcoxon(x, y).pvalue < 0.1
     res = wilcoxon_signed_rank_test(x, y, 0.1)
     assert res == true_res, "Your test result is incorrect for a large sample"
-
-    

@@ -3,10 +3,10 @@
 {
     "possible_choices": ["PCA aims to transform the original variables into a new set of uncorrelated variables called principal components.",  
                          "Similarly to PCA, the FA assumes that the observed variables are influenced common factors, and there is no correlations among the latent factors.",  
-                         "Both PCA and FA aims to give a interpretaple undelying pattern within the data.",
+                         "Both PCA and FA aims to give a interpretaple underlying pattern within the data.",
                          "Principal components are orthogonal to each other.",
                          "FA without encorporated error terms is just PCA.",
-                         "The main goal of the FA is to reduce dimensionaloty of the data."],
+                         "The main goal of the FA is to reduce dimensionality of the data."],
     "correct_choices": [true, false, false, true, true, false],
     "choice_explanations": ["This statement is correct. PCA indeed tries to do so. These components are linear combinations of the original variables and capture the maximum variance in the data.", 
                             "This statement is not correct. FA assumes that the observed variables are influenced by both common for all and unique factors, which allows for correlations.", 

@@ -3,8 +3,8 @@ import numpy as np
 #!cut_imports!#
 def test_pearson():
 
-    x = np.array([1,2,3,4,5])
-    y = np.array([2,4,6,8,10])
+    x = np.array([1.0,2.0,3.0,4.0,5.0])
+    y = np.array([2.0,4.0,6.0,8.0,10.0])
 
     #Return type
     corr = pearson_correlation(x, x)
