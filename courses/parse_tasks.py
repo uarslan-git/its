@@ -73,7 +73,7 @@ def task_to_json(dir, task_unique_name, outfile, db=None):
             #json.dump({"example_solution": content_docstring}, outfile, ensure_ascii=False)
             prefix = content_docstring.split("#!prefix!#")[0]
             prefix = prefix.split("!#")[1].lstrip()
-            task_dict["prefix"] = prefix
+            task_dict["prefix"] = prefix.strip()
             #test if there is a required signature, and if so, add it to database.
             task_dict["example_solution"] = content_docstring.split("#!prefix!#\n")[1]
             if task_type == "function":
