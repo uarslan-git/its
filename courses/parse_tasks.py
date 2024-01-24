@@ -53,6 +53,9 @@ def task_to_json(dir, task_unique_name, outfile, db=None):
             test = content_docstring.split("#!cut_imports!#")[1]
             #json.dump({"test_{0}".format(test_number): test}, outfile, ensure_ascii=False)
             tests[test_name] = test
+        # TODO: find a way to include pictures in the database
+        elif file_name.endswith("png"):
+            pass
         elif file_name.endswith("md"):
             header = content_docstring.split("\n")[0]
             if not header.startswith("# "):

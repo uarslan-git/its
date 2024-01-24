@@ -1,19 +1,17 @@
 '''
 #!json!#
 {
-    "possible_choices": ["PCA aims to transform the original variables into a new set of uncorrelated variables called principal components.",  
-                         "Similarly to PCA, the FA assumes that the observed variables are influenced common factors, and there is no correlations among the latent factors.",  
-                         "Both PCA and FA aims to give a interpretaple undelying pattern within the data.",
-                         "Principal components are orthogonal to each other.",
-                         "FA without encorporated error terms is just PCA.",
-                         "The main goal of the FA is to reduce dimensionaloty of the data."],
-    "correct_choices": [true, false, false, true, true, false],
-    "choice_explanations": ["This statement is correct. PCA indeed tries to do so. These components are linear combinations of the original variables and capture the maximum variance in the data.", 
-                            "This statement is not correct. FA assumes that the observed variables are influenced by both common for all and unique factors, which allows for correlations.", 
-                            "This statement is not correct. PCA and FA both can find interpretable, but this is not a necessity for the PCA, while the factors found through FA are intended to have a meaningful interpretation.",
-                            "This statement is correct. Principal components are orthogonal to each other, meaning they are uncorrelated.",
-                            "This statement is correct. The absence of the error term in FA renders it to be a deterministic model, equal to PCA in its nature.",
-                            "This statement is not correct. This is the goal of PCA, while FA looks to understand the connection between latent factors."]
+    "possible_choices": ["Biases can appear at each stage of user interaction with their recommendtions: from the data, behaviour of algorithm, or user responses themselves.",  
+                         "Biases tend to have lesser impact over time.",  
+                         "Popular choices of the majority of users are usually good recommendation candidates.",
+                         "Defining a recommendation target goal in a complex task in the educational context.",
+                         "The nDCG is the best metric to evaluate the efficiency of recommendations."],
+    "correct_choices": [true, false, false, true, false],
+    "choice_explanations": ["This statement is correct. The example would be inductive bias (data), conformity bias (users), popularity bias (algorithm).", 
+                            "This statement is not correct. Biases tend to amplify within the feedback loop, rendering their effects more severe over time.", 
+                            "This statement is not completely correct. This is the reason behind the popularity bias, and it often leads to the discrimination of smaller user subgroups, or underrepresentation of new items.",
+                            "This statement is correct. It is often challending to choose what exactly a recommender should optimize: skill growth, task completion, number of courses taken, etc.",
+                            "This statement is not correct. While nDCG is indeed a very popular and useful metric, it is important to note that the evaluation metric should first of all correspond to your recommendation and optimization target."]
 }
 #!json!#
 '''

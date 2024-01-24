@@ -113,7 +113,7 @@ export class CodePanelComponent {
         (data) => {
           this.currentAttemptId = data.attempt_id;
           if(this.isMultipleChoice) {
-            let choices = sessionStorage.getItem('taskChoices')!.split(',');
+            let choices = JSON.parse(sessionStorage.getItem('taskChoices')!);
             this.multipleChoiceComponent.choices = choices;
           }
           else {

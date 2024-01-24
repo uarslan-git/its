@@ -2,6 +2,7 @@
 
 Concisder an input data to be a set of the point on the plane (2D points in an array). 
 An example: 
+
 ![Example Input Data](example_clusters.png)
 
 Recall the agglomerative clustering from the lectures. On of its differences to the Kmeans is that it does not require a predefined number of clusters. 
