@@ -347,7 +347,7 @@ def check_user_code(code, prefix_lines=[]):
     visitor = ImportVisitor(prefix_lines=prefix_lines)
     visitor.visit(ast_tree)
     print(code)
-    bad_strings = ["np.distutil", "multiprocessing", "APIRouter", "asyncio", "current_active_user", "unsafe_sys_import", "database", "run_with_timeout"]
+    bad_strings = ["__builtins__", "np.distutil", "multiprocessing", "APIRouter", "asyncio", "current_active_user", "unsafe_sys_import", "database", "run_with_timeout"]
     for string in bad_strings:
         if string in code:
             raise Exception("Bad symbol detected, please don't use {0} in your program".format(string))

@@ -2,10 +2,10 @@
 #!json!#
 {
     "possible_choices": [ "The 1-parameter IRT model only uses item discrimination rate as the parameter.",
-                        "If the student ability reacher the difficulty of the task, the student will always be able to complete the task successfully.",  
+                        "If the student ability reaches the difficulty of the task, the student will always be able to complete the task successfully.",  
                         "2-parameter IRT model requires sophisticated optimization.",
                         "The goal of the IRT is to model the chance of each student i to pass item j.",
-                        "On a plot, these models intersect a the point where the student ability reaches the task difficulty."],
+                        "On a plot, these models intersect at the point where the student ability reaches the task difficulty."],
     "correct_choices": [false, false, true, true, true],
     "choice_explanations": ["This statement is not correct. The parameter in the 1-parameter IRT model is the difficulty of the item.", 
                             "This statement is not correct. For both models, if the ability of the student reaches the task difficulty, they have 50% chance to complete the task successfully.", 
