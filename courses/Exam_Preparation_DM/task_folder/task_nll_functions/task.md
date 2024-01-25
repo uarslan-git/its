@@ -13,7 +13,7 @@ What would be the correct negative log-likelihood (NLL) function for the Poisson
 $ \text{a)}\quad NLL_{A}(\mu, \sigma) = \frac{1}{2} \sum_{i=1}^{n} \left( \frac{(x_i - \mu)^2}{2\sigma^2} + \log(\sigma^2) \right) $
 
 
-$ \text{b)}\quad NLL_{B}(\lambda) = -n\lambda -\sum_{i=1}^{n} \left( x_i \log(\lambda) - \lambda - \log(x_i!) \right) $
+$ \text{b)}\quad NLL_{B}(\lambda) = -\sum_{i=1}^{n} \left( x_i \log(\lambda) - \lambda - \log(x_i!) \right) $
 
 $ \text{c)}\quad NLL_{C}(\lambda) = \lambda \sum_{i=1}^{n} x_i - n \log(\lambda) $
 
