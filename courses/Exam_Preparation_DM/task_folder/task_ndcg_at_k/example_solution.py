@@ -1,43 +1,48 @@
 #!function!#
 import numpy as np
-def ndcg_at_k(actual, predicted, k):
+def ndcg_at_k(user_evaluations, k):
 #!prefix!#
     """
-    Compute Normalized Discounted Cumulative Gain (nDCG) at a specified position k.
+    Calculate NDCG at k based on user evaluations.
 
     Parameters:
-    - actual (list): The list of actual relevance scores.
-    - predicted (list): The list of predicted relevance scores.
-    - k (int): The position up to which to calculate nDCG.
+    - user_evaluations: List or array of user relevance scores (higher values are more relevant)
+    - k: Top k items to consider
 
     Returns:
-    - nDCG value.
+    - NDCG at k
     """
-    def dcg_at_k(ranking):
-        ranking = np.asarray(ranking)[:k]
-        discounts = np.log2(np.arange(len(ranking)) + 2) # because it starts with 0 compared to the slides
-        dcg = np.sum(ranking / discounts)
-        return dcg
+    # Ensure the length of user_evaluations is at least k
+    if len(user_evaluations) < k:
+        raise ValueError("Length of user_evaluations should be at least k.")
 
-    ideal_sorted_order = np.argsort(actual)[::-1]
-    ideal_dcg = dcg_at_k([actual[i] for i in ideal_sorted_order])
+    # Sort the user evaluations in descending order
+    #sorted_user_evaluations = np.argsort(user_evaluations)[::-1]
 
-    predicted_sorted_order = np.argsort(predicted)[::-1]
-    predicted_dcg = dcg_at_k([actual[i] for i in predicted_sorted_order])
+    # Calculate DCG (Discounted Cumulative Gain) at k
+    dcg_at_k = 0
+    for i in range(k):
+        dcg_at_k += user_evaluations[i] / np.log2(i+ 2)
 
-    if ideal_dcg == 0:
-        return 0  # Avoid division by zero
+    # Sort user evaluations in non-decreasing order
+    ideal_sorted_user_evaluations = np.sort(user_evaluations)[::-1]
 
-    ndcg = predicted_dcg / ideal_dcg
-    return ndcg
+    # Calculate ideal DCG at k
+    ideal_dcg_at_k = 0 
+    for i in range(k):
+        ideal_dcg_at_k += ideal_sorted_user_evaluations[i] / np.log2(i+ 2)
+    
+
+    # Calculate NDCG at k
+    ndcg_at_k = dcg_at_k / ideal_dcg_at_k if ideal_dcg_at_k > 0 else 0.0
+
+    return ndcg_at_k
 
 # Example usage:
-#actual_relevance = [3, 2, 3, 0, 1, 2]  # Actual relevance scores
-#predicted_relevance = [3, 2, 0, 0, 1, 4]  # Predicted relevance scores
+#user_evaluations = [3, 2, 1, 4, 0, 5]
+#k = 3
 
-#k_value = 5  # Position up to which to calculate nDCG
-
-#nDCG_value = ndcg_at_k(actual_relevance, predicted_relevance, k_value)
-#print(f"nDCG at position {k_value}: {nDCG_value}")
-
+#result = ndcg_at_k_user_eval(user_evaluations, k)
+#print(result)
+#print(f"NDCG at {k}: {result}")
 
