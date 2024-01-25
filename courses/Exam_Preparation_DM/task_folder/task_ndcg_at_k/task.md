@@ -4,15 +4,15 @@ Consider a recommendation list  $ r \in \mathbb{N}^n $ where entries $ r_i $ rep
 
 That is, as an input you may receive: 
 
-'''python
+```python
 relevance = [3, 2, 1, 4, 0, 5]  # Evaluation of the recommender's prediction by a user
-'''
+```
 
 This means, that the ideal case would be: 
 
-'''python
+```python
 ideal_recommendation = [5, 4, 3, 2, 1, 0]  # Ideal recommendation order
-'''
+```
 
 Among others, this is a metric very commonly used to evaluate the quality of a recommender system. 
 In this task, please write a function for computing the nDCG of a recommendation list @k: that is, you only have to evaluate the quality of the recommendations on the first k positions in the list.
