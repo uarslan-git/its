@@ -1,6 +1,6 @@
 # Critical Thinking.
 
-The very last task in this curriculum is fairly easy: please read through the following scenario and a potential solution to it. Then, indicate if you agree of disagree with the aforementioned solution on the right.
+Please read through the following scenario and a potential solution to it. Then, indicate if you agree of disagree with different aspects of the aforementioned solution on the right.
 
 ## Scenario.
 
@@ -12,14 +12,13 @@ In certain educational contexts, simplicity and interpretability play a crucial 
 Here are some reasons why traditional statistical analysis should be considered in this scenario:
 
 ### Interpretability
-Traditional statistical models, such as linear regression or basic clustering algorithms, are often more interpretable than complex machine learning models. Educators and administrators may prioritize a clear understanding of the factors influencing learning styles without delving into the intricacies of complex neural networks.
+Traditional statistical models, such as linear regression or basic clustering algorithms, are often more interpretable than complex machine learning models. Educators and administrators may prioritize a clear understanding of the factors influencing learning styles without delving into the intricacies of complex neural networks and algorithms.
 
 ### Resource Constraints
 In some educational settings, there might be resource constraints, including limited computational resources or expertise in advanced machine learning techniques. Traditional statistical methods can be more accessible and require less computational power, making them practical in certain environments.
 
-
 ### Predictive Adequacy
-If the relationships within the data are relatively simple and linear, traditional statistical models can still provide satisfactory predictive performance. In scenarios where learning styles exhibit straightforward patterns, simpler models might be sufficient for generating meaningful insights.
+Traditional statistical models tend to provide satisfactory predictive performance. In scenarios where learning styles exhibit straightforward patterns, simpler models might be sufficient for generating meaningful insights.
 
 ### Educational Policy Considerations
 Decision-makers in educational institutions may prioritize policies based on transparent, easily understandable models. Traditional statistical analyses can align with these considerations, allowing for the development of policies that are more straightforward to communicate and implement.
