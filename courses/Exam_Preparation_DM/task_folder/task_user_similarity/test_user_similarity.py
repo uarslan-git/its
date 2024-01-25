@@ -43,5 +43,5 @@ def test_user_similarity():
     if len(common_items) == 0:
         true_res = 0
     else:
-        true_res = 1 - cosine(user1[common_items], user2[common_items])
+        true_res = cosine(user1[common_items], user2[common_items])
     assert res == true_res, "Your result for the implicit case differs from the expected result"
