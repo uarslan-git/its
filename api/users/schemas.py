@@ -14,6 +14,7 @@ class User(BeanieBaseUser, Document):
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
+    rand_subdomain_orders: list
     courses_completed: list
     register_datetime: dict
     settings: dict
@@ -39,6 +40,7 @@ class UserRead(schemas.BaseUser[PydanticObjectId]):
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
+    rand_subdomain_orders: list
     courses_completed: list
     register_datetime: dict
     settings: dict
@@ -53,6 +55,7 @@ class UserCreate(schemas.BaseUserCreate):
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
+    rand_subdomain_orders: list
     courses_completed: list
     register_datetime: dict
     settings: dict

@@ -6,3 +6,4 @@ class Course(Document):
     display_name: str
     domain: str
     sub_domains: list
+    course_options: list

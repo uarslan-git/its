@@ -88,7 +88,8 @@ export class AuthComponent {
       return;
     }
     const body = {"email": `${username}@anonym.de`,
-                  "password": password, "tasks_completed": [], "tasks_attempted": [], 
+                  "password": password, "tasks_completed": [], "tasks_attempted": [],
+                  "rand_subdomain_orders": [-1],
                   "enrolled_courses": [courseSelection], "courses_completed": [],
                   "register_datetime": this.datetimeService.datetimeNow(),
                   "settings": {"dataCollection": dataCollectionConsent}

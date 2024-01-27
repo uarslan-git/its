@@ -16,5 +16,10 @@ class Prototype_task_selector(Base_task_selector):
         course = await database.get_course(user_course_unique_name)
         curriculum = course.curriculum
         user_completed_tasks = user.tasks_completed
+
+        # Flatten the curriculum from a list of task lists to a normal list of tasks
+        curriculum = [item for sublist in curriculum for item in sublist]
+        print("curriculum: \n", curriculum)
+
         uncompleted_tasks = [curriculum_task for curriculum_task in curriculum if curriculum_task not in user_completed_tasks]
         return(uncompleted_tasks[0])
