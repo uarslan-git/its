@@ -21,7 +21,7 @@ async def get_course(user: User = Depends(current_active_user)):
     # Select random index if not already set
     # and update user with new value
     if rand_subdomain_order == -1:
-        rand_subdomain_order = randrange(len(sub_domains))
+        rand_subdomain_order = randrange(len(course_options))
         update_dict = {"rand_subdomain_orders": [rand_subdomain_order]}
         await database.update_user(user, update_dict)
 
