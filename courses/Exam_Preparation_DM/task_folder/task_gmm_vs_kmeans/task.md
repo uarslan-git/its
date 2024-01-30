@@ -1,7 +1,6 @@
-# Gaussian Mixure Models and KMeans Clustering
+# Clustering
 
 
-Both the GMM and KMeans are clustering algorithms, which require a pre-defined number of clusters and iterative optimization process. 
-While they are similar to some extent, there are differences between the two.
+Within the course, we discussed three types of clustering: K-Means, Gaussian Mixture Models (GMM), and agglomerative clustering. While the goal of all of them is to cluster the data, there are principal differences, too. 
 
 Please choose the statements that are true on the right. 
