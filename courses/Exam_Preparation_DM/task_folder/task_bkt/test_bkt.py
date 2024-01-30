@@ -25,12 +25,14 @@ def test_bkt():
 
     #Test exact result
     res = bkt(x, 0.3, 0.1, 0.2, 0.3)
-    assert ((np.array(res) - np.array([0.33559322, 0.34157169, 0.34262797, 
+    assert (np.abs((np.array(res) - np.array([0.33559322, 0.34157169, 0.34262797, 
                                        0.79075988, 0.52458564, 0.88265719,
                                     0.97991344, 0.99682583, 0.99950502])
-                                    ) < 0.0001).all(), f"The probability for skill mastery p was calculated wrong for at least one occasion."
+                                    )) < 0.0001).all(), f"The probability for skill mastery p was calculated wrong for at least one occasion."
 
     #Test for a long random sequence
     x = np.random.randint(0, 1, 1000)
     res = bkt(x, 0.3, 0.1, 0.2, 0.3)
 
+if __name__ == "__main__":
+    test_bkt()
