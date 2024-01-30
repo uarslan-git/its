@@ -27,7 +27,6 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
         task_json = await database.get_task(submission.task_unique_name)
         previous_step = task_json.prefix+submission.code
         task = task_json.task
-        instruction = self.create_instruction(previous_step, task=task)
         #Make request and receive/process LLM-answer
         async with aiohttp.ClientSession() as session:
     #     if submission.task_unique_name not in self.task_summaries.keys():
@@ -39,13 +38,13 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
     #             summary = await response.text()
     #             summary = json.loads(feedback)
     #             self.task_summaries[submission.task_unique_name] = summary
-            instruction = self.create_instruction(previous_step, task="Task should be here") #TODO: get short version of tasks or differentiate between local and server.
+            instruction = self.create_instruction(previous_step, task=task) #TODO: get short version of tasks or differentiate between local and server.
             payload = {
                     "model": "codellama-nxt",
                     #"model": "codellama:13b",
                     "prompt": instruction,
                     "stream": False,
-                    "options": {"num_predict": 100,
+                    "options": {"num_predict": 200,
                                 "stop": ["<s>", "</s>", "[INST]", "[/INST]", "<<SYS>>", "<</SYS>>", "[task end]"]}
                 }
             async with session.post(f"{ollama_url}api/generate", json=payload) as response:
@@ -69,6 +68,6 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
 
     
     def create_instruction(self, previous_step, task_ins="Consider the following programming task:", task="",
-                                 inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Also, there should be only the edited code and no further explanations. The reply should be valid Markdown. The current program state is:", 
+                                 inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements. Also, there should be only the edited code and no further explanations. The reply should be a Markdown code block. The current program state is:", 
                                 b_inst="[INST]", e_inst="[/INST]"):
         return f"""<s> {b_inst} {task_ins}\n"{task}"\n{inst}\n{previous_step} {e_inst}\nNext Step:\n"""
