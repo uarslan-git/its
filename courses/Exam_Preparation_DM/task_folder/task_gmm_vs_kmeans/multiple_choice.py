@@ -18,8 +18,7 @@
                             "This statement is not correct. KNN is computationally more efficient and converges to the solution more quickly.",
                             "This statement is correct. Knowing the number of clusters is crucial for introducing the criterion to end clustering process.",
                             "This statement is correct. Agglomerative clustering can handle the clusters with arbitrary form.",
-                            "This statement is not correct. Agglomerative clustering is best at hadnling the outliers, they will just be connected last.",
-
+                            "This statement is not correct. Agglomerative clustering is best at hadnling the outliers, they will just be connected last."
                             ]
 }
 #!json!#
