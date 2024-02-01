@@ -19,8 +19,8 @@ def test_pearson():
     assert np.abs(corr - 1) < 0.001, f"The Correlation of perfectly collinear arrays should be one, not {corr}"
 
     #Correlation of long random arrays
-    x2 = np.random.rand(100000)
-    y2 = np.random.rand(100000)
+    x2 = np.random.rand(10000)
+    y2 = np.random.rand(10000)
     corr = pearson_correlation(x2, y2)
     assert np.abs(corr) < 0.01, f"The Correlation of two long, completley random arrays should be close to zero, not {corr}"
 
@@ -31,4 +31,3 @@ def test_pearson():
     corr = pearson_correlation(x2, y2)
     print(true_corr)
     assert np.abs(corr - true_corr) < 0.01, f"The Correlation of two long correlated arrays was incorrect: {corr}"
-    
