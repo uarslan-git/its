@@ -34,20 +34,20 @@ At this point, the feature set of Curious Camel is limited. To maintain courses 
 
 At the current stage, learners should know which course they want to attend pre-registration. At registration, learners can select their course in a dropdown menu. On registration, learners must also select, whether they want their intermediate steps to be stored in the database and whether they allow the usage of their system data for research purposes. 
 
-<img src="doc/pictures/register.png" alt="drawing" width="300"/>
+![register](doc/pictures/register.png "Title Text"){width=300}
+
 
 #### Login
 
 Users can log in to the selected course with their username and password. At this moment, passwords cannot be reset.
 
-<img src="doc/pictures/login.png" alt="drawing" width="300"/>
-
+![login](doc/pictures/login.png "Title Text"){width=300}
 
 #### Tutoring View
 
 The tutoring view is the main view within a particular course. It allows for solving and navigating tasks. The task description is displayed in the upper left corner, different feedback and result types are displayed in the lower left corner. On the right side, the code editor allows for entering solutions to tasks. The action panel on the bottom allows for three actions: "Run", "Feedback" and "Submission". 
 
-<img src="doc/pictures/tutoring_view.png" alt="drawing" width="500"/>
+![tutoring view](doc/pictures/tutoring_view.png "Title Text"){width=500}
 
 
 The "Run" button allows for the execution of the learner program with custom parameters. The "Submit" functionality will run unit tests on the current solution and display the results to the learner in the feedback panel. The "Feedback" button will send a Feedback request to the backend. Depending on the course settings, feedback on the current learner program will then be generated.
@@ -56,7 +56,8 @@ The "Run" button allows for the execution of the learner program with custom par
 
 The user profile can be reached over the navigation bar. It displays basic information about the user profile. Also, the user profile allows for reviewing and re-setting the data-collection preferences that were originally set during registration.
 
-<img src="doc/pictures/profile.png" alt="drawing" width="300"/>
+
+![profile](doc/pictures/profile.png "Title Text"){width=300}
 
 ### Admins
 
