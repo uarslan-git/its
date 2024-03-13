@@ -42,7 +42,6 @@ export class TaskPanelComponent {
     const current_task_name = this.task.unique_name!;
     const task_index: number = curriculum.findIndex((element) => element == current_task_name);
     if (message == 'next') {
-      //TODO: Think about whether to allow clicking through next tasks.
       if (task_index == (curriculum.length-1)) {
         alert("No further task availiable")
         return;

@@ -4,11 +4,7 @@ from db.db_connector_beanie import User
 from db import database
 from fastapi import Depends
 from users.handle_users import current_active_user
-import ast
 from submissions.handle_submissions import check_user_code, json_serialize, execute_code_judge0
-#TODO: secure this:
-#import sys as unsafe_sys_import 
-#from io import StringIO
 import json
 
 router = APIRouter()

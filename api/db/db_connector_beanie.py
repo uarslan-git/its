@@ -57,7 +57,7 @@ class database():
         return(user)
 
     async def update_user(self, user: User, update_dict):
-        #TODO: Uset .update after new versions of MongoDB run on the server.
+        #TODO: use easier command: "Uset.update" after new versions of MongoDB run on the server.
         #await get_user_db().update(user)
         await user.update({"$set": update_dict})
         #await user.save()

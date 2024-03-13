@@ -104,7 +104,6 @@ async def on_startup():
     await initialize_settings(db_connection_beanie)
 
 # TODO: Hiermit in Hinblick auf security auseinandersetzen!
-#origins = ["*"]
 origins = ["http://localhost:4200", "http://localhost:3000", 
            "http://localhost", "http://localhost:8080",
            "http://its.techfak.de", "https://its.techfak.de"]

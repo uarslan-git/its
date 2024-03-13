@@ -1,4 +1,4 @@
-from _ast import Call, Del, Delete, Global, Interactive, Load, Nonlocal, Store, Name
+from _ast import Call, Del, Delete, Global, Interactive, Nonlocal, Name
 from typing import Any
 from fastapi import APIRouter, Depends
 import asyncio
@@ -49,7 +49,6 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
         async with session.post(f"{url}/submissions/?base64_encoded=false", data=payload) as response:
             run_token = await response.text()
             run_token = json.loads(run_token)["token"]
-            #run_token = eval(run_token)["token"]
         max_iter = 100
         for i in range(0, max_iter): #max_iter for querying the status
             async with session.get(f"{url}/submissions/{run_token}") as response:
@@ -62,7 +61,6 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
                     elif (run_result["stdout"] is None) and (run_result["status"]["description"] == "Accepted"):
                         run_result["stdout"] = ""
                     return run_result["stdout"]
-                #run_result = eval(run_result)["stdout"]
                 await asyncio.sleep(0.2)
         raise Exception("Code Sandbox status frozen!")
 
@@ -73,14 +71,6 @@ def json_serialize(obj):
         #return obj.tolist()
         return np.array2string(obj)
     return obj"""
-
-
-# task schema
-""" class task(BaseModel):
-    task_id: int
-    task_markdown: str
-    example_solution: str
-    tests: list """
 
 async def run_tests(task_json, submission):
     tests = task_json.tests
@@ -195,9 +185,9 @@ async def handle_mc_submission(submission: Code_submission, user: User = Depends
     if valid_solution and (not submission.task_unique_name in user.tasks_completed):
         user.tasks_completed.append(submission.task_unique_name)
         course = await database.get_course(unique_name=user.enrolled_courses[0])
-        if course.curriculum == user.tasks_completed:
+        if course.curriculum == user.tasks_completed: # TODO: Handle potential problems from curriculum options
             if user.enrolled_courses[0] not in user.courses_completed:
-                user.courses_completed.append(user.enrolled_courses[0]) #TODO: Unsafe, secure this
+                user.courses_completed.append(user.enrolled_courses[0]) #TODO: Handle multiple enrolled courses 
         await database.update_user(user, {"courses_completed": user.courses_completed, "tasks_completed": user.tasks_completed})
     #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
     if (submission.log == "True"):
@@ -263,19 +253,16 @@ async def send_feedback(submission_id):
 def check_user_code(code, prefix_lines=[]):
     class ImportVisitor(ast.NodeVisitor):
         def __init__(self, prefix_lines: list=[]):
-            self.found_imports = False
             self.prefix_lines = prefix_lines
 
         def visit_Import(self, node):
             if node.lineno not in self.prefix_lines:
-                self.found_imports = True # TODO: Can the bool be removed?
                 raise Exception("Imports are not allowed in this context.")
             else: 
                 self.generic_visit(node)
 
         def visit_ImportFrom(self, node):
             if node.lineno not in self.prefix_lines:
-                self.found_imports = True
                 raise Exception("Imports are not allowed in this context")
             else:
                 self.generic_visit(node)
@@ -347,8 +334,7 @@ def check_user_code(code, prefix_lines=[]):
     visitor = ImportVisitor(prefix_lines=prefix_lines)
     visitor.visit(ast_tree)
     print(code)
-    bad_strings = ["__builtins__", "np.distutil", "multiprocessing", "APIRouter", "asyncio", "current_active_user", "unsafe_sys_import", "database", "run_with_timeout"]
+    bad_strings = ["__builtins__", "np.distutil", "multiprocessing", "APIRouter", "asyncio", "current_active_user", "database", "run_with_timeout"]
     for string in bad_strings:
         if string in code:
             raise Exception("Bad symbol detected, please don't use {0} in your program".format(string))
-    return not visitor.found_imports

@@ -23,7 +23,6 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     verification_token_secret = SECRET
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
-        #user.roles = ["student"]
         update_dict = {"roles": ["student"]}
         await database.update_user(user, update_dict)
         print(f"User {user.id} has registered.")
@@ -58,7 +57,6 @@ auth_backend = AuthenticationBackend(
     get_strategy=get_jwt_strategy,
 )
 
-#fastapi_users = FastAPIUsers[User, PydanticObjectId](get_user_manager, [auth_backend])
 fastapi_users = FastAPIUsers[User, PydanticObjectId](get_user_manager, [auth_backend])
 
 

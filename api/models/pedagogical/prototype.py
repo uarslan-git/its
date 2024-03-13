@@ -29,15 +29,6 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
         task = task_json.task
         #Make request and receive/process LLM-answer
         async with aiohttp.ClientSession() as session:
-    #     if submission.task_unique_name not in self.task_summaries.keys():
-    #         payload = {
-    #             "model": "codellama-7b-nxt",
-    #             "prompt": "Please summarize the following programming task one sentence, focussing only on the actual assignment specs:\nTask:\n'{task}'"
-    #         }
-    #         async with session.post(f"{ollama_url}/api/generate", json=payload) as response:
-    #             summary = await response.text()
-    #             summary = json.loads(feedback)
-    #             self.task_summaries[submission.task_unique_name] = summary
             instruction = self.create_instruction(previous_step, task=task) #TODO: get short version of tasks or differentiate between local and server.
             payload = {
                     "model": "codellama-nxt",

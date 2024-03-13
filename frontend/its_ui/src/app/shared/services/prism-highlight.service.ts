@@ -25,11 +25,4 @@ export class PrismHighlightService {
   highlightAll() {
     Prism.highlightAll();
   }
-
-  // TODO: Remove unecessary HTML stuff
-/*   convertHtmlIntoString(text: string) {
-    return text
-      .replace(new RegExp('&', 'g'), '&amp;')
-      .replace(new RegExp('<', 'g'), '&lt;');
-  } */
 }
