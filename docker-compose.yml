@@ -9,12 +9,6 @@ x-logging:
 
 
 services:
-  # angular-app:
-  #   build: ./frontend
-  #   ports:
-  #     - "8080:80"
-  #   networks:
-  #     - its_network
   
   angular-app:
     build: 
@@ -34,7 +28,10 @@ services:
     build: ./api
     command: python main.py
     environment:
-      db_pwd: ${DB_SERVICE_PW?}
+      DB_SERVICE_PW: ${DB_SERVICE_PW?}
+      JWT_SECRET: ${JWT_SECRET}
+      USER_VERIFICATION_SECRET: ${USER_VERIFICATION_SECRET}
+      RESET_PWD_SECRET: ${RESET_PWD_SECRET}
     ports:
       - "8888:8000"
     depends_on:

@@ -14,13 +14,11 @@ import os
 https://fastapi-users.github.io/fastapi-users/12.1/configuration/overview/"""
 
 filedir = os.path.dirname(__file__)
-with open(os.path.join(filedir,"SECRET.txt")) as f:
-    SECRET = f.readline()
 
 class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     #TODO: Implement reset password and verification and choose some save tokens.
-    reset_password_token_secret = SECRET
-    verification_token_secret = SECRET
+    reset_password_token_secret = os.environ.get("RESET_PWD_SECRET")
+    verification_token_secret = os.environ.get("USER_VERIFICATION_SECRET")
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         update_dict = {"roles": ["student"]}
@@ -44,12 +42,10 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
 async def get_user_manager(user_db=Depends(get_user_db)):
     yield UserManager(user_db)
 
-
 cookie_transport = CookieTransport(cookie_max_age=7200, cookie_secure=True, cookie_samesite='none', cookie_httponly=False)
 
 def get_jwt_strategy() -> JWTStrategy:
-    return JWTStrategy(secret=SECRET, lifetime_seconds=7200)
-
+    return JWTStrategy(secret=os.environ.get("JWT_SECRET"), lifetime_seconds=7200)
 
 auth_backend = AuthenticationBackend(
     name="jwt",
@@ -58,6 +54,5 @@ auth_backend = AuthenticationBackend(
 )
 
 fastapi_users = FastAPIUsers[User, PydanticObjectId](get_user_manager, [auth_backend])
-
 
 current_active_user = fastapi_users.current_user(active=True)

@@ -46,9 +46,12 @@ if __name__ == "__main__":
     # Register the cleanup function to be called when the script exits
     atexit.register(cleanup_child_processes)
 
+    #Set backend environment Variables for development.
     backend_env = os.environ.copy()
-    backend_env["its_env"] = "development"
-    backend_env["database_pwd"] = "SECRET"
+    backend_env["ITS_ENV"] = "development"
+    #backend_env["DB_PWD"] = "SECRET"
+
+
 
     backend = subprocess.Popen([f"python {backend_start}"], shell=True, env=backend_env)
     child_processes.append(backend)

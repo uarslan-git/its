@@ -25,7 +25,7 @@ async def get_attempt_state(task_unique_name, user: User = Depends(current_activ
 @router.post("/log")
 async def log_attempt_state(state: AttemptState, user: User = Depends(current_active_user)):
     attempt = await database.get_attempt(state.attempt_id)
-    state.id = PydanticObjectId()
+    state.id = str(PydanticObjectId())
     if state.dataCollection:
         attempt.state_log.append(state)
     else:

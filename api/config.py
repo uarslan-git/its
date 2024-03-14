@@ -1,5 +1,5 @@
 import os
-
+import dotenv
 class Config:
     """Configuration for different environments for the api to run in.
     """
@@ -8,21 +8,25 @@ class Config:
 
     def load_config(self):
         # Get the value of the "env" environment variable, defaulting to "development"
-        env = os.environ.get("its_env", "development")
-        self.database_pwd = os.environ.get("db_pwd", "SECRET")
+        env = os.environ.get("ITS_ENV", "development")
+        
         self.database_usr = "backend_service_user"
 
         if env == "development":
+            dotenv.load_dotenv(dotenv.find_dotenv())
+            self.database_pwd = os.environ.get("DB_SERVICE_PW")
             self.database_host = "localhost"
             self.database_port = 27017
             self.judge0_host = "localhost"
 
         elif env == "production":
+            self.database_pwd = os.environ.get("DB_SERVICE_PW")
             self.database_host = "mongodb"
             self.database_port = 27017
             self.judge0_host = "j0-server"
 
         elif env == "staging":
+            self.database_pwd = os.environ.get("DB_SERVICE_PW")
             self.database_host = "mongodb"
             self.database_port = 27017
             self.judge0_host = "j0-server"

@@ -333,3 +333,4 @@ def check_user_code(code, prefix_lines=[]):
     for string in bad_strings:
         if string in code:
             raise Exception("Bad symbol detected, please don't use {0} in your program".format(string))
+    return True

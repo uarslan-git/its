@@ -63,6 +63,8 @@ The user profile can be reached over the navigation bar. It displays basic infor
 
 #### Installation
 
+Specify .env file with different secrets for the backend.
+
 #### Loading a course to the system
 
 #### Setting up the LLM Server
