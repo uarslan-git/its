@@ -32,8 +32,7 @@ async def handle_handle_feedback_request(submission: Feedback_submission, user: 
     else:
         feedback = await pedagogical_model.give_feedback(submission)
     # Store feedback and return ID
-    evaluated_feedback_submission = Evaluated_feedback_submission(log = submission.log, 
-                                                            task_unique_name = submission.task_unique_name, 
+    evaluated_feedback_submission = Evaluated_feedback_submission(task_unique_name = submission.task_unique_name, 
                                                             code = submission.code,
                                                             possible_choices = [],
                                                             correct_choices = [],
@@ -46,9 +45,7 @@ async def handle_handle_feedback_request(submission: Feedback_submission, user: 
                                                             feedback=feedback,
                                                             feedback_method=pedagogical_model.feedback_method
                                                             )
-    #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
-    if (submission.log == "True"):
-        await database.log_code_submission(evaluated_feedback_submission)
+    await database.log_code_submission(evaluated_feedback_submission)
     return {"feedback_id": str(evaluated_feedback_submission.id)}
 
 

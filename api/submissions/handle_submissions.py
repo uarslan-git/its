@@ -114,8 +114,7 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
         if test_results[i]["status"] == 0:
             valid_solution = False """
     # Log code submit to database
-    tested_submission = Tested_code_submission(log = submission.log, 
-                                               task_unique_name = submission.task_unique_name, 
+    tested_submission = Tested_code_submission(task_unique_name = submission.task_unique_name, 
                                                code = submission.code,
                                                possible_choices = [],
                                                correct_choices = [],
@@ -133,11 +132,10 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
             if user.enrolled_courses[0] not in user.courses_completed:
                 user.courses_completed.append(user.enrolled_courses[0]) #TODO: Unsafe, secure this
         await database.update_user(user, {"courses_completed": user.courses_completed, "tasks_completed": user.tasks_completed})
-    #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
-    if (submission.log == "True"):
-        await database.log_code_submission(tested_submission)
+    await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
+#TODO: unify mc_submit and code_submit
 @router.post("/mc_submit")
 async def handle_mc_submission(submission: Code_submission, user: User = Depends(current_active_user)):
     user_id = user.id
@@ -170,8 +168,7 @@ async def handle_mc_submission(submission: Code_submission, user: User = Depends
     test_results.append(test_result)
 
     # Log code submit to database
-    tested_submission = Tested_code_submission(log = submission.log, 
-                                               task_unique_name = submission.task_unique_name, 
+    tested_submission = Tested_code_submission(task_unique_name = submission.task_unique_name, 
                                                code = submission.code, 
                                                possible_choices = possible_choices,
                                                correct_choices = correct_choices,
@@ -189,9 +186,7 @@ async def handle_mc_submission(submission: Code_submission, user: User = Depends
             if user.enrolled_courses[0] not in user.courses_completed:
                 user.courses_completed.append(user.enrolled_courses[0]) #TODO: Handle multiple enrolled courses 
         await database.update_user(user, {"courses_completed": user.courses_completed, "tasks_completed": user.tasks_completed})
-    #TODO: Check whether this whole log-loic is necassary. User opt-out only for interaction-logging?
-    if (submission.log == "True"):
-        await database.log_code_submission(tested_submission)
+    await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
 async def get_test_result(test_code, test_name, submission_code, prefix_lines):

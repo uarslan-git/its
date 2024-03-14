@@ -7,7 +7,6 @@ from typing import Optional
 class Code_submission(Document):
     task_unique_name: str
     code: str
-    log: str
     submission_time: dict
     type: str
     selected_choices: Optional[list]

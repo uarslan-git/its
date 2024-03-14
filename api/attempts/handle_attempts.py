@@ -34,3 +34,7 @@ async def log_attempt_state(state: AttemptState, user: User = Depends(current_ac
         else: 
            attempt.state_log.append(state) 
     await database.update_attempt(attempt)
+
+
+
+
