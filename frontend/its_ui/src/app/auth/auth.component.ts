@@ -16,6 +16,7 @@ interface AuthResponse {
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
+
 export class AuthComponent {
 
   @ViewChild('dataTermsPopupComponent', { static: false }) dataTermsPopupComponent!: DataTermsPopupComponent;
@@ -35,7 +36,7 @@ export class AuthComponent {
   @Output() loginEvent : EventEmitter<string> = new EventEmitter<string>();
   loginStatus: string = 'none';
 
-  registering: boolean = false;
+  currentForm: string = "login";
 
   constructor(private http: HttpClient,
               private eventShareService: EventShareService,
@@ -97,7 +98,7 @@ export class AuthComponent {
     this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, body).subscribe(
       response => {
           // Handle successful registration
-          this.setRegistering(false);
+          this.setForm("login");
       },
       error => {
         console.error('Registration error:', error);
@@ -106,8 +107,28 @@ export class AuthComponent {
     );
   }
 
-  setRegistering(registering: boolean){
-    this.registering = registering;
+  resetPassword(username: string, password: string, resetToken: string): void 
+  {
+    //const formData = new FormData()
+    //formData.append('token', resetToken);
+    //formData.append('password', password);
+    const body = {"token": resetToken,
+    "password": password, "tasks_completed": [], "tasks_attempted": [],
+  };
+
+    this.http.post<any>(`${this.apiUrl}/auth/reset-password`, body, { withCredentials: true}).subscribe(
+      () => {
+        alert("Password was reset.")
+      },
+      error => {
+        console.error('Login error:', error);
+        alert("Reset Password not successful. Please provide valid username and reset token.")
+      }
+    ); 
+  }
+
+  setForm(form: string){
+    this.currentForm = form;
   }
 
   retrieveSessionSettings() {
