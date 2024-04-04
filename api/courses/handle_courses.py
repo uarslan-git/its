@@ -2,14 +2,15 @@ from fastapi import APIRouter
 from fastapi import Depends
 from courses.schemas import Course
 from users.schemas import User
-from users.handle_users import current_active_user
+from users.handle_users import current_active_verified_user
 from db import database
 from random import randrange
 
 router = APIRouter(prefix="/course")
 
 @router.get("/get")
-async def get_course(user: User = Depends(current_active_user)):
+async def get_course(user: User = Depends(current_active_verified_user)):
+    #TODO: change when users can enrol for multiple courses.
     course_unique_name = user.enrolled_courses[0]
     rand_subdomain_order = user.rand_subdomain_orders[0]
 

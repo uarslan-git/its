@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 import asyncio
 from os import path
 import ast
-from users.handle_users import current_active_user
+from users.handle_users import current_active_verified_user
 from db.db_connector_beanie import User
 from submissions.schemas import Code_submission, Tested_code_submission
 from tasks.schemas import Task
@@ -90,7 +90,7 @@ async def run_tests(task_json, submission):
     return test_results, valid_solution
 
 @router.post("/code_submit")
-async def handle_code_submission(submission: Code_submission, user: User = Depends(current_active_user)):
+async def handle_code_submission(submission: Code_submission, user: User = Depends(current_active_verified_user)):
     """Preprocess coda and run a series of test cases on a code submission.
 
     Args:
@@ -137,7 +137,7 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
 
 #TODO: unify mc_submit and code_submit
 @router.post("/mc_submit")
-async def handle_mc_submission(submission: Code_submission, user: User = Depends(current_active_user)):
+async def handle_mc_submission(submission: Code_submission, user: User = Depends(current_active_verified_user)):
     user_id = user.id
     task_id = submission.task_unique_name
     task_json = await database.get_task(str(task_id))

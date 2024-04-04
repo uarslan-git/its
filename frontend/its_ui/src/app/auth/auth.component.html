@@ -20,8 +20,8 @@
       <input #loginUsername placeholder="Username" /><br />
       <input #loginPassword type="password" placeholder="New Password" /><br />
       <input #resetToken type="password" placeholder="Reset Token" /><br />
-      <p>Please answer the security question!</p>
-      <input #securityQuestion type="password" placeholder="Answer" /><br />
+<!--       <p>Please answer the security question!</p>
+      <input #securityQuestion type="password" placeholder="Answer" /><br /> -->
       <div class="centered-button">
         <button (click)="resetPassword(loginUsername.value, loginPassword.value, resetToken.value)">Reset Password</button>
       </div>
@@ -47,6 +47,7 @@
         </select>
       </div>
 
+      <input #email placeholder="Email" /><br />
       <input #registerUsername placeholder="Username" /><br />
       <input #registerPassword type="password" placeholder="Password" /><br />
 
@@ -74,7 +75,7 @@
       <hr>
 
     <div class="centered-button">
-      <button (click)="register(registerUsername.value, registerPassword.value, consentCheckboxYes.checked, courseSelection.value)">Register</button>
+      <button (click)="register(email.value, registerUsername.value, registerPassword.value, consentCheckboxYes.checked, courseSelection.value)">Register</button>
     </div>
       <p>Do you already have an account? If so, you can <a (click)="setForm('login')"><u>login here!</u></a></p>
     </div>

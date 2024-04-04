@@ -3,7 +3,7 @@ from runs.schemas import Run_code_submission, Evaluated_run_code_submission
 from db.db_connector_beanie import User
 from db import database
 from fastapi import Depends
-from users.handle_users import current_active_user
+from users.handle_users import current_active_verified_user
 from submissions.handle_submissions import check_user_code, json_serialize, execute_code_judge0
 import json
 
@@ -37,7 +37,7 @@ def parse_argument_types(arg_dict):
         return run_argument_string, "Success"
 
 @router.post("/run_code")
-async def run_code(submission: Run_code_submission, user: User = Depends(current_active_user)):
+async def run_code(submission: Run_code_submission, user: User = Depends(current_active_verified_user)):
     user_id = user.id
     task_id = submission.task_unique_name
     task_json = await database.get_task(str(task_id))

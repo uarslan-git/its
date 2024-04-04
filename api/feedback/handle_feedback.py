@@ -2,7 +2,7 @@ from fastapi.routing import APIRouter
 from fastapi import Depends
 from feedback.schemas import Feedback_submission, Evaluated_feedback_submission
 from db import database
-from users.handle_users import current_active_user
+from users.handle_users import current_active_verified_user
 from db.db_connector_beanie import User
 from submissions.handle_submissions import run_tests
 from feedback.schemas import Url
@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.post("/feedback")
-async def handle_handle_feedback_request(submission: Feedback_submission, user: User = Depends(current_active_user)):
+async def handle_handle_feedback_request(submission: Feedback_submission, user: User = Depends(current_active_verified_user)):
     """This API-endpoint receives feedback requests from the frontend and uses them to trigger the inner loop of the ITS. 
 
     Args:
@@ -50,7 +50,7 @@ async def handle_handle_feedback_request(submission: Feedback_submission, user: 
 
 
 @router.post("/feedback/set_llm_url")
-async def set_llm_url(url: Url, user: User = Depends(current_active_user)):
+async def set_llm_url(url: Url, user: User = Depends(current_active_verified_user)):
     url = url.url
     #Test if user is admin
     if "admin" in user.roles:

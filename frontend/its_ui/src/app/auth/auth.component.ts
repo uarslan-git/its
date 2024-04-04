@@ -5,6 +5,7 @@ import { DatetimeService } from '../shared/services/datetime.service';
 
 import { environment } from 'src/environments/environment';
 import { DataTermsPopupComponent } from '../shared/components/data-terms-popup/data-terms-popup.component';
+import { timeout } from 'rxjs';
 
 interface AuthResponse {
   message: string;
@@ -73,14 +74,13 @@ export class AuthComponent {
     this.loginEvent.emit(this.loginStatus);
   }
 
-  register(username: string, password: string, dataCollectionConsent: boolean, courseSelection: string): void {
+  register(email: string, username: string, password: string, dataCollectionConsent: boolean, courseSelection: string): void {
     if(!this.consentCheckboxNo.nativeElement.checked && !this.consentCheckboxYes.nativeElement.checked){
       window.alert("Please select (Yes/No) whether we can use your data for scientific purposes.")
       return;
     }
-
-    let useremail_valid = username.split("@")[1] == "uni-bielefeld.de"
-    if(useremail_valid) {
+    let useremail_valid = email.split("@")[1] == "uni-bielefeld.de"
+    if(useremail_valid == false) {
       window.alert("Email must be a '@uni-bielefeld.de' address.")
       return;
     }
@@ -88,7 +88,10 @@ export class AuthComponent {
       window.alert("Please select a course.")
       return;
     }
-    const body = {"email": `${username}@anonym.de`,
+    const body = {"username": username,
+                  "verification_email": email,
+                  // email has to be a "dummy" as of the requirements of the fastapi-users module.
+                  "email": `${username}@anonym.de`,
                   "password": password, "tasks_completed": [], "tasks_attempted": [],
                   "rand_subdomain_orders": [-1],
                   "enrolled_courses": [courseSelection], "courses_completed": [],
@@ -98,7 +101,12 @@ export class AuthComponent {
     this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, body).subscribe(
       response => {
           // Handle successful registration
-          this.setForm("login");
+          setTimeout(()=>{
+            this.http.post<any>(`${environment.apiUrl}/auth/request-verify-token`, {"email": `${username}@anonym.de`}).subscribe()
+            const token = window.prompt("Please check your Emails for a verification token and enter it here:")
+            this.http.post<any>(`${environment.apiUrl}/auth/verify`, {"token": token}).subscribe()
+            this.setForm("login");
+          }, 1000);
       },
       error => {
         console.error('Registration error:', error);
@@ -107,13 +115,10 @@ export class AuthComponent {
     );
   }
 
-  resetPassword(username: string, password: string, resetToken: string): void 
+  resetPassword(username: string, password: string, resetToken: string): void
   {
-    //const formData = new FormData()
-    //formData.append('token', resetToken);
-    //formData.append('password', password);
     const body = {"token": resetToken,
-    "password": password, "tasks_completed": [], "tasks_attempted": [],
+    "password": password,
   };
 
     this.http.post<any>(`${this.apiUrl}/auth/reset-password`, body, { withCredentials: true}).subscribe(

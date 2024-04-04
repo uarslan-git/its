@@ -10,7 +10,8 @@ from pymongo.collation import Collation
 
 class User(BeanieBaseUser, Document):
     email: str
-    #username: str
+    username: str
+    verification_email: str
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
@@ -36,7 +37,7 @@ class User(BeanieBaseUser, Document):
 
 class UserRead(schemas.BaseUser[PydanticObjectId]):
     email: str
-    #username: str
+    username: str
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
@@ -52,6 +53,8 @@ class UserRead(schemas.BaseUser[PydanticObjectId]):
 
 class UserCreate(schemas.BaseUserCreate):
     email: str
+    verification_email: str
+    username: str
     tasks_completed: list
     tasks_attempted: list
     enrolled_courses: list
@@ -75,6 +78,7 @@ class UserUpdate(schemas.BaseUserUpdate):
     documents.
     """
     email: str
+    username: str
     register_datetime: dict
     settings: dict
     pass

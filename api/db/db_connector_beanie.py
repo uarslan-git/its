@@ -1,7 +1,7 @@
 import motor.motor_asyncio
 from courses.schemas import Course
 from beanie import Document
-from fastapi_users.db import BeanieBaseUser, BeanieUserDatabase
+from fastapi_users.db import BeanieUserDatabase
 from typing import Optional
 from users.schemas import User
 from tasks.schemas import Task
