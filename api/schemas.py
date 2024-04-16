@@ -7,3 +7,4 @@ from typing import Optional
 
 class Settings(Document):
     ollama_url: str
+    email_whitelist: list

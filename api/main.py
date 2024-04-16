@@ -98,10 +98,13 @@ async def on_startup():
     await init_beanie(
         database=db_connection_beanie.db,
         document_models=[
-            User, Code_submission, Tested_code_submission, Course, Task, Attempt, AttemptState, Settings, Url
+            User, Code_submission, Tested_code_submission, 
+            Course, Task, Attempt, AttemptState, Settings, Url,
+            user_schemas.GlobalAccountList
         ],
     )
     await initialize_settings(db_connection_beanie)
+    await initialize_global_accounts_list(db_connection_beanie)
 
 origins = ["http://localhost:4200", "http://localhost:8080",
            "http://localhost", "https://localhost"]
@@ -121,8 +124,13 @@ async def get_status():
     return {"message": "Connected!"}
 
 async def initialize_settings(database):
-    settings = Settings(ollama_url="")
+    settings = Settings(ollama_url="", email_whitelist=[".*"])
     await database.create_settings(settings)
+
+async def initialize_global_accounts_list(database):
+    global_accounts_list = user_schemas.GlobalAccountList(hashed_email_list=[])
+    await database.create_global_accounts_list(global_accounts_list)
+
 
 """ def parse_cl_arguments():
     parser = argparse.ArgumentParser(description="Command-line argument parser for database network.")

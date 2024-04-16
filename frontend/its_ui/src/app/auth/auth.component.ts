@@ -79,11 +79,11 @@ export class AuthComponent {
       window.alert("Please select (Yes/No) whether we can use your data for scientific purposes.")
       return;
     }
-    let useremail_valid = email.split("@")[1] == "uni-bielefeld.de"
+/*     let useremail_valid = email.split("@")[1] == "uni-bielefeld.de"
     if(useremail_valid == false) {
       window.alert("Email must be a '@uni-bielefeld.de' address.")
       return;
-    }
+    } */
     if(courseSelection=='none') {
       window.alert("Please select a course.")
       return;
@@ -106,7 +106,7 @@ export class AuthComponent {
             const token = window.prompt("Please check your Emails for a verification token and enter it here:")
             this.http.post<any>(`${environment.apiUrl}/auth/verify`, {"token": token}).subscribe()
             this.setForm("login");
-          }, 1000);
+          }, 100);
       },
       error => {
         console.error('Registration error:', error);
@@ -115,7 +115,25 @@ export class AuthComponent {
     );
   }
 
-  resetPassword(username: string, password: string, resetToken: string): void
+  forgotPassword(username: string, resetKey: string, verificationEmail: string)
+  {
+    const body = {"email": `${username}@anonym.de`,
+                  "resetKey": resetKey,
+                  "verificationEmail": verificationEmail
+                };
+    this.http.post<any>(`${this.apiUrl}/auth/forgot-password`, body, { withCredentials: true}).subscribe(
+      () => {
+        alert("Reset token for password reset was created and send via email.")
+        this.setForm("reset-pw")
+      },
+      error => {
+        console.error('Login error:', error);
+        alert("Forgot Password not successful. Please provide valid username and reset key. The reset key was issued via email on registration. Please contact your admin if it cannot be recovered.")
+      }
+    );
+  }
+
+  resetPassword(password: string, resetToken: string): void
   {
     const body = {"token": resetToken,
     "password": password,
@@ -124,10 +142,11 @@ export class AuthComponent {
     this.http.post<any>(`${this.apiUrl}/auth/reset-password`, body, { withCredentials: true}).subscribe(
       () => {
         alert("Password was reset.")
+        this.setForm("login");
       },
       error => {
         console.error('Login error:', error);
-        alert("Reset Password not successful. Please provide valid username and reset token.")
+        alert("Reset Password not successful. Please provide a valid reset token.")
       }
     ); 
   }

@@ -36,3 +36,7 @@ async def get_course(user: User = Depends(current_active_verified_user)):
     course.curriculum = [item for sublist in sorted_curriculum for item in sublist]
 
     return(course)
+
+async def get_course_enrolment():
+    #TODO: switch performance-related stuff and user-data related to courses to a new data-item called course_enrolment.
+    pass

@@ -82,3 +82,6 @@ class UserUpdate(schemas.BaseUserUpdate):
     register_datetime: dict
     settings: dict
     pass
+
+class GlobalAccountList(Document):
+    hashed_email_list: list

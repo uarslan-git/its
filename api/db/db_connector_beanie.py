@@ -3,7 +3,7 @@ from courses.schemas import Course
 from beanie import Document
 from fastapi_users.db import BeanieUserDatabase
 from typing import Optional
-from users.schemas import User
+from users.schemas import User, GlobalAccountList
 from tasks.schemas import Task
 from attempts.schemas import Attempt
 from submissions.schemas import Code_submission as Submission
@@ -20,17 +20,13 @@ async def get_user_db():
 class database():
     
     def __init__(self, database_host: str, database_user: str, database_pwd: str, database_port: str=27017) -> None:
-        #mo
         DATABASE_URL = f"mongodb://{database_user}:{database_pwd}@{database_host}:{database_port}/?authSource=admin"
-        #DATABASE_URL = f"mongodb://{database_host}:27017"
         client = motor.motor_asyncio.AsyncIOMotorClient(
             DATABASE_URL, uuidRepresentation="standard"
         )
         self.db = client["its_db"]
 
     async def log_code_submission(self, tested_submission):
-        #Await to enusre the event-loop is not blocked
-        #await self.db["submission"].insert_one(jsonable_encoder(tested_submission))
         await tested_submission.insert()
 
     async def get_task(self, unique_name):
@@ -92,3 +88,16 @@ class database():
     async def update_settings(self, update_dict):
         settings = await self.get_settings()
         await settings.update({"$set": update_dict})
+
+    async def get_global_accounts_list(self):
+        global_accounts_list = await GlobalAccountList.find_one()
+        return global_accounts_list
+    
+    async def create_global_accounts_list(self, global_accounts_list: GlobalAccountList):
+        existing_list = await GlobalAccountList.find().to_list()
+        if len(existing_list) == 0:
+            await global_accounts_list.insert()
+    
+    async def update_global_accounts_list(self, update_dict):
+        global_accounts_list = await GlobalAccountList.find_one()
+        await global_accounts_list.update({"$set": update_dict})
