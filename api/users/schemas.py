@@ -47,7 +47,6 @@ class UserRead(schemas.BaseUser[PydanticObjectId]):
     settings: dict
     roles: Optional[list] = None
     pass
-    #estimated_compentency: Optional[list]
 
 
 
@@ -64,8 +63,6 @@ class UserCreate(schemas.BaseUserCreate):
     settings: dict
     #roles: Optional[list]
     pass
-    #username: str
-    #estimated_compentency: Optional[list]
 
 
 

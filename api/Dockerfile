@@ -4,9 +4,7 @@ WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
 
-#TODO: Test Docker environment variable: https://phoenixnap.com/kb/docker-environment-variables
-ENV its_env=production
-#ENV db_pwd=${DB_SERVICE_PW?}
+#ENV ITS_ENV=production
 
 RUN apt-get update \
     && apt-get clean

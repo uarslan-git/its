@@ -19,24 +19,24 @@ class Config:
             self.database_port = 27017
             self.judge0_host = "localhost"
 
+        elif self.env == "development-docker":
+            self.database_pwd = os.environ.get("DB_SERVICE_PW")
+            self.database_host = "mongodb"
+            self.database_port = 27017
+            self.judge0_host = "j0-server"
+
         elif self.env == "production":
             self.database_pwd = os.environ.get("DB_SERVICE_PW")
             self.database_host = "mongodb"
             self.database_port = 27017
             self.judge0_host = "j0-server"
 
-        elif self.env == "staging":
-            self.database_pwd = os.environ.get("DB_SERVICE_PW")
-            self.database_host = "mongodb"
-            self.database_port = 27017
-            self.judge0_host = "j0-server"
 
         else:
             raise ValueError("Invalid 'env' value. Supported values are 'development', 'production', and 'staging'.")
         
         #TODO Eventually this should be an Admin setting
-        #if os.environ.get("EMAIL_PWD") == os.environ.get("EMAIL_HOST") == os.environ.get("EMAIL_ADRESS") == "":
-        if self.env == "development":
+        if self.env in ["development", "development-docker"]:
             self.email_enabled = False
         else: 
             self.email_enabled = True
