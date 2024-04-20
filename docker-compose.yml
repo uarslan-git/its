@@ -11,11 +11,13 @@ x-logging:
 services:
   
   angular-app:
+    environment:
+      ITS_ENV: ${ITS_ENV}
     build: 
       context: ./frontend
       dockerfile: Dockerfile
-    environment:
-      ITS_ENV: ${ITS_ENV}
+      args:
+        BUILD_ENV: ${ITS_ENV}
     ports:
       - "8080:80"
       - "4200:4200"
