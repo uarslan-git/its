@@ -31,12 +31,12 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
         async with aiohttp.ClientSession() as session:
             instruction = self.create_instruction(previous_step, task=task) #TODO: get short version of tasks or differentiate between local and server.
             payload = {
-                    "model": "codellama-nxt",
+                    "model": "llama3",
                     #"model": "codellama:13b",
                     "prompt": instruction,
                     "stream": False,
                     "options": {"num_predict": 200,
-                                "stop": ["<s>", "</s>", "[INST]", "[/INST]", "<<SYS>>", "<</SYS>>", "[task end]"]}
+                                "stop": ["<s>", "</s>", "[INST]", "[/INST]", "<<SYS>>", "<</SYS>>", "[task end]", "<|eot_id|>"]}
                 }
             async with session.post(f"{ollama_url}api/generate", json=payload) as response:
                 feedback = await response.text()
@@ -59,6 +59,6 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
 
     
     def create_instruction(self, previous_step, task_ins="Consider the following programming task:", task="",
-                                 inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements. Also, there should be only the edited code and no further explanations. The reply should be a Markdown code block. The current program state is:", 
+                                 inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements and only modules that were already imported. Also, there should be only the edited code and no further explanations. The reply should be a Markdown code block. The current program state is:", 
                                 b_inst="[INST]", e_inst="[/INST]"):
         return f"""<s> {b_inst} {task_ins}\n"{task}"\n{inst}\n{previous_step} {e_inst}\nNext Step:\n"""
