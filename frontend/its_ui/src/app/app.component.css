@@ -1,5 +1,5 @@
 
-.grid-container { 
+.tutoring-grid-container { 
     display: grid; 
     grid-template-columns:  minmax(0, 1fr) minmax(0, 1fr);  
     grid-template-rows: 1fr minmax(0, 10fr) minmax(0, 10fr);

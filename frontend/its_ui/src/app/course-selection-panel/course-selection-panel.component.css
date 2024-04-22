@@ -1,0 +1,39 @@
+.course-selection-container {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center;
+    align-items: center;
+    text-align: center; /* Center-align text */
+    overflow: auto;
+    margin-top: 13%;
+  }
+  
+  .title-course-selection {
+    margin-bottom: 20px; /* Add space between title and list */
+  }
+
+/* Reset default list styles */
+.styled-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Style list items */
+  .styled-list li {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Add hover effect */
+  .styled-list li:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Add transition for smooth hover effect */
+  .styled-list li {
+    transition: background-color 0.3s ease;
+  }
