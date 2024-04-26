@@ -14,9 +14,10 @@ async def get_attempt_state(task_unique_name, user: User = Depends(current_activ
     if attempt is None:
         attempt = Attempt(user_id = str(user.id), task_unique_name=task_unique_name, state_log=[])
         await database.create_attempt(attempt)
-        tasks_attempted = user.tasks_attempted
+        course_enrollment = database.create_course_enrollment(user, task_unique_name)
+        tasks_attempted = course_enrollment.tasks_attempted
         tasks_attempted.append(task_unique_name)
-        await database.update_user(user, {"tasks_attempted": tasks_attempted})
+        await database.update_course_enrollment(course_enrollment, {"tasks_attempted": tasks_attempted})
     if len(attempt.state_log)==0:
         return({"attempt_id": str(attempt.id), "code": ""})
     else:

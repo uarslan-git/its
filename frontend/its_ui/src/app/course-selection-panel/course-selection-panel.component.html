@@ -1,7 +1,11 @@
 <div class="course-selection-container">
     <h2 class="title-course-selection"> Please select a course</h2>
     <ul class="styled-list">
-        <li *ngFor="let course of courses">{{ course }}</li>
+    <li 
+        class="course-list-element" 
+        *ngFor="let course of courses"
+        (click)="selectCourse(course.unique_name)"
+        >{{ course.display_name }}</li>
     </ul>
 </div>
 

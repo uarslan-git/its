@@ -1,5 +1,5 @@
 import motor.motor_asyncio
-from courses.schemas import Course
+from courses.schemas import Course, CourseEnrollment
 from beanie import Document
 from fastapi_users.db import BeanieUserDatabase
 from typing import Optional
@@ -61,6 +61,27 @@ class database():
     async def get_course(self, unique_name):
         course = await Course.find_one(Course.unique_name == unique_name)
         return course
+    
+    async def get_courses(self):
+        courses = await Course.find().to_list()
+        return courses
+    
+    async def update_course(self, course: Course, update_dict):
+        await course.update({"$set": update_dict})
+
+    async def create_course_enrollment(self, course_enrollment: CourseEnrollment):
+        await course_enrollment.insert()
+    
+    async def get_course_enrollment(self, user: User, course_unique_name):
+        course_enrollment = await CourseEnrollment.find_one(CourseEnrollment.user_id==str(user.id), 
+                                                            CourseEnrollment.course_unique_name==course_unique_name)
+        if course_enrollment is None:
+            raise Exception(f"Course enrollment not found for {str(User.id)} and {course_unique_name}")
+        else:
+            return course_enrollment
+        
+    async def update_course_enrollment(self, course_enrollment: CourseEnrollment, update_dict):
+        await course_enrollment.update({"$set": update_dict})
     
     async def get_attempt(self, attempt_id):
         attempt = await Attempt.get(PydanticObjectId(attempt_id))

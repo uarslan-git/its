@@ -6,6 +6,7 @@ from typing import Optional
 # class Code_submission(BaseModel):
 class Code_submission(Document):
     task_unique_name: str
+    course_unique_name: str
     code: str
     submission_time: dict
     type: str

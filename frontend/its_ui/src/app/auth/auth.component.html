@@ -45,19 +45,6 @@
     <div class="login-form">
       <h2>Register</h2>
 
-      <div class="course-selection">
-        <label for="courses">For Course:</label>
-        <select #courseSelection name="courses" id="cars">
-          <option value="none">no selection</option>
-          <option value="Exam_Preparation_DM">Data Mining: Exam Preparation</option>
-          <!-- <option value="ITS_Course">Test course ITS</option> -->
-          <!-- <option value="Intro_to_DM">Introduction to Data Mining</option> -->
-          <option value="Intro_to_ML">Introduction to Machine Learning</option>
-          <!-- <option value="Intro_to_PY">Introduction to Python</option> -->
-          <!-- <option value="Intro_to_DS">Introduction to Data Security</option> -->
-        </select>
-      </div>
-
       <input #email placeholder="Email" /><br />
       <input #registerUsername placeholder="Username" /><br />
       <input #registerPassword type="password" placeholder="Password" /><br />
@@ -86,7 +73,7 @@
       <hr>
 
     <div class="centered-button">
-      <button (click)="register(email.value, registerUsername.value, registerPassword.value, consentCheckboxYes.checked, courseSelection.value)">Register</button>
+      <button (click)="register(email.value, registerUsername.value, registerPassword.value, consentCheckboxYes.checked)">Register</button>
     </div>
       <p>Do you already have an account? If so, you can <a (click)="setForm('login')"><u>login here!</u></a></p>
     </div>

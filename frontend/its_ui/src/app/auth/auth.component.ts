@@ -74,7 +74,7 @@ export class AuthComponent {
     this.loginEvent.emit(this.loginStatus);
   }
 
-  register(email: string, username: string, password: string, dataCollectionConsent: boolean, courseSelection: string): void {
+  register(email: string, username: string, password: string, dataCollectionConsent: boolean): void {
     if(!this.consentCheckboxNo.nativeElement.checked && !this.consentCheckboxYes.nativeElement.checked){
       window.alert("Please select (Yes/No) whether we can use your data for scientific purposes.")
       return;
@@ -84,17 +84,14 @@ export class AuthComponent {
       window.alert("Email must be a '@uni-bielefeld.de' address.")
       return;
     } */
-    if(courseSelection=='none') {
-      window.alert("Please select a course.")
-      return;
-    }
+
     const body = {"username": username,
                   "verification_email": email,
                   // email has to be a "dummy" as of the requirements of the fastapi-users module.
                   "email": `${username}@anonym.de`,
-                  "password": password, "tasks_completed": [], "tasks_attempted": [],
-                  "rand_subdomain_orders": [-1],
-                  "enrolled_courses": [courseSelection], "courses_completed": [],
+                  "password": password,
+                  "enrolled_courses": [],
+                  "current_course": "",
                   "register_datetime": this.datetimeService.datetimeNow(),
                   "settings": {"dataCollection": dataCollectionConsent}
                 };
