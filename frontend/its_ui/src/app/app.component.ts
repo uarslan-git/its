@@ -11,6 +11,7 @@ import { environment } from 'src/environments/environment';
 export class AppComponent {
   title = 'Tutoring System for Programming';
   pageName = 'loginView'
+  originPage = ''
   initTask?: string;
   //name = new FormControl('');
 
@@ -32,22 +33,26 @@ export class AppComponent {
   setView(status: string) {
     switch (status) {
       case 'loggedIn':
-          this.pageName = 'tutoringView';
+          this.pageName = 'welcomePage';
           break;
       case 'loggedOut':
           this.pageName = 'loginView';
           break;
+      case 'courseSelected':
+          this.pageName = 'tutoringView';
+          break;
       case 'closedProfile':
         this.initTask = sessionStorage.getItem("taskId")!;
-        this.pageName = 'tutoringView';
+        this.pageName = this.originPage;
         break;
       case 'profileRequest':
+        this.originPage = this.pageName
         this.pageName = 'profileView';
         break;
       default:
         this.pageName = 'loginView'
           console.log("Invalid View request");
           break;
-  }
+    }
   }
 }

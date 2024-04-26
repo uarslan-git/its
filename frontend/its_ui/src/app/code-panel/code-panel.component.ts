@@ -41,6 +41,7 @@ export class CodePanelComponent {
         {
           selected_choices: this.multipleChoiceComponent.checked,
           task_unique_name: this.current_task_id, 
+          course_unique_name: sessionStorage.getItem("courseID"),
           code: this.submitted_code,
           log: "True", 
           type: "submission",
@@ -56,6 +57,7 @@ export class CodePanelComponent {
       this.submitted_code = this.codeEditorComponent.userContentControl;
       this.client.post<any>(`${environment.apiUrl}/code_submit`, 
             {task_unique_name: this.current_task_id, code: this.submitted_code, 
+              course_unique_name: sessionStorage.getItem("courseID"),
               log: "True", type: "submission",
               selected_choices: [],
               submission_time: this.datetimeService.datetimeNow()
@@ -70,7 +72,9 @@ export class CodePanelComponent {
   //Run Button
   handleRunEvent(parameters: any) {
     var runCode = this.codeEditorComponent.userContentControl;
-    const body = {task_unique_name: this.current_task_id, code: runCode,
+    const body = {task_unique_name: this.current_task_id, 
+                course_unique_name: sessionStorage.getItem("courseID"),   
+                code: runCode,
                 log: "True", 
                 selected_choices: [],
                 submission_time: this.datetimeService.datetimeNow(),
@@ -159,6 +163,7 @@ export class CodePanelComponent {
             // TODO: check the payload!
             selected_choices: [],
             task_unique_name: this.current_task_id, 
+            course_unique_name: sessionStorage.getItem("courseID"),
             code: this.submitted_code,
             log: "True", 
             type: "feedback_request",

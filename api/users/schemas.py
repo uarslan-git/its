@@ -12,11 +12,12 @@ class User(BeanieBaseUser, Document):
     email: str
     username: str
     verification_email: str
-    tasks_completed: list
-    tasks_attempted: list
+    current_course: str
+    #tasks_completed: list
+    #tasks_attempted: list
     enrolled_courses: list
-    rand_subdomain_orders: list
-    courses_completed: list
+    #rand_subdomain_orders: list
+    #courses_completed: list
     register_datetime: dict
     settings: dict
     roles: Optional[list] = None
@@ -38,11 +39,12 @@ class User(BeanieBaseUser, Document):
 class UserRead(schemas.BaseUser[PydanticObjectId]):
     email: str
     username: str
-    tasks_completed: list
-    tasks_attempted: list
+    current_course: str
+    #tasks_completed: list
+    #tasks_attempted: list
     enrolled_courses: list
-    rand_subdomain_orders: list
-    courses_completed: list
+    #rand_subdomain_orders: list
+    #courses_completed: list
     register_datetime: dict
     settings: dict
     roles: Optional[list] = None
@@ -54,11 +56,12 @@ class UserCreate(schemas.BaseUserCreate):
     email: str
     verification_email: str
     username: str
-    tasks_completed: list
-    tasks_attempted: list
+    current_course: str
+    #tasks_completed: list
+    #tasks_attempted: list
     enrolled_courses: list
-    rand_subdomain_orders: list
-    courses_completed: list
+    #rand_subdomain_orders: list
+    #courses_completed: list
     register_datetime: dict
     settings: dict
     #roles: Optional[list]
@@ -78,6 +81,7 @@ class UserUpdate(schemas.BaseUserUpdate):
     username: str
     register_datetime: dict
     settings: dict
+    current_course: str
     pass
 
 class GlobalAccountList(Document):

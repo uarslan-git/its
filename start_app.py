@@ -49,7 +49,6 @@ if __name__ == "__main__":
     #Set backend environment Variables for development.
     backend_env = os.environ.copy()
     backend_env["ITS_ENV"] = "development"
-    #backend_env["DB_PWD"] = "SECRET"
 
 
 

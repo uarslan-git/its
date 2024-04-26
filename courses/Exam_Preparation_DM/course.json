@@ -1,6 +1,6 @@
 {
-    "display_name": "Course Name",
-    "domain": "Course Domain",
+    "display_name": "Data Mining: Exam Preparation",
+    "domain": "Data Mining",
     "sub_domains": ["Statistical Testing", "Clustering", "IRT and KT", "Recommenders", "Deep Models"],
     "curriculum": [["mean_and_std","pooled_variance", "nll_functions", "pearson", "wilcoxon"], 
                    ["pca_fa", "optimal_gmm_clusters", "gmm_vs_kmeans"], 

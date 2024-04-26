@@ -25,14 +25,15 @@ async def handle_handle_feedback_request(submission: Feedback_submission, user: 
     task_id = submission.task_unique_name
     task_json = await database.get_task(str(task_id))
     test_results, valid_solution = await run_tests(task_json, submission)
-    pedagogical_model = manager.pedagogical_model(user)
+    pedagogical_model = await manager.pedagogical_model(user)
     if valid_solution:
         feedback = "All tests pass, your solution is most likely correct, you should submit it."
     # Generate feedback with pedagical model
     else:
-        feedback = await pedagogical_model.give_feedback(submission)
+        feedback = await pedagogical_model.provide_feedback(submission)
     # Store feedback and return ID
     evaluated_feedback_submission = Evaluated_feedback_submission(task_unique_name = submission.task_unique_name, 
+                                                            course_unique_name=submission.course_unique_name,
                                                             code = submission.code,
                                                             possible_choices = [],
                                                             correct_choices = [],
