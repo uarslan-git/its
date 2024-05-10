@@ -21,7 +21,6 @@ https://fastapi-users.github.io/fastapi-users/12.1/configuration/overview/"""
 filedir = os.path.dirname(__file__)
 
 class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
-    #TODO: Implement reset password and verification and choose some save tokens.
     reset_password_token_secret = os.environ.get("RESET_PWD_SECRET")
     verification_token_secret = os.environ.get("USER_VERIFICATION_SECRET")
 

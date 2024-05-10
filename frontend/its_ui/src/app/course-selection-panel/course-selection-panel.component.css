@@ -5,11 +5,14 @@
     align-items: center;
     text-align: center; /* Center-align text */
     overflow: auto;
-    margin-top: 13%;
+    margin-top: 10%;
   }
   
+
   .title-course-selection {
     margin-bottom: 20px; /* Add space between title and list */
+    font-size: 1.4rem;
+    font-weight: bold;
   }
 
 /* Reset default list styles */
@@ -21,17 +24,22 @@
   
   /* Style list items */
   .styled-list li {
-    background-color: #dcdcdc;
-    padding: 10px;
     margin-bottom: 5px;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    padding: 10px 20px; /* Adjusted padding to make the button smaller */
+    background-color: #777777;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 95%;
   }
   
   /* Add hover effect */
   .styled-list li:hover {
-    background-color: #8b8b8b;
+    background-color: #252525;
   }
   
   /* Add transition for smooth hover effect */

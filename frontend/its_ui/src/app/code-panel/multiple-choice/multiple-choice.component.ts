@@ -28,6 +28,7 @@ export class MultipleChoiceComponent {
   ) {
     this.newTaskSubscription = this.eventShareService.newTaskFetched$.subscribe(() => {
       this.choices = [];
+      //TODO: trigger an attempt-log to register start time!
     });
   }
 

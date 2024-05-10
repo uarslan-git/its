@@ -65,12 +65,10 @@ async def get_course_info(User = Depends(current_active_verified_user)) -> Cours
     return course_info
 
 
-#TODO: mit payload ausprobieren!
 @router.post("/select")
 async def select_course(course_selection: CourseSelection, User = Depends(current_active_verified_user)):
     await database.update_user(User, {"current_course": course_selection.course_unique_name})
 
 
 async def get_course_enrolment():
-    #TODO: switch performance-related stuff and user-data related to courses to a new data-item called course_enrolment.
     pass

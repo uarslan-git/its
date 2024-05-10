@@ -41,6 +41,4 @@ class Config:
         else: 
             self.email_enabled = True
 
-        #TODO: Additional Admin-settings: email-domain-whitelist (regex), Email-signature 
-
 config = Config()

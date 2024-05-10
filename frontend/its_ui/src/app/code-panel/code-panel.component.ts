@@ -160,7 +160,7 @@ export class CodePanelComponent {
         this.submitted_code = this.codeEditorComponent.userContentControl;
         this.client.post<any>(`${environment.apiUrl}/feedback`, 
           {
-            // TODO: check the payload!
+            // TODO: Do we need to include selected choices since MC is excluded?
             selected_choices: [],
             task_unique_name: this.current_task_id, 
             course_unique_name: sessionStorage.getItem("courseID"),

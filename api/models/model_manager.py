@@ -23,7 +23,6 @@ class Model_manager():
         else: 
             return self.prototype
     
-    #TODO: Maybe that is not necesessary
     async def domain_model(self):
         raise Exception("Not implemented!")
     
