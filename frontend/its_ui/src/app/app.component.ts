@@ -12,7 +12,7 @@ export class AppComponent {
   title = 'Tutoring System for Programming';
   pageName = 'loginView'
   originPage = ''
-  initTask?: string;
+  initTask?: string | null;
   //name = new FormControl('');
 
   constructor(private client: HttpClient,
@@ -51,6 +51,7 @@ export class AppComponent {
         break;
       case 'homeRequest':
         this.pageName = 'welcomePage';
+        this.initTask = null;
         break;
       default:
         this.pageName = 'loginView'
