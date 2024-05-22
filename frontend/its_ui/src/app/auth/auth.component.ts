@@ -53,6 +53,17 @@ export class AuthComponent {
       () => {
           // Handle successful login
           this.loginStatus = "loggedIn";
+          //Find if user is verified.
+          this.http.get<any>(`${this.apiUrl}/users/me`, {"withCredentials": true}).subscribe(
+            (data)  => {
+            const isVerified = data.is_verified;
+            if (!isVerified){
+              const verification_request_complete: boolean = this.request_verify(username);
+              if (verification_request_complete){
+                this.login(username, password);
+              }
+            }
+            else {
           this.emitLoginEvent();
           this.timer = setTimeout(
             () => {
@@ -62,6 +73,8 @@ export class AuthComponent {
             }
             , 6400000);
            this.retrieveSessionSettings();
+          }
+          });
       },
       error => {
         console.error('Login error:', error);
@@ -79,11 +92,6 @@ export class AuthComponent {
       window.alert("Please select (Yes/No) whether we can use your data for scientific purposes.")
       return;
     }
-/*     let useremail_valid = email.split("@")[1] == "uni-bielefeld.de"
-    if(useremail_valid == false) {
-      window.alert("Email must be a '@uni-bielefeld.de' address.")
-      return;
-    } */
 
     const body = {"username": username,
                   "verification_email": email,
@@ -98,18 +106,25 @@ export class AuthComponent {
     this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, body).subscribe(
       response => {
           // Handle successful registration
-          setTimeout(()=>{
-            this.http.post<any>(`${environment.apiUrl}/auth/request-verify-token`, {"email": `${username}@anonym.de`}).subscribe()
-            const token = window.prompt("Please check your Emails for a verification token and enter it here:")
-            this.http.post<any>(`${environment.apiUrl}/auth/verify`, {"token": token}).subscribe()
-            this.setForm("login");
-          }, 100);
+          this.request_verify(username);
       },
       error => {
         console.error('Registration error:', error);
         alert("Registration not successful. Probably the user already exists.")
       }
     );
+  }
+
+  request_verify(username: string){
+    var verification_complete = false;
+      this.http.post<any>(`${environment.apiUrl}/auth/request-verify-token`, {"email": `${username}@anonym.de`}).subscribe()
+      const token = window.prompt("Please check your Emails for a verification token and enter it here:")
+      this.http.post<any>(`${environment.apiUrl}/auth/verify`, {"token": token}).subscribe(
+        () => {this.setForm("login");
+                verification_complete = true;
+        }
+      )
+    return verification_complete
   }
 
   forgotPassword(username: string, resetKey: string, verificationEmail: string)

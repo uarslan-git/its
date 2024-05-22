@@ -12,6 +12,11 @@
     font-size: 1.6rem;
     font-weight: bold;
   }
+
+  .nav-brand:hover {
+    color: #dadada;
+    cursor: pointer;
+  }
   
   .nav-links {
     font-size: 1rem;
@@ -79,3 +84,4 @@
   .impressum a:hover{
     color: rgb(104, 164, 255);
   }
+

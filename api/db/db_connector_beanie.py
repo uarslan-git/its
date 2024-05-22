@@ -87,8 +87,10 @@ class database():
         attempt = await Attempt.get(PydanticObjectId(attempt_id))
         return attempt
 
-    async def find_attempt(self, task_unique_name, user_id: PydanticObjectId):
-        attempt = await Attempt.find_one(Attempt.task_unique_name == task_unique_name, Attempt.user_id == str(user_id))
+    async def find_attempt(self, task_unique_name, user_id: PydanticObjectId, course_unique_name):
+        attempt = await Attempt.find_one(Attempt.task_unique_name == task_unique_name, 
+                                         Attempt.user_id == str(user_id), 
+                                         Attempt.course_unique_name == course_unique_name)
         return attempt
     
     async def update_attempt(self, attempt: Attempt): 

@@ -112,7 +112,8 @@ export class TaskPanelComponent {
             curriculum: data.curriculum,
           }
         }
-      );                         
+      ); 
+      console.log(this.initTask);                        
       if (this.initTask == null) {
         this.fetch_task();
       }

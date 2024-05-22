@@ -63,7 +63,8 @@ app.include_router(retrieve_info.router, prefix=f"{prefix}/info")
 
 # User Router and database setup
 app.include_router(
-    handle_users.fastapi_users.get_auth_router(handle_users.auth_backend), prefix=f"{prefix}/auth/jwt", tags=["auth"]
+    handle_users.fastapi_users.get_auth_router(handle_users.auth_backend,
+                                               requires_verification=False), prefix=f"{prefix}/auth/jwt", tags=["auth"]
 )
 app.include_router(
     handle_users.fastapi_users.get_register_router(user_schemas.UserRead, user_schemas.UserCreate),

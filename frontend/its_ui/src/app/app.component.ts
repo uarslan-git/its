@@ -49,6 +49,9 @@ export class AppComponent {
         this.originPage = this.pageName
         this.pageName = 'profileView';
         break;
+      case 'homeRequest':
+        this.pageName = 'welcomePage';
+        break;
       default:
         this.pageName = 'loginView'
           console.log("Invalid View request");

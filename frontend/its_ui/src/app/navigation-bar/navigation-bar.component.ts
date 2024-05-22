@@ -11,6 +11,7 @@ import { environment } from 'src/environments/environment';
 export class NavigationBarComponent {
 
   @Output() profileButtonClicked: EventEmitter<string> = new EventEmitter<string>;
+  @Output() homeButtonClicked: EventEmitter<string> = new EventEmitter<string>;
 
   @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>
 
@@ -43,6 +44,7 @@ export class NavigationBarComponent {
     });
   }
 
+
   newTaskButtonClicked(direction: string){
     this.eventShareService.emitNewTaskEvent(direction);
   }
@@ -50,6 +52,11 @@ export class NavigationBarComponent {
   emitProfileButtonClicked() {
     //this.eventShareService.emitProfileButtonClick();
     this.profileButtonClicked.emit("profileRequest")
+  }
+
+  emitHomeButtonClicked() {
+    //this.eventShareService.emitProfileButtonClick();
+    this.homeButtonClicked.emit("homeRequest")
   }
 
   openAboutPopup() {

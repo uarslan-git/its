@@ -6,7 +6,7 @@ Curious Camel is an Intelligent Tutoring System for programming. In this file, y
 
 This software is distributed under the xxxx license. It shall not be redistributed commercially. The source code shall not be used in proprietary systems unless permission is granted by the KML group. 
 
-## Feature List 
+## Feature List
 
 - [x] Online code-editor
 - [x] Display tasks and feedback with markdown
@@ -16,12 +16,15 @@ This software is distributed under the xxxx license. It shall not be redistribut
 - [x] Run programs with custom parameters
 - [x] Users can send feedback requests to an ollama LLM-server
 - [x] Print, function and multiple-choice tasks
-- [ ] E-Mail based login
+- [x] Multiple courses per user
+- [x] E-Mail based login
 - [ ] Tasks with image-files
-- [ ] Multiple courses per user
 - [ ] Course settings
 - [ ] Task selection based on user competency
 - [ ] Fill the gap-tasks
+- [ ] Monaco code editor
+- [ ] Upload courses
+- [ ] Conceptual Feedback on Steps
 
 
 ## How to use?
