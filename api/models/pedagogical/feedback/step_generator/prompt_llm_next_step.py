@@ -1,8 +1,9 @@
 from models.pedagogical.feedback.step_generator.base import Base_step_generator
 from submissions.schemas import Code_submission
 from db import database
-import aiohttp
-import json
+#import aiohttp
+#import json
+from services.language_generation import generate_language
 
 class Prompt_llm_step_generator(Base_step_generator):
 
@@ -13,35 +14,17 @@ class Prompt_llm_step_generator(Base_step_generator):
             submission (Code_submission): The users code submission
         """
         #Retrieve task info and create prompt.
-        ollama_url = await self.get_ollama_url()
         task_json = await database.get_task(submission.task_unique_name)
         previous_step = task_json.prefix+submission.code
         task = task_json.task
-        #TODO: Make querying LLMs a service.
-        #Make request and receive/process LLM-answer
-        async with aiohttp.ClientSession() as session:
-            instruction = self.create_instruction(previous_step, task=task) #TODO: get short version of tasks or differentiate between local and server.
-            payload = {
-                    #"model": "codellama-nxt",
-                    #"model": "codellama:13b",
-                    "model": "llama3",
-                    "prompt": instruction,
-                    "stream": False,
-                    "options": {"num_predict": 200,
-                                "stop": ["<s>", "</s>", "[INST]", "[/INST]", "<<SYS>>", "<</SYS>>", "[task end]", "<|eot_id|>"]}
-                }
-            async with session.post(f"{ollama_url}api/generate", json=payload) as response:
-                next_step = await response.text()
-                next_step = json.loads(next_step)
-        return(next_step["response"])
+        instruction = self.create_instruction(previous_step, task=task) #TODO: get short version of tasks or differentiate between local and server.
+        next_step = await generate_language(instruction, model="llama3")
+        return next_step
     
     #TODO: Changing settings should happen either more generically or at some different place.
-    async def set_ollama_url(self, ollama_url):
-        await database.update_settings({"olama_url": ollama_url})
+    #async def set_ollama_url(self, ollama_url):
+    #    await database.update_settings({"olama_url": ollama_url})
 
-    async def get_ollama_url(self):
-        settings = await database.get_settings()
-        return settings.ollama_url
     
     async def get_feedback_available(self, task_type):
         settings = await database.get_settings()
