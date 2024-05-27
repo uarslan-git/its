@@ -30,11 +30,7 @@ export class ProfileComponent {
   displayApiSettings: boolean = false;
 
   constructor(private http: HttpClient,
-    private eventShareService: EventShareService) {
-/*       this.eventShareService.profileButtonClick$.subscribe((data) => {
-        this.show_profile();
-      }); */
-    }
+    private eventShareService: EventShareService) {}
 
     ngAfterViewInit() {
       this.show_profile()
@@ -88,7 +84,6 @@ export class ProfileComponent {
     saveApiUrl(url: string) {
       this.http.post(`${this.apiUrl}/feedback/set_llm_url`,{"url": url}, {withCredentials: true}).subscribe(
         (data) => {
-
         }
       );
     }

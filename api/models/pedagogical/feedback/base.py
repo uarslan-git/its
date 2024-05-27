@@ -9,7 +9,7 @@ class Base_step_feedback_module():
 
     async def provide_feedback(self, submission: Code_submission):
         next_step = await self.step_generator.predict_next_step(submission)
-        return self.feedback_generator.generate_feedback(next_step)
+        return await self.feedback_generator.generate_feedback(next_step, submission)
     
     async def get_feedback_available(self, task_type):
         raise NotImplementedError()
