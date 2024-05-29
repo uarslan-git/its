@@ -2,7 +2,6 @@ import { Component, OnInit, } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from './shared/services/event-share.service';
 import { environment } from 'src/environments/environment';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

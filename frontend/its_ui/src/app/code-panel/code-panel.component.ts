@@ -12,6 +12,9 @@ import { DatetimeService } from '../shared/services/datetime.service';
 import { environment } from 'src/environments/environment';
 import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.component';
 
+// Monaco 
+import { MonacoCodeEditorComponent } from '../shared/components/monaco-code-editor/monaco-code-editor.component';
+
 
 @Component({
   selector: 'app-code-panel',

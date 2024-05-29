@@ -1,9 +1,10 @@
 <div class="grid-container-code">
 
   <div class="code-editor">
-    <app-code-editor *ngIf="!isMultipleChoice" (codeChangeEvent)="recordChanges($event)"></app-code-editor>
+    <app-code-editor-new *ngIf="!isMultipleChoice" (codeChangeEvent)="recordChanges($event)"></app-code-editor-new>
     <app-multiple-choice *ngIf="isMultipleChoice"></app-multiple-choice>
   </div>
+
   
   <div class="actionPanel">
     <app-action-panel 

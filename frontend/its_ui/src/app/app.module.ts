@@ -24,6 +24,7 @@ import { MultipleChoiceComponent } from './code-panel/multiple-choice/multiple-c
 import { AuthComponent } from './auth/auth.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CourseSelectionPanelComponent } from './course-selection-panel/course-selection-panel.component';
+import { CodeEditorNewComponent } from './code-panel/code-editor-new/code-editor-new.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { CourseSelectionPanelComponent } from './course-selection-panel/course-s
     MultipleChoiceComponent,
     AuthComponent,
     ProfileComponent,
-    CourseSelectionPanelComponent
+    CourseSelectionPanelComponent,
+    CodeEditorNewComponent
   ],
   imports: [
     BrowserModule,
