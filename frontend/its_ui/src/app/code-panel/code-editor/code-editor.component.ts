@@ -5,7 +5,6 @@ import { FormBuilder } from '@angular/forms'
 import { fromEvent, Subscription } from 'rxjs';
 import { PrismHighlightService } from 'src/app/shared/services/prism-highlight.service'
 
-import { DataShareService } from 'src/app/shared/services/data-share.service';
 import { EventShareService } from 'src/app/shared/services/event-share.service';
 
 @Component({
@@ -85,7 +84,6 @@ constructor(
   private prismService: PrismHighlightService,
   private fb: FormBuilder,
   private renderer: Renderer2,
-  private dataShareService: DataShareService,
   private eventShareService: EventShareService,
 ) {
   this.newTaskSubscription = this.eventShareService.newTaskFetched$.subscribe(() => {

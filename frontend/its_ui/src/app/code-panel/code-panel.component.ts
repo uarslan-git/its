@@ -6,14 +6,11 @@ import { fromEvent, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { EventShareService } from '../shared/services/event-share.service';
-import { CodeEditorComponent } from './code-editor/code-editor.component';
+import { CodeEditorNewComponent } from './code-editor-new/code-editor-new.component';
 import { DatetimeService } from '../shared/services/datetime.service';
 
 import { environment } from 'src/environments/environment';
 import { MultipleChoiceComponent } from './multiple-choice/multiple-choice.component';
-
-// Monaco 
-import { MonacoCodeEditorComponent } from '../shared/components/monaco-code-editor/monaco-code-editor.component';
 
 
 @Component({
@@ -27,8 +24,8 @@ export class CodePanelComponent {
   code_language = 'python';
 
   //TODO: the editor is initialized and listens for changes even for MC-Questions.
-  @ViewChild(CodeEditorComponent)
-  codeEditorComponent!: CodeEditorComponent;
+  @ViewChild(CodeEditorNewComponent)
+  codeEditorComponent!: CodeEditorNewComponent;
   lastSavedCode!: string;
 
   @ViewChild(MultipleChoiceComponent)
@@ -124,7 +121,8 @@ export class CodePanelComponent {
             this.multipleChoiceComponent.choices = choices;
           }
           else {
-            this.codeEditorComponent.form.setValue({'content': sessionStorage.getItem('taskPrefix') + data.code});
+            //this.codeEditorComponent.form.setValue({'content': sessionStorage.getItem('taskPrefix') + data.code});
+            this.codeEditorComponent.setEditorContent(sessionStorage.getItem('taskPrefix') + data.code);
           }
           this.contentReloaded = true;
           this.lastSavedCode = data.code;
