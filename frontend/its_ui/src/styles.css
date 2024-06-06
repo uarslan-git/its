@@ -47,7 +47,7 @@ p {
 }
 
 /* // Prism.js line numbers plugin */
-.line-numbers .line-numbers-rows {
+/* .line-numbers .line-numbers-rows {
   position: absolute;
   pointer-events: none;
   top: 15px;
@@ -70,7 +70,7 @@ p {
   display: block;
   padding-right: 0.8em;
   text-align: right;
-}
+} */
 
 
 /* Popup Dialog styles. For all Popup dialogs use the same class names */

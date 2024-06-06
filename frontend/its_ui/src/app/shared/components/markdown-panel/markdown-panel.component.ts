@@ -10,7 +10,6 @@ export class MarkdownPanelComponent {
   @ViewChild("markdownContainer", {static: true}) markdownContainer!: ElementRef;
 
 
-
   resetScroll(){
     this.markdownContainer.nativeElement.scrollTop = 0;
   }

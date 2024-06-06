@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, ElementRef, ViewChild, Input, HostListener, Output, EventEmitter } from '@angular/core';
 import { MonacoEditorService } from '../../services/monaco-edito-service.service';
 import { first } from 'rxjs';
+import themeJson from '../monaco-code-editor/Tomorrow-LightNight.json'
 
 declare var monaco: any;
 
@@ -37,22 +38,27 @@ export class MonacoCodeEditorComponent implements AfterViewInit {
     }
 
     // Define custom theme
-    monaco.editor.defineTheme('its-grey', {
-      base: 'vs-dark',
+    console.log(themeJson)
+    monaco.editor.defineTheme('tomorrow-light-night', themeJson);
+
+
+/*     monaco.editor.defineTheme('its-grey', {
+      base: 'tomorrow-night',
       inherit: true,
       rules: [],
       colors: {
           'editor.background': '#2d2d2d',
       },
-  });
+  }); */
 
     this._editor = monaco.editor.create(
       this._editorContainer.nativeElement,
-      {"theme": "its-grey",
+      {"theme": "tomorrow-light-night",
         "language": this.language,
         "fontSize": this.fontMeasure.nativeElement.getBoundingClientRect().height,
         "padding": {"top": 10},
-        minimap: { enabled: false }
+        minimap: { enabled: false },
+        automaticLayout: true,
       }
     );
     //console.log(this._editor.onDidChangeModelContent);

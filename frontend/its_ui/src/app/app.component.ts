@@ -1,4 +1,4 @@
-import { Component, OnInit, } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from './shared/services/event-share.service';
 import { environment } from 'src/environments/environment';
