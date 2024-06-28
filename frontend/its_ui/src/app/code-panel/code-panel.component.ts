@@ -6,7 +6,7 @@ import { fromEvent, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { EventShareService } from '../shared/services/event-share.service';
-import { CodeEditorNewComponent } from './code-editor-new/code-editor-new.component';
+import { CodeEditorComponent } from './code-editor/code-editor.component';
 import { DatetimeService } from '../shared/services/datetime.service';
 
 import { environment } from 'src/environments/environment';
@@ -24,8 +24,8 @@ export class CodePanelComponent {
   code_language = 'python';
 
   //TODO: the editor is initialized and listens for changes even for MC-Questions.
-  @ViewChild(CodeEditorNewComponent)
-  codeEditorComponent!: CodeEditorNewComponent;
+  @ViewChild(CodeEditorComponent)
+  codeEditorComponent!: CodeEditorComponent;
   lastSavedCode!: string;
 
   @ViewChild(MultipleChoiceComponent)

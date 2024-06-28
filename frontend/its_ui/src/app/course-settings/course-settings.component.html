@@ -1,0 +1,41 @@
+<div class="settings-container">
+    <div class="base-settings">
+
+        <form [formGroup]="settingsForm">
+          <h2>Feedback Settings</h2>
+          <p>Initialization time:
+            <!-- <mat-form-field> -->
+              <input type="number" formControlName="feedback_init_time" placeholder="sec">
+            <!-- </mat-form-field> -->
+          </p>
+          <p>Feedback cooldown:
+            <!-- <mat-form-field> -->
+              <input type="number" formControlName="feedback_cooldown" placeholder="sec">
+            <!-- </mat-form-field> -->
+          </p>
+
+<!--             <mat-form-field>
+              <input matInput formControlName="name" placeholder="Your Name">
+              <mat-hint>Required</mat-hint>
+            </mat-form-field>
+          
+            <mat-checkbox formControlName="receiveNewsletters">Receive Newsletters</mat-checkbox>
+           -->
+           
+    <!--         <mat-select formControlName="language">
+              <mat-option value="en">English</mat-option>
+              <mat-option value="fr">French</mat-option>
+            </mat-select> -->
+          
+            <div class="manage-settings">
+                <button  [disabled]="!settingsForm.valid" (click)="closeSettings()">Close</button>
+                <button  [disabled]="!settingsForm.valid" (click)="saveSettings()">Save Settings</button>
+            </div>
+          </form>
+    </div>
+    
+    <div class="alternative-settings">
+
+    </div>
+</div>
+

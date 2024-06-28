@@ -13,8 +13,14 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 
 import { HttpClientModule } from '@angular/common/http';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatOption, MatOptionModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
+
+
 import { TaskPanelComponent } from './task-panel/task-panel.component';
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
 import { FeedbackPanelComponent } from './feedback-panel/feedback-panel.component';
@@ -24,7 +30,7 @@ import { MultipleChoiceComponent } from './code-panel/multiple-choice/multiple-c
 import { AuthComponent } from './auth/auth.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CourseSelectionPanelComponent } from './course-selection-panel/course-selection-panel.component';
-import { CodeEditorNewComponent } from './code-panel/code-editor-new/code-editor-new.component';
+import { CourseSettingsComponent } from './course-settings/course-settings.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +45,7 @@ import { CodeEditorNewComponent } from './code-panel/code-editor-new/code-editor
     AuthComponent,
     ProfileComponent,
     CourseSelectionPanelComponent,
-    CodeEditorNewComponent
+    CourseSettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -49,6 +55,9 @@ import { CodeEditorNewComponent } from './code-panel/code-editor-new/code-editor
     SharedModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatOptionModule,
     MarkdownModule.forRoot({
       markedOptions: {
         provide: MarkedOptions,

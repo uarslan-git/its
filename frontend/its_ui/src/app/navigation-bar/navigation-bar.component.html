@@ -1,15 +1,60 @@
 <nav class="navbar">
     <div class="nav-brand" (click)="emitHomeButtonClicked()">{{title}}</div>
     <ul class="nav-links">
-      <li><a (click)="newTaskButtonClicked('previous')"><i class="arrow left" role="button"></i></a></li>
-      <!-- <li><a href="#" (click)="newTaskButtonClicked('personal')">New Task</a></li> -->
-      <li><a>{{task_name}}</a></li>
-      <li><a (click)="newTaskButtonClicked('next')"><i class="arrow right" role="button"></i></a></li>
-      <li><a (click)="openAboutPopup()" href="#">About</a></li>
-      <li><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></li>
-      <li><a [href]="'https://utfragen.uni-bielefeld.de/index.php/229462?login='+user_name">Personality</a></li>
-      <li><a [href]="'https://utfragen.uni-bielefeld.de/index.php/125364?login='+user_name">Feedback</a></li>
-      <li><a href="#" (click)="emitProfileButtonClicked()">Profile</a></li>
+
+
+      
+      <li *ngIf="display_elements.has('taskSelection')"><a (click)="newTaskButtonClicked('previous')"><i class="arrow left" role="button"></i></a></li>
+      <li *ngIf="display_elements.has('taskSelection')"><a>{{task_name}}</a></li>
+      <li *ngIf="display_elements.has('taskSelection')"><a (click)="newTaskButtonClicked('next')"><i class="arrow right" role="button"></i></a></li>
+
+      <!-- Questionaires Dropdown -->
+      <li>
+        <div class="dropdown">
+          <li>
+            <button class="dropbtn">Surveys
+              <i class="fa fa-caret-down"></i>
+            </button>
+          </li>
+          <div class="dropdown-content">
+            <li><a [href]="'https://utfragen.uni-bielefeld.de/index.php/229462?login='+user_name">Personality</a></li>
+            <li><a [href]="'https://utfragen.uni-bielefeld.de/index.php/125364?login='+user_name">Feedback</a></li>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <div class="dropdown">
+          <li>
+            <button class="dropbtn">Settings
+              <i class="fa fa-caret-down"></i>
+            </button>
+          </li>
+          <div class="dropdown-content">
+            <li><a >Admin Settings</a></li>
+            <li *ngIf="display_elements.has('courseSettings')" ><a (click)="emitCourseSettingsRequested()">Course Settings</a></li>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <div class="dropdown">
+          <li>
+            <button class="dropbtn">Info
+              <i class="fa fa-caret-down"></i>
+            </button>
+          </li>
+          <div class="dropdown-content">
+            <!-- <li><a href="#" (click)="newTaskButtonClicked('personal')">New Task</a></li> -->
+            <li><a (click)="openAboutPopup()" href="#">About</a></li>
+            <li><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></li>
+            <li><a href="#" (click)="emitProfileButtonClicked()">Profile</a></li>
+          </div>
+        </div>
+      </li>
+
+
+      
     </ul>
   </nav>
   

@@ -38,7 +38,6 @@ export class MonacoCodeEditorComponent implements AfterViewInit {
     }
 
     // Define custom theme
-    console.log(themeJson)
     monaco.editor.defineTheme('tomorrow-light-night', themeJson);
 
 
@@ -61,8 +60,6 @@ export class MonacoCodeEditorComponent implements AfterViewInit {
         automaticLayout: true,
       }
     );
-    //console.log(this._editor.onDidChangeModelContent);
-    //this._editor.onDidChangeModelContent(() => {console.log("Content Changed")})
     this.subscribeToChanges();
   }
 
@@ -97,7 +94,15 @@ export class MonacoCodeEditorComponent implements AfterViewInit {
   }
 
   setContent(value: string){
-    this._editor.setValue(value);
+    if (this._editor != undefined)
+      {
+        this._editor.setValue(value);
+      }
+    //wait for editor to be initialized
+    else {
+      setTimeout(() => {
+        this.setContent(value);
+      },200)
+    }
   }
 }
-

@@ -1,57 +1,73 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, status
 from fastapi import Depends
-from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection
+from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings
 from users.schemas import User
 from users.handle_users import current_active_verified_user
 from db import database
 from random import randrange
 import itertools
+import numpy as np
 
 router = APIRouter(prefix="/course")
 
 @router.get("/get/{course_unique_name}")
 async def get_course(course_unique_name, user: User = Depends(current_active_verified_user)) -> Course:
+    course = await database.get_course(course_unique_name)
     if course_unique_name not in user.enrolled_courses:
-
         enrolled_courses = user.enrolled_courses.copy()
         enrolled_courses.append(course_unique_name)
-        update_dict = {"enrolled_courses": enrolled_courses}
-        await database.update_user(user, update_dict)
+        course_settings_index = np.where(np.random.multinomial(1, np.array(course.sample_settings)))[0]
         course_enrollment = CourseEnrollment(user_id=str(user.id), username=user.username,
                                              course_unique_name=course_unique_name,
                                              tasks_completed=[], tasks_attempted=[], completed=False,
-                                             rand_subdomain_orders=[-1])
+                                             course_settings_index=int(course_settings_index))
+                                             #rand_subdomain_orders=[-1])
+        user_update_dict = {"enrolled_courses": enrolled_courses}
+        await database.update_user(user, user_update_dict)
         await database.create_course_enrollment(course_enrollment)
     else:
         course_enrollment = await database.get_course_enrollment(user, course_unique_name)
-
-    rand_subdomain_order = course_enrollment.rand_subdomain_orders[0]
-    course = await database.get_course(course_unique_name)
+    
     curriculum = course.curriculum
     sub_domains = course.sub_domains
-    course_options = course.course_options
+    
+    course_settings_index = course_enrollment.course_settings_index
+    course_settings = course.course_settings_list[course_settings_index]
+    course = override_course_settings(course, course_settings)
+    course.course_settings_list = [course_settings]
 
     if type(curriculum[0]) == list:
-        # TODO: The random sub-domains should be part of an implementation of a pedagogical model
-        # Select random index if not already set
-        # and update user with new value
-        if rand_subdomain_order == -1:
-            rand_subdomain_order = randrange(len(course_options))
-            update_dict = {"rand_subdomain_orders": [rand_subdomain_order]}
-            await database.update_course_enrollment(course_enrollment, update_dict)
-
-        # Get course option from random index
-        rand_chosen_option = course_options[rand_subdomain_order]
-
-        # Sort curriculum according to the order in the chosen course option
-        sorted_curriculum = [subdomain_tasks for _, subdomain_tasks in sorted(zip(rand_chosen_option, curriculum))]
-
-        # Flatten the sorted curriculum from a list of task lists to a normal list of tasks
-        course.curriculum = [item for sublist in sorted_curriculum for item in sublist]
+        course.curriculum = [task for sub_domain in course.curriculum for task in sub_domain]
     else:
         pass
-
     return(course)
+
+
+@router.get("/get_settings/{course_unique_name}")
+async def get_course_settings(course_unique_name, user: User = Depends(current_active_verified_user)) -> Course:
+    if (not "admin" in user.roles) or ("tutor" in user.roles):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to access this resource"
+        )
+    course = await database.get_course(course_unique_name)
+    return course
+
+@router.post("/update_settings")
+async def update_course_settings(courseSettings: CourseSettings, user: User = Depends(current_active_verified_user)):
+    course = await database.get_course(courseSettings.course_id)
+    course.course_settings_list[0] = courseSettings
+    await database.update_course(course, {"course_settings_list": course.course_settings_list}) 
+
+
+def override_course_settings(course: Course, course_settings):
+    #TODO: turn the course settings into an object and access values accordingly!
+    if not course_settings["curriculum"] is None: 
+        course.curriculum = course_settings["curriculum"]
+    course.course_settings_list = None
+    course.course_settings = course_settings
+    return course
+
 
 
 @router.get("/info")

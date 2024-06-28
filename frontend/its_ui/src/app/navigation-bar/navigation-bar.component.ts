@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild, Input } from '@angular/core';
 import { EventShareService } from '../shared/services/event-share.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
@@ -12,15 +12,20 @@ export class NavigationBarComponent {
 
   @Output() profileButtonClicked: EventEmitter<string> = new EventEmitter<string>;
   @Output() homeButtonClicked: EventEmitter<string> = new EventEmitter<string>;
+  @Output() courseSettingButtonClicked: EventEmitter<string> = new EventEmitter<string>;
 
   @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>
 
-  aboutMarkdown: string = ''
+  aboutMarkdown: string = '';
 
   apiUrl: string = environment.apiUrl;
   user_name: string = "INVALID_EMAIL";
-  title: string = 'Tutoring System for Programming'
-  task_name: string = ''
+  title: string = 'Tutoring System for Programming';
+  task_name: string = '';
+  course?: any;
+
+  display_elements: Set<string> = new Set(); 
+  _currentPageName?: string
 
   constructor(
     private eventShareService: EventShareService,
@@ -32,6 +37,18 @@ export class NavigationBarComponent {
         }
       )
     }
+
+  @Input() set currentPageName(pageName: string){
+    this._currentPageName = pageName
+    this.updateDisplayElements()
+  }
+
+  updateDisplayElements(){
+    if(this._currentPageName == "tutoringView"){
+      this.display_elements.add("taskSelection")
+      this.display_elements.add("courseSettings")
+    }
+  }
 
   ngAfterViewInit() {
     this.show_profile()
@@ -65,5 +82,9 @@ export class NavigationBarComponent {
           this.aboutMarkdown = data.about_markdown;
         });
     this.aboutPopup.nativeElement.showModal();
+  }
+
+  emitCourseSettingsRequested() {
+    this.courseSettingButtonClicked.emit("courseSettingsRequest")
   }
 }

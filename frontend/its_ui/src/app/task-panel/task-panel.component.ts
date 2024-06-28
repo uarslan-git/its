@@ -1,9 +1,9 @@
-import { Component, ElementRef, ViewChild, Input } from '@angular/core';
+import { Component, ElementRef, ViewChild, Input, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
-import { DataShareService } from '../shared/services/data-share.service';
 import { Subscription, delay } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { CourseSettingsService } from '../shared/services/course-settings-service.service';
 
 import { MarkdownPanelComponent } from '../shared/components/markdown-panel/markdown-panel.component';
 
@@ -22,14 +22,15 @@ export class TaskPanelComponent {
   task_markdown: string = '';
   code_language: string = 'python';
 
+  //@Input() course: {unique_name?: string; curriculum?: string[]} = {}
   course: {unique_name?: string; curriculum?: string[]} = {}
-  task: { unique_name?: string; task?: string; type?: string, prefix?: string, 
+  task: {unique_name?: string; task?: string; type?: string, prefix?: string, 
     arguments?: string[], possible_choices?: string, feedback_available?: string} = {};
 
   constructor(
     private client: HttpClient,
     private eventShareService: EventShareService,
-    private dataShareService: DataShareService,
+    private courseSettingsService: CourseSettingsService
     ){
       this.eventSubscription = this.eventShareService.newTaskEvent$.subscribe((message) => {
         this.selectAndFetchTask(message);
@@ -101,7 +102,7 @@ export class TaskPanelComponent {
   });
  }
 
-  ngOnInit(): void {
+/*   ngOnInit(): void {
     // Fetch the first task with timeout in order to load the whole app.
     setTimeout(()=>{  
       const courseID = sessionStorage.getItem("courseID")
@@ -121,6 +122,20 @@ export class TaskPanelComponent {
         this.fetch_task(this.initTask);
       }
   }, 300);
+  } */
+
+  ngAfterViewInit(){
+    this.courseSettingsService.getCourse().subscribe((course) =>
+    {
+      this.course = course
+      if (this.initTask == null) {
+        this.fetch_task();
+      }
+      else {
+        this.fetch_task(this.initTask);
+      }
+    });
+
   }
 
   ngOnDestroy() {

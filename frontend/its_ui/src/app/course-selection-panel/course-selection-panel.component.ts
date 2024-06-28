@@ -17,7 +17,7 @@ export class CourseSelectionPanelComponent {
 
   courses: CourseDescription[] = [];
 
-  course_names: string[] =  ["Lorem ipsum dolor sit amet", "Consectetur adipiscing elit"];
+  course_names: string[] =  [];
 
   constructor(
     private client: HttpClient,
@@ -28,7 +28,7 @@ export class CourseSelectionPanelComponent {
     const endpoint_url = `${environment.apiUrl}/course/select`;
     const body = {
       'course_unique_name': courseID};
-    this.client.post(endpoint_url, body, {withCredentials: true}).subscribe((data) => console.log(data));
+    this.client.post(endpoint_url, body, {withCredentials: true}).subscribe();
     this.courseSelected.emit("courseSelected");
   }
 

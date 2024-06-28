@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from users import handle_users
 from users import schemas as user_schemas
-from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection
+from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings
 from tasks.schemas import Task
 from attempts.schemas import Attempt, AttemptState
 from beanie import init_beanie
@@ -100,7 +100,8 @@ async def on_startup():
         database=db_connection_beanie.db,
         document_models=[
             User, Code_submission, Tested_code_submission, 
-            Course, CourseInfo, CourseEnrollment, CourseSelection, Task, Attempt, AttemptState, Settings, Url,
+            Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings,
+              Task, Attempt, AttemptState, Settings, Url,
             user_schemas.GlobalAccountList, 
         ],
     )

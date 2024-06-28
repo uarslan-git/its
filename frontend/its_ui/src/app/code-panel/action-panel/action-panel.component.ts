@@ -1,7 +1,8 @@
-import { Component, Output, EventEmitter, ElementRef, ViewChild, Input } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Component, Output, EventEmitter, ElementRef, ViewChild, Input, OnInit } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { EventShareService } from 'src/app/shared/services/event-share.service';
+import { CourseSettingsService } from 'src/app/shared/services/course-settings-service.service';
 
 @Component({
   selector: 'app-action-panel',
@@ -15,32 +16,35 @@ export class ActionPanelComponent {
   @Output() feedbackEvent : EventEmitter<string> = new EventEmitter<string>();
 
   taskFetchedSubscription?: Subscription;
+
+
   @ViewChild("runDialog", {static: true}) runDialog!: ElementRef<HTMLDialogElement>
 
   submissionId: string = '';
-
   runParametersForm!: FormGroup;
+  course?: any;
+  inCooldown: boolean = false;
 
   @Input() showRunButton: boolean = true;
   @Input() showFeedbackButton!: boolean;
 
-  inCooldown: boolean = false;
 
   constructor(private eventShareService: EventShareService,
-              private fb: FormBuilder){
-                this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe((data) => {
-                  this.inCooldown = true;
-                  setTimeout(() => {
-                    this.inCooldown = false;
-                  }, 60000); // 60 seconds initial timeout
-                }
-                );
+              private fb: FormBuilder, private courseSettingsService: CourseSettingsService){
               }
 
-  ngOnInit() {
-/*      this.runParametersForm = this.fb.group({
-      fields: this.fb.array(this.parameterFormArrayControls())
-    }); */
+  ngOnInit(){
+    this.courseSettingsService.getCourse().subscribe((course)  =>
+    {
+      this.course = course
+      this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe((data) => {
+        this.inCooldown = true;
+        setTimeout(() => {
+          this.inCooldown = false;
+        }, this.course.course_settings.feedback_init_time*1000);
+      }
+      );
+    });
   }
 
   parameterFormArrayControls() {
@@ -64,7 +68,6 @@ export class ActionPanelComponent {
     return (this.runParametersForm.get('fields') as FormArray).controls;
   }
 
-  //run Button
   runButtonClicked() {
     if(sessionStorage.getItem("taskType") == "function") {
       this.runParametersForm = this.fb.group({
@@ -106,11 +109,11 @@ export class ActionPanelComponent {
     if (!this.inCooldown) {
       this.feedbackEvent.emit();
       this.eventShareService.emitFeedbackButtonClick();
-      // Set cooldown for 30 seconds
       this.inCooldown = true;
       setTimeout(() => {
+        console.log("unset cooldown");
         this.inCooldown = false;
-      }, 30000); // 30 seconds cooldown
+      }, this.course.course_settings.feedback_cooldown*1000);
     }
     else {
       window.alert("New Feedback will not be available for a short time. Please Try to implement the suggestions of the last feedback first or try a new approach.")

@@ -5,35 +5,38 @@
     align-items: center;
     text-align: center; /* Center-align text */
     overflow: auto;
-    margin-top: 10%;
+    margin-top: 10%
   }
 
   .title-course-selection {
-    margin-bottom: 20px; /* Add space between title and list */
-    font-size: 1.4rem;
+    margin-bottom: 2rem; /* Add space between title and list */
+    font-size: 1.6rem;
     font-weight: bold;
   }
 
 /* Reset default list styles */
 .styled-list {
+    justify-content: center;
     list-style: none;
     padding: 0;
     margin: 0;
+    width: 30%
   }
   
   /* Style list items */
   .styled-list li {
-    margin-bottom: 5px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    padding: 10px 20px; /* Adjusted padding to make the button smaller */
+    padding: 1rem 2rem; /* Adjusted padding to make the button smaller */
     background-color: #777777;
     color: #fff;
     border: none;
-    border-radius: 3px;
+    border-radius: 0.3rem;
     cursor: pointer;
-    width: 95%;
+    width: 85%;
+    font-size: 1.1rem;
   }
   
   /* Add hover effect */
