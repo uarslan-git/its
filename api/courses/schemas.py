@@ -4,10 +4,10 @@ from typing import Optional
 
 class CourseSettings(Document):
     course_id: str
-    feedback_init_time: int
-    feedback_cooldown: int
+    feedback_init_time: Optional[int] = None
+    feedback_cooldown: Optional[int] = None
     #Override curriculum: should be optional
-    curriculum: Optional[list] = None
+    #curriculum: Optional[list] = None
 
 class Course(Document):
     curriculum: list
@@ -21,7 +21,6 @@ class Course(Document):
     course_settings_list: Optional[list]
     # Use p-array
     sample_settings: list
-
 
 class CourseInfo(Document):
     course_list: list[dict]

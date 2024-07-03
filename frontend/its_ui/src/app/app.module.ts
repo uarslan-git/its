@@ -31,6 +31,7 @@ import { AuthComponent } from './auth/auth.component';
 import { ProfileComponent } from './profile/profile.component';
 import { CourseSelectionPanelComponent } from './course-selection-panel/course-selection-panel.component';
 import { CourseSettingsComponent } from './course-settings/course-settings.component';
+import { SettingsElementComponent } from './course-settings/settings-element/settings-element.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { CourseSettingsComponent } from './course-settings/course-settings.compo
     AuthComponent,
     ProfileComponent,
     CourseSelectionPanelComponent,
-    CourseSettingsComponent
+    CourseSettingsComponent,
+    SettingsElementComponent
   ],
   imports: [
     BrowserModule,

@@ -7,6 +7,7 @@ from db import database
 from random import randrange
 import itertools
 import numpy as np
+from typing import List
 
 router = APIRouter(prefix="/course")
 
@@ -54,21 +55,26 @@ async def get_course_settings(course_unique_name, user: User = Depends(current_a
     return course
 
 @router.post("/update_settings")
-async def update_course_settings(courseSettings: CourseSettings, user: User = Depends(current_active_verified_user)):
-    course = await database.get_course(courseSettings.course_id)
-    course.course_settings_list[0] = courseSettings
-    await database.update_course(course, {"course_settings_list": course.course_settings_list}) 
-
+async def update_course_settings(course: Course, user: User = Depends(current_active_verified_user)):
+    if (not "admin" in user.roles) or ("tutor" in user.roles):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to access this resource"
+        )
+    else:
+        db_course = await database.get_course(course.unique_name)
+        db_course.course_settings_list = course.course_settings_list
+        await database.update_course(db_course, {"course_settings_list": course.course_settings_list, 
+                                                 "sample_settings": course.sample_settings})
 
 def override_course_settings(course: Course, course_settings):
     #TODO: turn the course settings into an object and access values accordingly!
-    if not course_settings["curriculum"] is None: 
-        course.curriculum = course_settings["curriculum"]
+    base_settings = course.course_settings_list[0]
+    for key in course_settings.keys():
+        base_settings.update([(key, course_settings[key])])
     course.course_settings_list = None
-    course.course_settings = course_settings
+    course.course_settings = base_settings
     return course
-
-
 
 @router.get("/info")
 async def get_course_info(User = Depends(current_active_verified_user)) -> CourseInfo:
@@ -79,7 +85,6 @@ async def get_course_info(User = Depends(current_active_verified_user)) -> Cours
                       "domain": course.domain } for course in courses]
     course_info = CourseInfo(course_list=course_list)
     return course_info
-
 
 @router.post("/select")
 async def select_course(course_selection: CourseSelection, User = Depends(current_active_verified_user)):

@@ -5,13 +5,13 @@
     align-items: center;
     text-align: center; /* Center-align text */
     overflow: auto;
-    margin-top: 10%;
+    margin-top: 5%;
 }
 
 .manage-settings {
     display: flex;
     justify-content: space-evenly;
-    width: 100%;
+    width: 40%;
 }
 
 .manage-settings button {
@@ -31,4 +31,23 @@
 
 .manage-settings button:hover {
     background-color: #252525;
+}
+
+.add-settings {
+    cursor: pointer;
+}
+
+.add-settings p:last-child:hover{
+    color: #b5b5b5;
+}
+
+.delete-alt-setting {
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    color: rgb(217, 61, 61);
+}
+
+.delete-alt-setting:hover {
+    color: rgb(215, 127, 127);
 }
