@@ -33,7 +33,7 @@ export class CourseSettingsComponent {
         this.course = data
         this.courseSettingsList = data.course_settings_list;
         this.settingsForm.patchValue({
-          sample_settings: this.course["sample_settings"],
+          sample_settings: this.course["sample_settings"].join(','),
           feedback_init_time: +this.courseSettingsList[0].feedback_init_time,
           feedback_cooldown: +this.courseSettingsList[0].feedback_cooldown,
         });
@@ -46,6 +46,7 @@ export class CourseSettingsComponent {
     const course_id = this.course["id"];
     //var data = this.settingsForm.value;
     var settingsList: any[] = [this.settingsForm.value];
+    console.log(settingsList[0]["sample_settings"])
     this.course["sample_settings"] = settingsList[0]["sample_settings"].split(",").map((i: string) => Number(i));
     delete settingsList[0]["sample_settings"];
     for (let index = 0; index < this.formGroupArray.length; index++) {
@@ -63,7 +64,7 @@ export class CourseSettingsComponent {
 
   addNewAlternativeSetting() {
     this.course["sample_settings"].push(0);
-    this.settingsForm.patchValue({"sample_settings": this.course["sample_settings"]});
+    this.settingsForm.patchValue({"sample_settings": this.course["sample_settings"].join(",")});
     this.courseSettingsList.push({});
     this.formGroupArray.push(new FormGroup({}));
     }
@@ -102,7 +103,10 @@ export class CourseSettingsComponent {
 
   deleteAlternativeSetting(index: number){
     this.course["sample_settings"].splice(index, 1)
-    this.settingsForm.patchValue({"sample_settings": this.course["sample_settings"]});
+    if (this.course["sample_settings"].length == 1){
+      this.course["sample_settings"][0] = 1
+    }
+    this.settingsForm.patchValue({"sample_settings": this.course["sample_settings"].join(",")});
     this.courseSettingsList.splice(index, 1);
     this.formGroupArray.splice(index-1, 1);
   }
