@@ -13,15 +13,19 @@ class Model_manager():
         """In the constructor all variants of models should be registered (and instantiated) for later selection.
         """
         self.prototype = Prototype_pedagogical_model()
+        self.default = Prototype_pedagogical_model()
 
     async def pedagogical_model(self, user: User):
         course_unique_name = user.current_course
-        course =  await database.get_course(course_unique_name)
-        # TODO: Introduce course-settings to decide between Models
-        if type(course.curriculum[0]) == list:
-            return self.prototype
-        else: 
-            return self.prototype
+        course_settings = await database.get_course_settings_for_user(user.id, course_unique_name)
+        model_name = course_settings["pedagogical_model"]
+        if model_name is None:
+            return self.default
+        try:
+            return getattr(self, model_name)
+        except AttributeError as e:
+            print("Warning: Pedagogical Model {model_name} not known, using default.")
+            return self.default
     
     async def domain_model(self):
         raise Exception("Not implemented!")

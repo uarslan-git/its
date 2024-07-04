@@ -6,6 +6,8 @@
 
         <form [formGroup]="settingsForm">
           <app-settings-element *ngIf="formGroupArray.length > 0" setting="sample_settings" [form]="settingsForm"></app-settings-element>
+          <app-settings-element setting="pedagogical_model" [form]="settingsForm"></app-settings-element>
+          <app-settings-element setting="language_generation_model" [form]="settingsForm"></app-settings-element>
           <h2>Feedback Settings</h2>
           <app-settings-element setting="feedback_init_time" [form]="settingsForm"></app-settings-element>
           <app-settings-element setting="feedback_cooldown" [form]="settingsForm"></app-settings-element>
@@ -13,7 +15,6 @@
               <input type="number" formControlName="feedback_cooldown" placeholder="sec">
           </p> -->
           </form>
-    
     </div>
     
     <div class="alternative-settings">
@@ -35,6 +36,10 @@
 <!--             <option *ngFor="let key of courseSettingsList[0].keys()" [ngValue]="key"></option> -->
             <option *ngIf='!courseSettingsList[id+1].hasOwnProperty("feedback_cooldown")'
                value="feedback_cooldown">Feedback cooldown</option>
+            <option *ngIf='!courseSettingsList[id+1].hasOwnProperty("pedagogical_model")'
+               value="pedagogical_model">Pedagogical Model</option>
+            <option *ngIf='!courseSettingsList[id+1].hasOwnProperty("language_generation_model")'
+               value="language_generation_model">Language generation Model</option>
           </select>
         </div>
       </div>

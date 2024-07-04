@@ -6,6 +6,8 @@ class CourseSettings(Document):
     course_id: str
     feedback_init_time: Optional[int] = None
     feedback_cooldown: Optional[int] = None
+    pedagogical_model: Optional[str] = None
+    language_generation_model: Optional[str] = None
     #Override curriculum: should be optional
     #curriculum: Optional[list] = None
 

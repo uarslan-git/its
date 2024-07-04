@@ -10,6 +10,7 @@ export class SettingsElementComponent {
 
   @Input('setting') setting!: string
   @Input() form!: FormGroup
+  @Input() setting_data: any
 
   settingName!: string
   settingInput!: string
@@ -33,6 +34,12 @@ export class SettingsElementComponent {
       case "sample_settings":
         this.settingName = "A/B test Probabilities";
         break;
+      case "pedagogical_model":
+          this.settingName = "Pedagogical Model";
+          break;
+      case "language_generation_model":
+          this.settingName = "Language generation Model";
+          break;
       default: 
           // 
           break;

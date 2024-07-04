@@ -22,6 +22,20 @@
             </p>
         </div>
 
+        <div *ngSwitchCase="'pedagogical_model'">
+            <p>
+                {{settingName}}:
+                <input formControlName="pedagogical_model">
+            </p>
+        </div>
+
+        <div *ngSwitchCase="'language_generation_model'">
+            <p>
+                {{settingName}}:
+                <input formControlName="language_generation_model">
+            </p>
+        </div>
+
     </ng-container>
     </form>
 </div>

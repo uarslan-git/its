@@ -49,7 +49,8 @@ class database():
 
     async def get_user(self, user_id): 
         #Use fastapi_users boilerplate indirectly to increase modularity.
-        user = await get_user_db.get(user_id)
+        #user = await get_user_db.get(user_id)
+        user = await User.find_one(User.id == user_id)
         return(user)
 
     async def update_user(self, user: User, update_dict):
@@ -65,6 +66,19 @@ class database():
     async def get_courses(self):
         courses = await Course.find().to_list()
         return courses
+    
+    async def get_course_settings_for_user(self, user_id, course_unique_name):
+        course = await self.get_course(course_unique_name)
+        user = await self.get_user(user_id)
+        course_enrollment = await self.get_course_enrollment(user, course_unique_name)
+        base_settings = course.course_settings_list[0]
+        override_index = course_enrollment.course_settings_index
+        if override_index != 0:
+            override_settings = course.course_settings_list[course_enrollment.course_settings_index]
+            for key in override_settings.keys():
+                base_settings.update([(key, override_settings[key])])
+        return base_settings
+
     
     async def update_course(self, course: Course, update_dict):
         await course.update({"$set": update_dict})

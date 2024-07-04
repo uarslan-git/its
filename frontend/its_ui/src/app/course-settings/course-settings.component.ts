@@ -20,6 +20,8 @@ export class CourseSettingsComponent {
 
   constructor(private client: HttpClient){
     this.settingsForm = new FormGroup({
+      pedagogical_model: new FormControl("default"),
+      language_generation_model: new FormControl("default"),
       sample_settings: new FormControl([]),
       feedback_init_time: new FormControl(0),
       feedback_cooldown: new FormControl(0),
@@ -33,6 +35,8 @@ export class CourseSettingsComponent {
         this.course = data
         this.courseSettingsList = data.course_settings_list;
         this.settingsForm.patchValue({
+          pedagogical_model: this.course.course_settings_list[0].pedagogical_model,
+          language_generation_model: this.course.course_settings_list[0].language_generation_model,
           sample_settings: this.course["sample_settings"].join(','),
           feedback_init_time: +this.courseSettingsList[0].feedback_init_time,
           feedback_cooldown: +this.courseSettingsList[0].feedback_cooldown,
@@ -46,7 +50,6 @@ export class CourseSettingsComponent {
     const course_id = this.course["id"];
     //var data = this.settingsForm.value;
     var settingsList: any[] = [this.settingsForm.value];
-    console.log(settingsList[0]["sample_settings"])
     this.course["sample_settings"] = settingsList[0]["sample_settings"].split(",").map((i: string) => Number(i));
     delete settingsList[0]["sample_settings"];
     for (let index = 0; index < this.formGroupArray.length; index++) {
@@ -109,10 +112,6 @@ export class CourseSettingsComponent {
     this.settingsForm.patchValue({"sample_settings": this.course["sample_settings"].join(",")});
     this.courseSettingsList.splice(index, 1);
     this.formGroupArray.splice(index-1, 1);
-  }
-
-  ngOnDestroy(){
-
   }
 
 }

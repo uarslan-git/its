@@ -20,7 +20,9 @@ class Prompt_llm_step_generator(Base_step_generator):
         example_solution = task_json.prefix+task_json.example_solution
         task = task_json.task
         instruction, system = self.create_instruction(previous_step, task=task, example_solution=example_solution) #TODO: get short version of tasks or differentiate between local and server.
-        next_step = await generate_language(instruction, system=system, model="llama3")
+        course_settings = await database.get_course_settings_for_user(submission.user_id, submission.course_unique_name)
+        language_generation_model = course_settings["language_generation_model"]
+        next_step = await generate_language(instruction, system=system, model=language_generation_model)
         return next_step
     
     #async def get_feedback_available(self, task_type):

@@ -11,7 +11,9 @@ class LLM_conceptual_explanation_generator(Base_feedback_generator):
         task_description = task_json.task
         test_messages = "\n".join([test["message"] for test in submission.test_results])
         instruction, system = self.generate_instruction(predicted_step, previous_state, task_description, test_messages=test_messages)
-        conceptual_explanation = await generate_language(instruction, system=system)
+        course_settings = await database.get_course_settings_for_user(submission.user_id, submission.course_unique_name)
+        language_generation_model = course_settings["language_generation_model"]
+        conceptual_explanation = await generate_language(instruction, system=system, model=language_generation_model)
         conceptual_explanation = conceptual_explanation.strip("'").strip().strip("`")
         return predicted_step + "\n" + conceptual_explanation
     
