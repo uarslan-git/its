@@ -8,12 +8,13 @@
           <app-settings-element *ngIf="formGroupArray.length > 0" setting="sample_settings" [form]="settingsForm"></app-settings-element>
           <app-settings-element setting="pedagogical_model" [form]="settingsForm"></app-settings-element>
           <app-settings-element setting="language_generation_model" [form]="settingsForm"></app-settings-element>
+          <p>
+            Update Task-files:
+            <input type="file" class="file-upload" onchange="console.log(event.target.files)">
+        </p>
           <h2>Feedback Settings</h2>
           <app-settings-element setting="feedback_init_time" [form]="settingsForm"></app-settings-element>
           <app-settings-element setting="feedback_cooldown" [form]="settingsForm"></app-settings-element>
-          <!-- <p>Feedback cooldown:
-              <input type="number" formControlName="feedback_cooldown" placeholder="sec">
-          </p> -->
           </form>
     </div>
     
@@ -60,4 +61,3 @@
   </div>
 
 </div>
-

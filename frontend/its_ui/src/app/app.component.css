@@ -8,22 +8,36 @@
     "nav nav"
     "task code"
     "feedback code";
-    gap: 0.5rem;
-    height: 98%;
+    gap: 0.4rem;
+    height: 100%;
     width: 100%;
+    margin-bottom: 0;
+    overflow: hidden;
   }
+
 .navbar {
     grid-area: nav;
     text-align: center;
 }
+
 .task-panel
 {
     grid-area: task;
 }
+
 .feedback-panel {
     grid-area: feedback;
 }
+
 .code-panel
 {
     grid-area: code;
+}
+
+.login-view {
+    height: 100%;
+}
+
+.profile-view {
+    height: 100%
 }

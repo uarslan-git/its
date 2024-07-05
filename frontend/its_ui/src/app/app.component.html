@@ -1,7 +1,7 @@
 <!-- Main Page -->
 <ng-container [ngSwitch]="pageName">
-    <div *ngSwitchCase="'loginView'"><app-auth (loginEvent)="setView($event)"></app-auth></div>
-    <div *ngSwitchCase="'profileView'"><app-profile (profileAction)="setView($event)" ></app-profile></div>
+    <div *ngSwitchCase="'loginView'" class="login-view"><app-auth (loginEvent)="setView($event)"></app-auth></div>
+    <div *ngSwitchCase="'profileView'" class="profile-view"><app-profile (profileAction)="setView($event)" ></app-profile></div>
 
     <div *ngSwitchCase="'tutoringView'" class="tutoring-view tutoring-grid-container">
         <div class="navbar"><app-navigation-bar (profileButtonClicked)="setView($event)"
