@@ -26,16 +26,17 @@ frontend_start = os.path.join("start_frontend.py")
 if __name__ == "__main__":
 
     #Parse course to database
-    print("Import a course? (Y/N)")
+    print("Import a course? (y/N)")
     import_course = input()
     if import_course in ["y", "Y"]:
         print("Please give directory of the course folder to add to db:")
         directory = input()
+        if directory == "": directory = "courses/test_course"
         client = MongoClient(host="localhost", port=27017)
         db = client["its_db"]
         parse_course(directory, db)
         parse_all_tasks(directory+"/task_folder", db=db)
-    elif import_course in ["n", "N"]:
+    elif import_course in ["n", "N", ""]:
         pass
     else:
         raise Exception("Invalid Input, expected y or n")
