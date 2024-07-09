@@ -9,8 +9,8 @@
           <app-settings-element setting="pedagogical_model" [form]="settingsForm"></app-settings-element>
           <app-settings-element setting="language_generation_model" [form]="settingsForm"></app-settings-element>
           <p>
-            Update Task-files:
-            <input type="file" class="file-upload" onchange="console.log(event.target.files)">
+            Update Task-files (.zip):
+            <input type="file" class="file-upload" (change)="onTaskFolderSelected($any($event).target)">
         </p>
           <h2>Feedback Settings</h2>
           <app-settings-element setting="feedback_init_time" [form]="settingsForm"></app-settings-element>

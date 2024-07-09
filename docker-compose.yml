@@ -12,6 +12,7 @@ services:
   
   angular-app:
     environment:
+      #TODO: Should this be set in the .env or not?
       ITS_ENV: ${ITS_ENV}
     build: 
       context: ./frontend

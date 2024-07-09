@@ -7,4 +7,8 @@
         (click)="selectCourse(course.unique_name)"
         >{{ course.display_name }}</li>
     </ul>
+    <p>
+        Upload new Course (.zip):
+        <input type="file" class="file-upload" (change)="onCourseFolderSelected($any($event).target)">
+    </p>
 </div>

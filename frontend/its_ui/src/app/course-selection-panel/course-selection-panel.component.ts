@@ -42,4 +42,20 @@ export class CourseSelectionPanelComponent {
       this.courses =  data.course_list;
   });
   }
+
+  onCourseFolderSelected(input: HTMLInputElement) {
+    const file: File | undefined = input.files![0];
+    if (file)
+    {
+      const formData = new FormData();
+      formData.append("file", file);
+      const url: string = `${environment.apiUrl}/course/upload_course`;
+      this.client.post<any>(url, formData,{"withCredentials": true}).subscribe(
+        () => {
+          console.log("Course Uploaded!")
+        }
+      );
+    }
+  }
+
 }

@@ -7,10 +7,10 @@
                    ["IRT_logreg", "param1_2", "bkt", "case_kt"], 
                    ["user_similarity", "ndcg_at_k", "bias_rs"], 
                    ["markov_models", "deep_learning","critical_thinking"]],
-    "course_options": [[0,1,2,3,4],
-                       [0,1,3,2,4], 
-                       [0,2,1,3,4], 
-                       [0,2,3,1,4], 
-                       [0,3,1,2,4], 
-                       [0,3,2,1,4]]
+    "course_settings": {
+        "feedback_init_time": 60,
+        "feedback_cooldown": 30,
+        "pedagogical_model": "default",
+        "language_generation_model": "default"
+    }
 }

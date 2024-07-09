@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, UploadFile
 from fastapi import Depends
 from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings
 from users.schemas import User
@@ -8,6 +8,13 @@ from random import randrange
 import itertools
 import numpy as np
 from typing import List
+import zipfile
+from io import BytesIO
+import shutil
+import os
+from courses.parse_tasks import parse_all_tasks
+from courses.parse_courses import parse_course
+
 
 router = APIRouter(prefix="/course")
 
@@ -89,6 +96,50 @@ async def get_course_info(User = Depends(current_active_verified_user)) -> Cours
 @router.post("/select")
 async def select_course(course_selection: CourseSelection, User = Depends(current_active_verified_user)):
     await database.update_user(User, {"current_course": course_selection.course_unique_name})
+
+
+async def parse_task_folder(task_folder: str):
+    db = database.db
+    await parse_all_tasks(task_folder, db)
+
+
+async def unzip_folder(file: UploadFile, temp_dir):
+    if os.path.isdir(temp_dir):
+        shutil.rmtree(temp_dir)
+    contents = await file.read()
+    byte_contents = bytes(contents)
+    fp = BytesIO(byte_contents)
+    with zipfile.ZipFile(fp, 'r') as zip_ref:
+        zip_ref.extractall(temp_dir)
+
+
+@router.post("/update_tasks")
+async def update_tasks(file: UploadFile, temp_dir="./temp"):
+    await unzip_folder(file, temp_dir)
+    try:
+        if not "task_folder" in os.listdir(temp_dir):
+            raise Exception("The folder that contains tasks should be named task_folder, it couldn't be found in the uploaded archive.")
+        await parse_task_folder(os.path.join(temp_dir, "task_folder"))
+    except Exception as e:
+        shutil.rmtree(temp_dir)
+        raise e
+    shutil.rmtree(temp_dir)
+
+
+@router.post("/upload_course")
+async def upload_course(file: UploadFile, temp_dir="./temp"):
+    await unzip_folder(file, temp_dir)
+    course_name = os.listdir(temp_dir)
+    if len(course_name) > 1:
+        raise Exception("Uploaded archive should only contain a single course folder which should be named with the course_unique_name")
+    course_name = os.path.basename(course_name[0])
+    try:
+        await parse_course(os.path.join(temp_dir, course_name))
+        await parse_task_folder(os.path.join(temp_dir, course_name, "task_folder"))
+    except Exception as e:
+        shutil.rmtree(temp_dir)
+        raise e
+    shutil.rmtree(temp_dir)
 
 
 async def get_course_enrolment():

@@ -1,11 +1,11 @@
-"""Read a folder of tasks from disk to a single .JSON file per task.
+"""Read a folder of tasks from disk to db.
 """
 import json
 import os
 import ast
 import io
-from pymongo import MongoClient
 import ast
+from db import database
 
 def process_file(file_path):
     # Process the content of the text file as needed.
@@ -31,14 +31,11 @@ def extract_argument_names(func_str):
     except Exception as e:
         raise ValueError(f"Error extracting arguments: {e}")
 
-def task_to_json(dir, task_unique_name, outfile, db=None):
+async def task_to_json(dir, task_unique_name, db=None):
     # Iterate through the files in the folder
     task_dict = {}
     task_dict["unique_name"] = task_unique_name.removeprefix("task_").split(".")[0]
     tests = {}
-    #create empty .json file
-    if db is None:
-        open(file=os.path.join(dir, outfile), mode="w")
     for file_name in os.listdir(os.path.join(dir, task_unique_name)):
         file_path = os.path.join(dir, task_unique_name, file_name)
         content_docstring = process_file(file_path)
@@ -48,7 +45,6 @@ def task_to_json(dir, task_unique_name, outfile, db=None):
             test_name_alt = get_function_names(file_path)
             assert len(test_name_alt) == 1, "Too many test functions defined in single test file. Define only one!"
             assert test_name == test_name_alt[0], "Name of the test function should be the same as the filename"
-            #assert test_number.isnumeric(), "Wrong filename format for tests, should be test_[test_number] but is {0}".format(file_name)
             #Split on stop-symbol for imports
             test = content_docstring.split("#!cut_imports!#")[1]
             #json.dump({"test_{0}".format(test_number): test}, outfile, ensure_ascii=False)
@@ -83,7 +79,7 @@ def task_to_json(dir, task_unique_name, outfile, db=None):
         elif file_name == "multiple_choice.py":
             task_dict["type"] = "multiple_choice"
             task_dict["prefix"] = "no_prefix"
-            task_dict["example_solution"] = "no_example_solution"
+            task_dict["example_solution"] = ""
 
             json_section = content_docstring.split("#!json!#")[1]
             mc_json = json.loads(json_section)
@@ -91,42 +87,15 @@ def task_to_json(dir, task_unique_name, outfile, db=None):
             task_dict["possible_choices"] = mc_json["possible_choices"]
             task_dict["correct_choices"] = mc_json["correct_choices"]
             task_dict["choice_explanations"] = mc_json["choice_explanations"]
-
     task_dict["tests"] = tests
-    if db is None:
-        print(task_dict)
-        with open(os.path.join(dir, outfile), "w") as f:
-            json.dump(task_dict, f, ensure_ascii=False)
-    else:
-        db.Task.insert_one(task_dict)
+    await database.create_task(task_dict)
 
-def parse_all_tasks(dir, db=None):
-    print(os.listdir(dir))
+async def parse_all_tasks(dir, db=None):
     for task_unique_name in os.listdir(dir):
         if not task_unique_name.endswith(".json"):
             #TODO: Shouldn't task.md be handled in task_to_json?
             task_path = os.path.join(dir, task_unique_name)+"/task.md"
-            #with open(task_path, "r") as task_file:
-            #    header = task_file.readline()
-            #    if not header.startswith("# "):
-            #        raise Exception("task.md should contain the first line '# task_display_name'")
-            #    task_display_name = header.split("#")[1].strip()
             assert task_unique_name.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
             task_unique_name_postfix = task_unique_name.removeprefix("task_").split(".")[0]
             outfile = "task_{0}.json".format(task_unique_name_postfix)
-            if db is None:
-                task_to_json(dir, task_unique_name, outfile)
-            else:
-                task_to_json(dir, task_unique_name, outfile, db)
-
-if __name__ == "__main__":
-    print("Database import? (Y/N)")
-    db_import = input()
-    print("Please give directory of the task folder to convert:")
-    directory = input()
-    if db_import == "Y":
-        client = MongoClient(host="localhost", port=27017)
-        db = client["its_db"] 
-        parse_all_tasks(directory, db)
-    elif db_import == "N":
-        parse_all_tasks(directory)
+            await task_to_json(dir, task_unique_name, db)

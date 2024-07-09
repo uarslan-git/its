@@ -114,4 +114,19 @@ export class CourseSettingsComponent {
     this.formGroupArray.splice(index-1, 1);
   }
 
+  onTaskFolderSelected(input: HTMLInputElement) {
+    const file: File | undefined = input.files![0];
+    if (file)
+    {
+      const formData = new FormData();
+      formData.append("file", file);
+      const url: string = `${environment.apiUrl}/course/update_tasks`;
+      this.client.post<any>(url, formData,{"withCredentials": true}).subscribe(
+        () => {
+          console.log("Tasks updated!")
+        }
+      );
+    }
+  }
+
 }

@@ -3,7 +3,7 @@ from typing import Optional
 
 
 class CourseSettings(Document):
-    course_id: str
+    course_unique_name: str
     feedback_init_time: Optional[int] = None
     feedback_cooldown: Optional[int] = None
     pedagogical_model: Optional[str] = None
@@ -19,7 +19,7 @@ class Course(Document):
     domain: str
     sub_domains: list
     #course_options: list
-    course_settings: Optional[CourseSettings]
+    course_settings: Optional[CourseSettings] = None
     course_settings_list: Optional[list]
     # Use p-array
     sample_settings: list

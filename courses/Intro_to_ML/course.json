@@ -6,5 +6,8 @@
     "list_copy", "second_sum", "contains_negative", "breakfast", "factorial", "smallest_positive",
     "largest_perfect_square", "my_arrays", "custom_identity_matrix", "apply_mask", "get_corner_sums", "reshape_and_sum", 
     "trigonometry", "eigen_of_diagonal", "simulate_dice_rolls"],
-    "course_options": []
+    "course_settings": {
+        "feedback_init_time": 60,
+        "feedback_cooldown": 30
+    }
 }

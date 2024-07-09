@@ -38,6 +38,23 @@ class database():
         #    return(task_json[0])
         #else: 
         #    raise Exception("Multiple Tasks with same ID present")
+
+    async def create_task(self, task_dict):
+        old_task = await self.get_task(task_dict["unique_name"])
+        if old_task is None:
+            new_task = Task(**task_dict)
+            await Task.insert_one(new_task)
+        else:
+            await old_task.update({"$set": task_dict})
+
+    async def create_course(self, course_dict):
+        old_course = await self.get_course(course_dict["unique_name"])
+        if old_course is None:
+            new_course = Course(**course_dict)
+            await Course.insert_one(new_course)
+        else:
+            await old_course.update({"$set": course_dict})
+
         
     async def get_submission(self, submission_id):
         submission = await Submission.find_one(Submission.id == PydanticObjectId(submission_id), with_children=True)
@@ -78,7 +95,6 @@ class database():
             for key in override_settings.keys():
                 base_settings.update([(key, override_settings[key])])
         return base_settings
-
     
     async def update_course(self, course: Course, update_dict):
         await course.update({"$set": update_dict})
