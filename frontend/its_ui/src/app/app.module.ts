@@ -32,6 +32,7 @@ import { ProfileComponent } from './profile/profile.component';
 import { CourseSelectionPanelComponent } from './course-selection-panel/course-selection-panel.component';
 import { CourseSettingsComponent } from './course-settings/course-settings.component';
 import { SettingsElementComponent } from './course-settings/settings-element/settings-element.component';
+import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { SettingsElementComponent } from './course-settings/settings-element/set
     ProfileComponent,
     CourseSelectionPanelComponent,
     CourseSettingsComponent,
-    SettingsElementComponent
+    SettingsElementComponent,
+    AdminSettingsComponent
   ],
   imports: [
     BrowserModule,

@@ -5,6 +5,6 @@ from beanie import PydanticObjectId
 from beanie import Document
 from typing import Optional
 
-class Settings(Document):
+class AppSettings(Document):
     ollama_url: str
     email_whitelist: list

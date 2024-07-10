@@ -19,12 +19,13 @@ from db import db_connector_beanie
 from users.schemas import User
 from config import config
 from runs import handle_runs
-from info import retrieve_info
+from system import retrieve_info
+from system import handle_settings
 import time
 import asyncio
 from fastapi.responses import JSONResponse
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
-from schemas import Settings
+from system.schemas import AppSettings
 from feedback.schemas import Url
 
 
@@ -60,6 +61,7 @@ app.include_router(handle_attempts.router, prefix=f"{prefix}")
 app.include_router(handle_courses.router, prefix=f"{prefix}")
 app.include_router(handle_runs.router, prefix=f"{prefix}/run")
 app.include_router(retrieve_info.router, prefix=f"{prefix}/info")
+app.include_router(handle_settings.router, prefix=f"{prefix}/settings")
 
 # User Router and database setup
 app.include_router(
@@ -101,7 +103,7 @@ async def on_startup():
         document_models=[
             User, Code_submission, Tested_code_submission, 
             Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings,
-              Task, Attempt, AttemptState, Settings, Url,
+              Task, Attempt, AttemptState, AppSettings, Url,
             user_schemas.GlobalAccountList, 
         ],
     )
@@ -126,7 +128,8 @@ async def get_status():
     return {"message": "Connected!"}
 
 async def initialize_settings(database):
-    settings = Settings(ollama_url="", email_whitelist=[".*"])
+    #TODO: Enable initialization of settings via optional environment variables
+    settings = AppSettings(ollama_url="", email_whitelist=[".*"])
     await database.create_settings(settings)
 
 async def initialize_global_accounts_list(database):

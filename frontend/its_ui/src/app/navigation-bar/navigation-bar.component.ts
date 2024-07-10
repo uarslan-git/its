@@ -12,7 +12,7 @@ export class NavigationBarComponent {
 
   @Output() profileButtonClicked: EventEmitter<string> = new EventEmitter<string>;
   @Output() homeButtonClicked: EventEmitter<string> = new EventEmitter<string>;
-  @Output() courseSettingButtonClicked: EventEmitter<string> = new EventEmitter<string>;
+  @Output() settingButtonClicked: EventEmitter<string> = new EventEmitter<string>;
 
   @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>
 
@@ -85,6 +85,11 @@ export class NavigationBarComponent {
   }
 
   emitCourseSettingsRequested() {
-    this.courseSettingButtonClicked.emit("courseSettingsRequest")
+    this.settingButtonClicked.emit("courseSettingsRequest")
   }
+
+  emitAdminSettingsRequested(){
+    this.settingButtonClicked.emit("adminSettingsRequest")
+  }
+
 }

@@ -27,7 +27,6 @@ export class ProfileComponent {
   registeredDatetime: string = '';
   user: {email?: string, register_datetime?: any, settings?: any, enrolled_courses?: string[], roles?: string[]} = {};
   enrolledCourse: string = '';
-  displayApiSettings: boolean = false;
 
   constructor(private http: HttpClient,
     private eventShareService: EventShareService) {}
@@ -56,9 +55,6 @@ export class ProfileComponent {
         else {
           this.consentCheckbox.nativeElement.checked = false;
         }
-        if(data.roles.includes("admin")){
-          this.displayApiSettings = true;
-        }
       });
     }
 
@@ -81,10 +77,4 @@ export class ProfileComponent {
       }
     }
 
-    saveApiUrl(url: string) {
-      this.http.post(`${this.apiUrl}/feedback/set_llm_url`,{"url": url}, {withCredentials: true}).subscribe(
-        (data) => {
-        }
-      );
-    }
 }

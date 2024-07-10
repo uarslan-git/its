@@ -63,6 +63,10 @@ export class AppComponent {
         this.originPage = "tutoringView";
         this.pageName = 'courseSettings';
         break;
+      case 'adminSettingsRequest':
+          this.originPage = this.pageName;
+          this.pageName = 'adminSettings';
+          break;
       case 'settingsClosed':
         if (this.originPage == "tutoringView")
           {this.initTask = sessionStorage.getItem("taskId")!;}

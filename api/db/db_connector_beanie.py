@@ -10,7 +10,7 @@ from submissions.schemas import Code_submission as Submission
 from runs.schemas import Evaluated_run_code_submission as Run_submission
 from tasks.schemas import Task
 from feedback.schemas import Evaluated_feedback_submission as Feedback_submission
-from schemas import Settings
+from system.schemas import AppSettings
 from beanie import PydanticObjectId
 
 
@@ -130,11 +130,11 @@ class database():
         await attempt.insert()
 
     async def get_settings(self):
-        settings = await Settings.find_one()
+        settings = await AppSettings.find_one()
         return settings
 
-    async def create_settings(self, settings: Settings):
-        old_settings = await Settings.find().to_list()
+    async def create_settings(self, settings: AppSettings):
+        old_settings = await AppSettings.find().to_list()
         if len(old_settings) == 0:
             await settings.insert()
 

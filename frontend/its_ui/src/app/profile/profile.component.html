@@ -35,11 +35,6 @@
           <app-data-terms-popup #dataTermsPopupComponent></app-data-terms-popup>
         </div>
 
-        <div *ngIf="displayApiSettings">
-          <input #url type="text" id="apiUrl" placeholder="Enter Ollama URL">
-          <button type="right-button" (click)="saveApiUrl(url.value)">Save URL</button>
-        </div>
-
         <hr>
 
       <div class="centered-button">

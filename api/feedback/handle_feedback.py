@@ -49,14 +49,3 @@ async def handle_handle_feedback_request(submission: Feedback_submission, user: 
     evaluated_feedback_submission.feedback = feedback
     await database.log_code_submission(evaluated_feedback_submission)
     return {"feedback_id": str(evaluated_feedback_submission.id)}
-
-#TODO: Move to course or admin settings
-@router.post("/feedback/set_llm_url")
-async def set_llm_url(url: Url, user: User = Depends(current_active_verified_user)):
-    url = url.url
-    #Test if user is admin
-    if "admin" in user.roles:
-        await database.update_settings({"ollama_url": url})
-        return {"response": "Url was set"}
-    else:
-        return {"response": "No permission"}
