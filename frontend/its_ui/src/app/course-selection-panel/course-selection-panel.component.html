@@ -7,7 +7,7 @@
         (click)="selectCourse(course.unique_name)"
         >{{ course.display_name }}</li>
     </ul>
-    <p>
+    <p *ngIf="roles.includes('admin') || roles.includes('tutor')">
         Upload new Course (.zip):
         <input type="file" class="file-upload" (change)="onCourseFolderSelected($any($event).target)">
     </p>

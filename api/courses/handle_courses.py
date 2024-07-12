@@ -53,7 +53,7 @@ async def get_course(course_unique_name, user: User = Depends(current_active_ver
 
 @router.get("/get_settings/{course_unique_name}")
 async def get_course_settings(course_unique_name, user: User = Depends(current_active_verified_user)) -> Course:
-    if (not "admin" in user.roles) or ("tutor" in user.roles):
+    if (not "admin" in user.roles) and (not "tutor" in user.roles):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authorized to access this resource"
@@ -61,9 +61,10 @@ async def get_course_settings(course_unique_name, user: User = Depends(current_a
     course = await database.get_course(course_unique_name)
     return course
 
+#TODO: Impelement course-ownership for tutors.
 @router.post("/update_settings")
 async def update_course_settings(course: Course, user: User = Depends(current_active_verified_user)):
-    if (not "admin" in user.roles) or ("tutor" in user.roles):
+    if (not "admin" in user.roles) and (not "tutor" in user.roles):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authorized to access this resource"
@@ -114,7 +115,12 @@ async def unzip_folder(file: UploadFile, temp_dir):
 
 
 @router.post("/update_tasks")
-async def update_tasks(file: UploadFile, temp_dir="./temp"):
+async def update_tasks(file: UploadFile, temp_dir="./temp", user: User = Depends(current_active_verified_user)):
+    if (not "admin" in user.roles) and (not "tutor" in user.roles):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to access this resource"
+        )
     await unzip_folder(file, temp_dir)
     try:
         if not "task_folder" in os.listdir(temp_dir):
@@ -127,7 +133,12 @@ async def update_tasks(file: UploadFile, temp_dir="./temp"):
 
 
 @router.post("/upload_course")
-async def upload_course(file: UploadFile, temp_dir="./temp"):
+async def upload_course(file: UploadFile, temp_dir="./temp", user: User = Depends(current_active_verified_user)):
+    if (not "admin" in user.roles) and (not "tutor" in user.roles):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authorized to access this resource"
+        )
     await unzip_folder(file, temp_dir)
     course_name = os.listdir(temp_dir)
     if len(course_name) > 1:

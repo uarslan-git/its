@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, Output, ViewChild, Input } from '@
 import { EventShareService } from '../shared/services/event-share.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { RolesService } from '../shared/services/roles.service';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -24,18 +25,26 @@ export class NavigationBarComponent {
   task_name: string = '';
   course?: any;
 
+  roles: string[] = [];
+
   display_elements: Set<string> = new Set(); 
   _currentPageName?: string
 
   constructor(
     private eventShareService: EventShareService,
     private httpClient: HttpClient,
+    private rolesService: RolesService
     ){
       this.eventShareService.newTaskFetched$.subscribe(
         () => {
           this.task_name = sessionStorage.getItem("taskId")!
         }
       )
+      rolesService.getRoles().subscribe((roles) => {
+        console.log(roles.roles);
+        this.roles = roles.roles;
+      });
+      //this.roles = sessionStorage.getItem("roles")!.split(",")
     }
 
   @Input() set currentPageName(pageName: string){

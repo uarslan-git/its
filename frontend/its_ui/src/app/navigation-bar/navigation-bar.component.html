@@ -3,7 +3,7 @@
     <ul class="nav-links">
 
 
-      
+      <!-- TODO: Make dropdown elements responsive to their contenr (such that they disapear if no content is present)-->
       <li *ngIf="display_elements.has('taskSelection')"><a (click)="newTaskButtonClicked('previous')"><i class="arrow left" role="button"></i></a></li>
       <li *ngIf="display_elements.has('taskSelection')"><a>{{task_name}}</a></li>
       <li *ngIf="display_elements.has('taskSelection')"><a (click)="newTaskButtonClicked('next')"><i class="arrow right" role="button"></i></a></li>
@@ -23,7 +23,7 @@
         </div>
       </li>
 
-      <li>
+      <li *ngIf="roles.includes('admin') || roles.includes('tutor')">
         <div class="dropdown">
           <li>
             <button class="dropbtn">Settings
@@ -31,7 +31,7 @@
             </button>
           </li>
           <div class="dropdown-content">
-            <li><a (click)="emitAdminSettingsRequested()">Admin Settings</a></li>
+            <li *ngIf="roles.includes('admin')"><a (click)="emitAdminSettingsRequested()">Admin Settings</a></li>
             <li *ngIf="display_elements.has('courseSettings')" ><a (click)="emitCourseSettingsRequested()">Course Settings</a></li>
           </div>
         </div>
@@ -52,8 +52,6 @@
           </div>
         </div>
       </li>
-
-
       
     </ul>
   </nav>

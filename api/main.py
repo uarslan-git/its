@@ -93,8 +93,6 @@ app.include_router(
 async def authenticated_route(user: User = Depends(handle_users.current_active_user)):
     return {"message": f"Hello {user.email}!"}
 
-
-
 @app.on_event("startup")
 async def on_startup():
 

@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { RolesService } from '../shared/services/roles.service';
 
 export interface CourseDescription{
   unique_name: string;
@@ -19,9 +20,17 @@ export class CourseSelectionPanelComponent {
 
   course_names: string[] =  [];
 
+  roles: string[] = [];
+
   constructor(
-    private client: HttpClient,
-    ){}
+      private client: HttpClient,
+      private rolesService: RolesService
+    ){
+      rolesService.getRoles().subscribe((roles) => {
+        console.log(roles.roles);
+        this.roles = roles.roles;
+      });
+    }
 
   selectCourse(courseID: string){
     sessionStorage.setItem("courseID", courseID);
