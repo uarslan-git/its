@@ -27,8 +27,6 @@ class Model_manager():
             print("Warning: Pedagogical Model {model_name} not known, using default.")
             return self.default
     
-    async def domain_model(self):
-        raise Exception("Not implemented!")
     
     async def learner_model(self):
         raise Exception("Not implemented!")

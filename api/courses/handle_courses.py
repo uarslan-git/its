@@ -114,6 +114,7 @@ async def unzip_folder(file: UploadFile, temp_dir):
         zip_ref.extractall(temp_dir)
 
 
+#TODO: Upload von Task folder ist nicht user-friendly, 
 @router.post("/update_tasks")
 async def update_tasks(file: UploadFile, temp_dir="./temp", user: User = Depends(current_active_verified_user)):
     if (not "admin" in user.roles) and (not "tutor" in user.roles):
