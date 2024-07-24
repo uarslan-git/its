@@ -5,10 +5,8 @@ async def parse_course(dir):
     with open(dir+"/course.json", "r") as course_file:
         course_json = course_file.read()
     course_dict = json.loads(course_json)
-    if len(dir.split("/")) <= 1:
-        unique_name = dir.split("\\")[-1]
-    else:
-        unique_name = dir.split("/")[-1]
+    course_unique_name = os.path.basename(dir)
+
 
     course_dict["unique_name"] = unique_name
 
