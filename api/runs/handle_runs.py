@@ -4,7 +4,7 @@ from db.db_connector_beanie import User
 from db import database
 from fastapi import Depends
 from users.handle_users import current_active_verified_user
-from submissions.handle_submissions import check_user_code, json_serialize, execute_code_judge0
+from models.domain.submissions import check_user_code, json_serialize, execute_code_judge0
 import json
 
 router = APIRouter()

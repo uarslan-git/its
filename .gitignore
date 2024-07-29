@@ -372,3 +372,4 @@ pyrightconfig.json
 ## Custom
 */Intro_to_ML
 codellama-7b-nxt.gguf
+*.zip

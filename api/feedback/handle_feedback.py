@@ -4,7 +4,7 @@ from feedback.schemas import Feedback_submission, Evaluated_feedback_submission
 from db import database
 from users.handle_users import current_active_verified_user
 from db.db_connector_beanie import User
-from submissions.handle_submissions import run_tests
+from models.domain.submissions import run_tests
 from feedback.schemas import Url
 
 from models import manager
