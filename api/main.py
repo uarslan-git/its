@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends, Request, Response, HTTPException
 from fastapi import APIRouter
 from submissions import handle_submissions
 from attempts import handle_attempts
-from submissions.schemas import Code_submission, Tested_code_submission
+from submissions.schemas import Base_Submission, Tested_Submission
 from tasks import handle_tasks
 from feedback import handle_feedback
 from courses import handle_courses
@@ -99,7 +99,7 @@ async def on_startup():
     await init_beanie(
         database=db_connection_beanie.db,
         document_models=[
-            User, Code_submission, Tested_code_submission, 
+            User, Base_Submission, Tested_Submission, 
             Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings,
               Task, Attempt, AttemptState, AppSettings, Url,
             user_schemas.GlobalAccountList, 

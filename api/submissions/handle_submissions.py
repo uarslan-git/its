@@ -1,25 +1,16 @@
-from _ast import Call, Del, Delete, Global, Interactive, Nonlocal, Name
-from typing import Any
 from fastapi import APIRouter, Depends
-import asyncio
-from os import path
-import ast
 from users.handle_users import current_active_verified_user
 from db.db_connector_beanie import User
-from submissions.schemas import Code_submission, Tested_code_submission
-from tasks.schemas import Task
+from submissions.schemas import Base_Submission
 from models.domain.submissions import handle_submission
-from config import config
 
 from db import database
 from sys import __stdout__
-import aiohttp
-import json
 
 router = APIRouter()
 
 @router.post("/submit")
-async def submit(submission: Code_submission, user: User = Depends(current_active_verified_user)):
+async def submit(submission: Base_Submission, user: User = Depends(current_active_verified_user)):
     try:
         return await handle_submission(submission, user)
     except Exception as e:

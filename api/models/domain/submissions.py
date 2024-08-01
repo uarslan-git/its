@@ -3,7 +3,7 @@ from typing import Any
 import asyncio
 import ast
 from db.db_connector_beanie import User
-from submissions.schemas import Code_submission, Tested_code_submission
+from submissions.schemas import Base_Submission, Tested_Submission
 from config import config
 
 from db import database
@@ -12,7 +12,8 @@ import aiohttp
 import json
 
 
-async def handle_submission(submission: Code_submission, user: User):
+async def handle_submission(submission: Base_Submission, user: User):
+    """Split point for all types of submissions."""
     task = await database.get_task(submission.task_unique_name)
     match task.type:
         case "function" | "print":
@@ -22,46 +23,28 @@ async def handle_submission(submission: Code_submission, user: User):
         case _:
             raise ValueError(f"Task type '{task.type}' not recognized.")
 
-# course enrollment
-# user id
-# task id
-# task json
-# test result
-# valid solution
-
-async def handle_code_submission(submission: Code_submission, user: User):
+# submission, user
+# submission, user -> course enrollment
+# submission -> task json -> test result, valid solution
+async def handle_code_submission(submission: Base_Submission, user: User):
     """Preprocess coda and run a series of test cases on a code submission.
 
     Args:
         submission (Code_submission): Submission object as defined in schemas.py
     """
     course_enrollment = await database.get_course_enrollment(user, course_unique_name=submission.course_unique_name)
-    user_id = user.id
-    task_id = submission.task_unique_name
-    task_json = await database.get_task(str(task_id))
+    task_json = await database.get_task(str(submission.task_unique_name))
     test_results, valid_solution = await run_tests(task_json, submission)
-    """     tests = task_json.tests
-    test_results = []
-    valid_solution = True
-    for i, test_name in enumerate(tests.keys()):
-        prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
-        test_result = await get_test_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines)
-        if test_result is None:
-            submission.type = "timed_out_submission"
-            await database.log_code_submission(submission)
-            raise asyncio.TimeoutError
-        test_results.append(test_result)
-        if test_results[i]["status"] == 0:
-            valid_solution = False """
+
     # Log code submit to database
-    tested_submission = Tested_code_submission(task_unique_name = submission.task_unique_name, 
+    tested_submission = Tested_Submission(task_unique_name = submission.task_unique_name, 
                                                course_unique_name=submission.course_unique_name,
                                                code = submission.code,
                                                possible_choices = [],
                                                correct_choices = [],
                                                selected_choices = [],  
                                                test_results = test_results,
-                                               user_id=user_id, 
+                                               user_id=user.id, 
                                                type="submission",
                                                submission_time=submission.submission_time, 
                                                valid_solution=valid_solution)
@@ -77,14 +60,15 @@ async def handle_code_submission(submission: Code_submission, user: User):
     await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
-async def handle_mc_submission(submission: Code_submission, user: User):
+# submission, user
+# submission, user -> course enrollment
+# submisson -> task json
+# test result
+# valid solution
+async def handle_mc_submission(submission: Base_Submission, user: User):
     course_enrollment = await database.get_course_enrollment(user, course_unique_name=submission.course_unique_name)
-    user_id = user.id
-    task_id = submission.task_unique_name
-    task_json = await database.get_task(str(task_id))
-    
-    test_results = []
-    valid_solution = True
+    task_json = await database.get_task(str(submission.task_unique_name))
+    test_results, valid_solution = [], True
 
     possible_choices = task_json.possible_choices
     correct_choices = task_json.correct_choices
@@ -109,14 +93,14 @@ async def handle_mc_submission(submission: Code_submission, user: User):
     test_results.append(test_result)
 
     # Log code submit to database
-    tested_submission = Tested_code_submission(task_unique_name = submission.task_unique_name, 
+    tested_submission = Tested_Submission(task_unique_name = submission.task_unique_name, 
                                                course_unique_name=submission.course_unique_name,
                                                code = submission.code, 
                                                possible_choices = possible_choices,
                                                correct_choices = correct_choices,
                                                selected_choices = selected_choices, 
                                                test_results = test_results,
-                                               user_id=user_id, 
+                                               user_id=user.id, 
                                                type="submission",
                                                submission_time=submission.submission_time, 
                                                valid_solution=valid_solution)
