@@ -1,13 +1,9 @@
 from _ast import Call, Del, Delete, Global, Interactive, Nonlocal, Name
 from typing import Any
-from fastapi import APIRouter, Depends
 import asyncio
-from os import path
 import ast
-from users.handle_users import current_active_verified_user
 from db.db_connector_beanie import User
 from submissions.schemas import Code_submission, Tested_code_submission
-from tasks.schemas import Task
 from config import config
 
 from db import database
@@ -25,6 +21,13 @@ async def handle_submission(submission: Code_submission, user: User):
             return await handle_mc_submission(submission, user)
         case _:
             raise ValueError(f"Task type '{task.type}' not recognized.")
+
+# course enrollment
+# user id
+# task id
+# task json
+# test result
+# valid solution
 
 async def handle_code_submission(submission: Code_submission, user: User):
     """Preprocess coda and run a series of test cases on a code submission.
