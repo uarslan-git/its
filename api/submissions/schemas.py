@@ -1,9 +1,8 @@
-from pydantic import BaseModel
 from beanie import PydanticObjectId
 from beanie import Document
 from typing import Optional
 
-# class Code_submission(BaseModel):
+# TODO: refactor schemas into base class and classes for the task types
 class Base_Submission(Document):
     task_unique_name: str
     course_unique_name: str

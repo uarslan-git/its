@@ -23,9 +23,6 @@ async def handle_submission(submission: Base_Submission, user: User):
         case _:
             raise ValueError(f"Task type '{task.type}' not recognized.")
 
-# submission, user
-# submission, user -> course enrollment
-# submission -> task json -> test result, valid solution
 async def handle_code_submission(submission: Base_Submission, user: User):
     """Preprocess coda and run a series of test cases on a code submission.
 
@@ -48,7 +45,7 @@ async def handle_code_submission(submission: Base_Submission, user: User):
                                                type="submission",
                                                submission_time=submission.submission_time, 
                                                valid_solution=valid_solution)
-    #TODO: implement learner model for this.
+    #TODO: Handle course and enrollment updates by learner model, trigger learner model.
     if valid_solution and (not submission.task_unique_name in course_enrollment.tasks_completed):
         course_enrollment.tasks_completed.append(submission.task_unique_name)
         course = await database.get_course(unique_name=user.current_course)
@@ -60,11 +57,6 @@ async def handle_code_submission(submission: Base_Submission, user: User):
     await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
-# submission, user
-# submission, user -> course enrollment
-# submisson -> task json
-# test result
-# valid solution
 async def handle_mc_submission(submission: Base_Submission, user: User):
     course_enrollment = await database.get_course_enrollment(user, course_unique_name=submission.course_unique_name)
     task_json = await database.get_task(str(submission.task_unique_name))
@@ -104,7 +96,7 @@ async def handle_mc_submission(submission: Base_Submission, user: User):
                                                type="submission",
                                                submission_time=submission.submission_time, 
                                                valid_solution=valid_solution)
-    #TODO: implement learner model for this.
+    #TODO: Handle course and enrollment updates by learner model, trigger learner model.
     if valid_solution and (not submission.task_unique_name in course_enrollment.tasks_completed):
         course_enrollment.tasks_completed.append(submission.task_unique_name)
         course = await database.get_course(unique_name=user.current_course)
