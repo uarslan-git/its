@@ -1,5 +1,6 @@
 import json
 from db import database
+import os
 
 async def parse_course(dir):
     with open(dir+"/course.json", "r") as course_file:
