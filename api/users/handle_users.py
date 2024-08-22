@@ -12,7 +12,7 @@ import os
 from config import config
 import random
 import hashlib
-from services.email import send_mail
+from services.email_sending import send_mail
 import re
 
 """For Information about fastapi-users and this implementation of it, please refer to

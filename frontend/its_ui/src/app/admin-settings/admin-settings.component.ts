@@ -17,6 +17,7 @@ export class AdminSettingsComponent {
   constructor(private client: HttpClient){
     this.settingsForm = new FormGroup({
       ollama_url: new FormControl(""),
+      ollama_key: new FormControl(""),
       email_whitelist: new FormControl(""),
     });
   }
@@ -26,6 +27,7 @@ export class AdminSettingsComponent {
       (data) => {
         this.settingsForm.patchValue({
           ollama_url: data.ollama_url,
+          ollama_key: data.ollama_key,
           email_whitelist: data.email_whitelist.join(","),
         });
       }
