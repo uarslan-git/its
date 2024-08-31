@@ -24,4 +24,5 @@ class First_uncompleted_task_selector(Base_task_selector):
             print("curriculum: \n", curriculum)
 
         uncompleted_tasks = [curriculum_task for curriculum_task in curriculum if curriculum_task not in user_completed_tasks]
+        print(uncompleted_tasks)
         return(uncompleted_tasks[0])
