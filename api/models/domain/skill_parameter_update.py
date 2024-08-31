@@ -48,7 +48,7 @@ class Skill_parameters_update():
         pfa_model = LogisticRegression(penalty = 'l2', C = 1.0, fit_intercept = False)
         pfa_model.fit(Xlogreg_reg, Ylogreg)
 
-        coefficients = pfa_model.coef_
+        coefficients = -pfa_model.coef_
         course_values.skill_weights = coefficients
 
         await database.update_course(course, course_values)
