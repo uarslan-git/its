@@ -15,7 +15,7 @@ from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelectio
 from tasks.schemas import Task
 from attempts.schemas import Attempt, AttemptState
 from beanie import init_beanie
-from db import db_connector_beanie
+from db import db_connector_beanie, database
 from users.schemas import User
 from config import config
 from runs import handle_runs
@@ -27,6 +27,7 @@ from fastapi.responses import JSONResponse
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 from system.schemas import AppSettings
 from feedback.schemas import Url
+from models.domain.skill_parameter_update import Skill_parameters_update
 
 
 REQUEST_TIMEOUT_ERROR = 30  # Threshold
@@ -107,6 +108,12 @@ async def on_startup():
     )
     await initialize_settings(db_connection_beanie)
     await initialize_global_accounts_list(db_connection_beanie)
+
+    # TODO: schedule the updates of the course: exact timing not decided yet
+    courses = await database.get_courses()
+    updater = Skill_parameters_update()
+    for course in courses:
+        await updater.select(course=course)
 
 origins = ["http://localhost:4200", "http://localhost:8080",
            "http://localhost", "https://localhost"]

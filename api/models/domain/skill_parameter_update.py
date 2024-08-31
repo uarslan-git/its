@@ -4,17 +4,18 @@ from users.schemas import User
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 
-class Skill_parameters_update(Course):
+
+class Skill_parameters_update():
     
     async def select(self, course: Course):
 
         #get all the task completions and order it for users and time stamps (last submissions available?) call all_course_submissions + correctness
+        
+        all_enrolled_users = await database.get_all_enrolled_users(course.unique_name)
+        course_values=course.copy()
 
-        all_enrolled_users = await database.get_course_enrollment(Course)
-
-
-        q_matrix = Course.q_matrix
-        num_skills = Course.skills_number
+        q_matrix = course.q_matrix
+        num_skills = course.skills_number
 
         #user_completed_tasks = course_enrollment.tasks_completed
         #user_attempted_tasks = course_enrollment.tasks_attempted
@@ -24,8 +25,6 @@ class Skill_parameters_update(Course):
         Ylogreg=[]
         
         for user in all_enrolled_users:
-            Xlogreg_reg_user = []
-            Ylogreg_user=[]
             s = np.zeros(num_skills)
             f = np.zeros(num_skills)
             for task in user.tasks_attempted:     
@@ -36,21 +35,21 @@ class Skill_parameters_update(Course):
                     new_row[3*j + 0] = s[j]
                     new_row[3*j + 1] = f[j]
                     new_row[3*j + 2] = task_skills[j]
-                Xlogreg_reg_user.append(new_row) 
                 if (task in user.tasks_completed):
                     s = [sum(x) for x in zip(s, task_skills)]
-                    Ylogreg_user.append(1)
+                    Ylogreg.append(1)
                 else:
                     f += [sum(x) for x in zip(s, task_skills)]
-                    Ylogreg_user.append(0)
+                    Ylogreg.append(0)
+                Xlogreg_reg.append(new_row)
 
-            Xlogreg_reg.append(Xlogreg_reg_user)
-            Ylogreg.append(Ylogreg_user)
             
         
         pfa_model = LogisticRegression(penalty = 'l2', C = 1.0, fit_intercept = False)
         pfa_model.fit(Xlogreg_reg, Ylogreg)
 
         coefficients = pfa_model.coef_
-        Course.skill_weights = coefficients
+        course_values.skill_weights = coefficients
+
+        await database.update_course(course, course_values)
         return 

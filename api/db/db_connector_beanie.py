@@ -155,6 +155,6 @@ class database():
         global_accounts_list = await GlobalAccountList.find_one()
         await global_accounts_list.update({"$set": update_dict})
 
-    async def get_all_enrolled_users(self):
-        courses = await CourseEnrollment.find().to_list()
+    async def get_all_enrolled_users(self, course_unique_name):
+        courses = await CourseEnrollment.find(CourseEnrollment.course_unique_name==course_unique_name).to_list()
         return courses
