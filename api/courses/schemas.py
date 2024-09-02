@@ -24,9 +24,9 @@ class Course(Document):
     # Use p-array
     sample_settings: list
     # Model related
-    q_matrix: dict
-    skills_number: int
-    skill_weights: Optional[list]
+    q_matrix: Optional[dict] = None
+    skills_number: Optional[int] = None
+    skill_weights: Optional[list] = None
 
 class CourseInfo(Document):
     course_list: list[dict]
