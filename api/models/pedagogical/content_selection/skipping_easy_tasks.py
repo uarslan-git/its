@@ -5,8 +5,6 @@ from users.schemas import User
 import numpy as np
 import math
 
-#WARNING: routing to learner model was bugged, hence the whole algorithm is moved here. 
-#TODO: discuss learning model and what learner's parameters we would like to actually remember. 
 
 class Skipping_task_selector(Base_task_selector):
 
@@ -32,10 +30,11 @@ class Skipping_task_selector(Base_task_selector):
         uncompleted_tasks = [curriculum_task for curriculum_task in curriculum if curriculum_task not in user_completed_tasks]
 
         q_matrix = course.q_matrix
-        skill_weights = np.array(course.skill_weights)
+        skill_weights = np.array(course.course_parameters["skill_weights_pfa"])
         user_completed_tasks = course_enrollment.tasks_completed
         user_attempted_tasks = course_enrollment.tasks_attempted
-        num_skills = course.skills_number
+        num_skills = len(course.competencies)
+        mandatory_tasks = course.mandatory_curriculum
         #new_task_skills = q_matrix.get(Task.unique_name)
         #n=4 #with struggle
         n=3 #without struggle
@@ -62,9 +61,9 @@ class Skipping_task_selector(Base_task_selector):
 
             return 1 / (1 + math.exp(-logit))
         
-   
-        if (completion_probability(uncompleted_tasks[0])>0.8):
-            while (completion_probability(uncompleted_tasks[0])>0.8) and (len(uncompleted_tasks)>0):
+
+        if (completion_probability(uncompleted_tasks[0])>0.8) and (uncompleted_tasks[0] not in mandatory_tasks):
+            while (completion_probability(uncompleted_tasks[0])>0.8) and (len(uncompleted_tasks)>0) and (uncompleted_tasks[0] not in mandatory_tasks):
                 uncompleted_tasks.pop(0)
 
         return(uncompleted_tasks[0])
