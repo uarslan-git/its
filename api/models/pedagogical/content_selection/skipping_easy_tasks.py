@@ -1,7 +1,7 @@
 from models.pedagogical.content_selection.base import Base_task_selector
 from db import database
 from users.schemas import User
-from models.learner.competency_models import Task_completion_probability
+#from models.learner.competency_models import Task_completion_probability
 import numpy as np
 import math
 

@@ -113,7 +113,8 @@ async def on_startup():
     courses = await database.get_courses()
     updater = Skill_parameters_update()
     for course in courses:
-        await updater.select(course=course)
+        if (not course.q_matrix is None):
+            await updater.select(course=course)
 
 origins = ["http://localhost:4200", "http://localhost:8080",
            "http://localhost", "https://localhost"]

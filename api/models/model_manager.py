@@ -1,5 +1,6 @@
 
 from models.pedagogical.prototype import Prototype_pedagogical_model
+from models.pedagogical.skipping_tasks_pfa import Skipping_tasks_pfa_pedagogical_model
 from users.schemas import User
 from courses.schemas import Course
 from db import database
@@ -13,7 +14,8 @@ class Model_manager():
         """In the constructor all variants of models should be registered (and instantiated) for later selection.
         """
         self.prototype = Prototype_pedagogical_model()
-        self.default = Prototype_pedagogical_model()
+        self.skipping_pfa = Skipping_tasks_pfa_pedagogical_model()
+        self.default = Skipping_tasks_pfa_pedagogical_model()
 
     async def pedagogical_model(self, user: User):
         course_unique_name = user.current_course

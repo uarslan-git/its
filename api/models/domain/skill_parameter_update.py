@@ -12,7 +12,6 @@ class Skill_parameters_update():
         #get all the task completions and order it for users and time stamps (last submissions available?) call all_course_submissions + correctness
         
         all_enrolled_users = await database.get_all_enrolled_users(course.unique_name)
-        course_values=course.copy()
 
         q_matrix = course.q_matrix
         num_skills = course.skills_number
@@ -48,8 +47,7 @@ class Skill_parameters_update():
         pfa_model = LogisticRegression(penalty = 'l2', C = 1.0, fit_intercept = False)
         pfa_model.fit(Xlogreg_reg, Ylogreg)
 
-        coefficients = -pfa_model.coef_
-        course_values.skill_weights = coefficients
+        coefficients = (-pfa_model.coef_[0]).tolist()
 
-        await database.update_course(course, course_values)
+        await database.update_course(course, {"skill_weights": coefficients})
         return 

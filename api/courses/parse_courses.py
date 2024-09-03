@@ -9,7 +9,7 @@ async def parse_course(dir):
     course_unique_name = os.path.basename(dir)
 
 
-    course_dict["unique_name"] = unique_name
+    course_dict["unique_name"] = course_unique_name
 
     if "course_settings" not in course_dict.keys():
         course_dict["course_settings"] = {}
