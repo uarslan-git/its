@@ -25,6 +25,7 @@ async def generate_language(instruction, model="llama3", system=None, backend="o
 #            text = json.loads(text)["response"]
 #    return(text)
 
+
 async def generate_language_ollama(instruction, model, system=None, max_tokens=300):
     ollama_url, api_token = await get_ollama_credentials()
     async with aiohttp.ClientSession() as session:

@@ -41,7 +41,6 @@ export class NavigationBarComponent {
         }
       )
       rolesService.getRoles().subscribe((roles) => {
-        console.log(roles.roles);
         this.roles = roles.roles;
       });
       //this.roles = sessionStorage.getItem("roles")!.split(",")

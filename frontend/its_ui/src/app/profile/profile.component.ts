@@ -25,8 +25,8 @@ export class ProfileComponent {
   email: string = '';
   name: string = '';
   registeredDatetime: string = '';
-  user: {email?: string, register_datetime?: any, settings?: any, enrolled_courses?: string[], roles?: string[]} = {};
-  enrolledCourse: string = '';
+  user: {register_datetime?: any, settings?: any, enrolled_courses?: string[], roles?: string[], username?: string, current_course?: string} = {};
+  enrolledCourses: string = "";
 
   constructor(private http: HttpClient,
     private eventShareService: EventShareService) {}
@@ -39,16 +39,15 @@ export class ProfileComponent {
       this.http.get<any>(`${this.apiUrl}/users/me`, {"withCredentials": true}).subscribe(
         (data)  => {
         this.user = {
-          email: data.email,
           register_datetime: data.register_datetime,
           settings: data.settings,
           enrolled_courses: data.enrolled_courses,
-          roles: data.roles
+          roles: data.roles,
+          username: data.username,
+          current_course: data.current_course
         };
-        this.email = this.user.email!;
-        this.name = this.user.email!.split("@")[0];
         this.registeredDatetime = this.user.register_datetime["local"];
-        this.enrolledCourse = this.user.enrolled_courses![0];
+        this.enrolledCourses = this.user.enrolled_courses!.join("\n");
         if(this.user.settings.dataCollection) {
           this.consentCheckbox.nativeElement.checked = true;
         }

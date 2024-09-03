@@ -13,7 +13,7 @@ from users import handle_users
 from users import schemas as user_schemas
 from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings
 from tasks.schemas import Task
-from attempts.schemas import Attempt, AttemptState
+from attempts.schemas import Attempt, AttemptState, NestedAttemptState
 from beanie import init_beanie
 from db import db_connector_beanie, database
 from users.schemas import User
@@ -102,7 +102,7 @@ async def on_startup():
         document_models=[
             User, Code_submission, Tested_code_submission, 
             Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings,
-              Task, Attempt, AttemptState, AppSettings, Url,
+              Task, Attempt, AttemptState, NestedAttemptState, AppSettings, Url,
             user_schemas.GlobalAccountList, 
         ],
     )

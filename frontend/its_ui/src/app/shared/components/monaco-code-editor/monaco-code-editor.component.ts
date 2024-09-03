@@ -90,7 +90,15 @@ export class MonacoCodeEditorComponent implements AfterViewInit {
 
   //Interact with Monaco content
   getContent(){
-    return this._editor.getValue();
+    if (this._editor != undefined)
+      {
+        return this._editor.getValue();
+      }
+    else {
+      setTimeout(() => {
+        return this._editor.getValue();
+      }, 200)
+    }
   }
 
   setContent(value: string){

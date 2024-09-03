@@ -27,7 +27,6 @@ export class CourseSelectionPanelComponent {
       private rolesService: RolesService
     ){
       rolesService.getRoles().subscribe((roles) => {
-        console.log(roles.roles);
         this.roles = roles.roles;
       });
     }
@@ -66,5 +65,4 @@ export class CourseSelectionPanelComponent {
       );
     }
   }
-
 }

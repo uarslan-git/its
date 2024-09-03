@@ -15,4 +15,13 @@ export class DatetimeService {
     };
     return datetime_obj
   }
+
+
+  datetimeNowLocal(){
+    const datetime_obj = {
+      "local": this.datePipe.transform((new Date), 'dd.MM.yyyy HH:mm:ss.SSS'),
+    };
+    return datetime_obj
+  }
+
 }

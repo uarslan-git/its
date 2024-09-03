@@ -11,5 +11,8 @@ class Base_step_feedback_module():
         next_step = await self.step_generator.predict_next_step(submission)
         return await self.feedback_generator.generate_feedback(next_step, submission)
     
+    async def provide_feedback_stream(self, submission: Code_submission):
+        raise Exception("Not Implemented!")
+
     async def get_feedback_available(self, task_type):
         raise NotImplementedError()

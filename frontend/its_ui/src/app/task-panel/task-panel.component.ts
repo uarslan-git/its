@@ -96,8 +96,8 @@ export class TaskPanelComponent {
     sessionStorage.setItem("taskPrefix", this.task['prefix']!);
     sessionStorage.setItem("taskChoices", JSON.stringify(this.task['possible_choices']!));
     sessionStorage.setItem("feedbackAvailable", this.task["feedback_available"]!);
-    this.eventShareService.emitNewTaskFetchedEvent();
     this.markdownPanelComponent.resetScroll();
+    this.eventShareService.emitNewTaskFetchedEvent();
 
   });
  }
