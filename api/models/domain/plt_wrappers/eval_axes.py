@@ -1,12 +1,19 @@
 from matplotlib.axes import Axes
 
 class Eval_Axes(Axes):
+    """
+    This Axes subclass overloads all relevant plotting functions to be able to process the data before plotting it.
+    """
+    
+    # This variable is required to pass the subclass as a Projection to the Figure
     name = "eval_axes"
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     ### Adding Data to the plot
+    # Overload all methods the students are expected to use, so they can process the data before passing it on.
+    # TODO process data before forwarding to plt
 
     def plot(self, *args, **kwargs):
         return super().plot(*args, **kwargs)
