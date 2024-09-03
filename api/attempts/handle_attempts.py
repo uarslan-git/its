@@ -5,7 +5,7 @@ from users.schemas import User
 from users.handle_users import current_active_verified_user
 from db import database
 from beanie import PydanticObjectId
-
+from datetime import datetime, timedelta, timezone
 from edist.sed import sed_backtrace
 from edist import edits
 from edist.edits import Insertion, Deletion, Replacement, Script
@@ -17,17 +17,24 @@ router = APIRouter(prefix="/attempt")
 async def get_attempt_state(task_unique_name, user: User = Depends(current_active_verified_user)):
     attempt = await database.find_attempt(task_unique_name, user.id, user.current_course)
     if attempt is None:
-        attempt = Attempt(user_id = str(user.id), task_unique_name=task_unique_name, state_log=[], course_unique_name=user.current_course, current_state="")
+        attempt = Attempt(user_id = str(user.id), task_unique_name=task_unique_name, state_log=[], 
+                          course_unique_name=user.current_course, current_state="",
+                          start_time_list=[datetime.now().astimezone(timezone.utc).strftime("%d.%m.%Y %H:%M:%S")], 
+                          duration_list=[str(timedelta(0))])
         await database.create_attempt(attempt)
         course_enrollment = course_enrollment = await database.get_course_enrollment(user, user.current_course)
         tasks_attempted = course_enrollment.tasks_attempted
-        tasks_attempted.append(task_unique_name)
+        if not task_unique_name in tasks_attempted:
+            tasks_attempted.append(task_unique_name)
         await database.update_course_enrollment(course_enrollment, {"tasks_attempted": tasks_attempted})
         return({"attempt_id": str(attempt.id), "code": ""})
     #if len(attempt.state_log)==0:
     #    return({"attempt_id": str(attempt.id), "code": ""})
     else:
         logged_current_state = attempt.current_state
+        attempt.start_time_list.append(datetime.now().astimezone(timezone.utc).strftime("%d.%m.%Y %H:%M:%S"))
+        attempt.duration_list.append(str(timedelta(0)))
+        await database.update_attempt(attempt)
         if user.settings["dataCollection"] == True:
             compiled_current_state = compile_state_log("", attempt.state_log)
             if compiled_current_state != logged_current_state:
@@ -134,7 +141,10 @@ async def log_attempt_state(state: NestedAttemptState, user: User = Depends(curr
     #        attempt.state_log[-1] = code_state
     #    else:
     #       attempt.state_log.append(code_state)
-
-    attempt.current_state = state.current_state
+    if len(state.state_datetime_list) > 0:
+        current_attempt_time = datetime.strptime(state.state_datetime_list[-1]["utc"], "%d.%m.%Y %H:%M:%S.%f")
+        current_start_time = datetime.strptime(attempt.start_time_list[-1], "%d.%m.%Y %H:%M:%S")
+        attempt.duration_list[-1] = str(current_attempt_time - current_start_time)
+        attempt.current_state = state.current_state
     await database.update_attempt(attempt)
 

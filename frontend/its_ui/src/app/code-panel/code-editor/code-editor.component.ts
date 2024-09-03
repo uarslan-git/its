@@ -67,7 +67,7 @@ export class CodeEditorComponent {
 
   appendContent(newContent: any){
     this.newContentList.push(newContent);
-    this.datetimeList.push(this.datetimeService.datetimeNowLocal());
+    this.datetimeList.push(this.datetimeService.datetimeNowUTC());
   }
 
   clearContentList(){

@@ -24,4 +24,11 @@ export class DatetimeService {
     return datetime_obj
   }
 
+  datetimeNowUTC(){
+    const datetime_obj = {
+      "utc": this.datePipe.transform((new Date), 'dd.MM.yyyy HH:mm:ss.SSS', '+0:00'),
+    };
+    return datetime_obj
+  }
+
 }
