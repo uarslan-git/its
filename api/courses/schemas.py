@@ -27,7 +27,6 @@ class Course(Document):
     sample_settings: list
     # Model related
     q_matrix: Optional[dict] = None
-    skills_number: Optional[int] = None
     course_parameters: Optional[dict] = None
 
 class CourseInfo(Document):

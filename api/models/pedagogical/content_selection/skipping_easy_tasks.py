@@ -62,8 +62,8 @@ class Skipping_task_selector(Base_task_selector):
             return 1 / (1 + math.exp(-logit))
         
 
-        if (completion_probability(uncompleted_tasks[0])>0.8) and (uncompleted_tasks[0] not in mandatory_tasks):
-            while (completion_probability(uncompleted_tasks[0])>0.8) and (len(uncompleted_tasks)>0) and (uncompleted_tasks[0] not in mandatory_tasks):
+        if ((completion_probability(uncompleted_tasks[0])>0.8) and (uncompleted_tasks[0] not in mandatory_tasks)):
+            while ((completion_probability(uncompleted_tasks[0])>0.8) and (len(uncompleted_tasks)>0) and (uncompleted_tasks[0] not in mandatory_tasks)):
                 uncompleted_tasks.pop(0)
 
         return(uncompleted_tasks[0])
