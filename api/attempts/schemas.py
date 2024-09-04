@@ -15,7 +15,6 @@ class AttemptState(Document):
     state_datetime: Optional[dict]=None
     diff: Optional[tuple]=str
     submission_id: Optional[str]=None
-    dataCollection: bool
 
 class NestedAttemptState(AttemptState):
     code_list: list[tuple]
