@@ -8,7 +8,8 @@ from sklearn.linear_model import LogisticRegression
 class Skill_parameters_pfa_update():
     
     async def select(self, course: Course):
-
+        if course.domain == "Surveys":
+            return
         #get all the task completions and order it for users and time stamps (last submissions available?) call all_course_submissions + correctness
         
         all_enrolled_users = await database.get_all_enrolled_users(course.unique_name)

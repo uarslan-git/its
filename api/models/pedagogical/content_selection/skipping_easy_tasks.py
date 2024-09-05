@@ -28,6 +28,8 @@ class Skipping_task_selector(Base_task_selector):
             print("curriculum: \n", curriculum)
 
         uncompleted_tasks = [curriculum_task for curriculum_task in curriculum if curriculum_task not in user_completed_tasks]
+        if course.domain == "Surveys":
+             return(uncompleted_tasks[0])
 
         q_matrix = course.q_matrix
         skill_weights = np.array(course.course_parameters["skill_weights_pfa"])
