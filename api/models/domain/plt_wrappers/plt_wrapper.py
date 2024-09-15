@@ -1,6 +1,6 @@
-import matplotlib.pyplot as _plt
-from api.models.domain.plt_wrappers.eval_figure import Eval_Figure
-from api.models.domain.plt_wrappers.eval_axes import Eval_Axes
+from eval_axes import Eval_Axes
+from eval_figure import Eval_Figure
+
 from matplotlib.projections import register_projection
 
 """
@@ -12,95 +12,106 @@ Methods student are not supposed to have access to are simply ommitted from here
 
 # TODO process data before forwarding to plt
 
-### Managing Figure and Axes
+class PLT_Wrapper():
+    def __init__(self):
+        import matplotlib.pyplot
+        self.__plt = matplotlib.pyplot
+        
+        self.setup();
 
-def figure(**fig_kw):
-    fig_kw = set_figure_class_arg(fig_kw)
-    return _plt.figure(**fig_kw)
+    ### Managing Figure and Axes
 
-def subplots(*args, **fig_kw):
-    fig_kw = set_figure_class_arg(fig_kw)
-    return _plt.subplots(*args, **fig_kw)
+    def figure(self, **fig_kw):
+        fig_kw = self.set_figure_class_arg(fig_kw)
+        return self.__plt.figure(**fig_kw)
 
-def subplot(*args, **kwargs):
-    return _plt.subplot(*args, **kwargs)
+    def gca(self):
+        return self.__plt.gca()
 
-### Adding Data to the plot
+    def gcf(self):
+        return self.__plt.gcf()
 
-def plot(*args, **kwargs):
-    return _plt.plot(*args, **kwargs)
+    def subplots(self, *args, **fig_kw):
+        fig_kw = self.set_figure_class_arg(fig_kw)
+        return self.__plt.subplots(*args, **fig_kw)
 
-def errorbar(x, y, yerr=None, xerr=None, *args, **kwargs):
-    return _plt.errorbar(x, y, yerr, xerr, *args, **kwargs)
-    
-def scatter(x, y, *args, **kwargs):
-    return _plt.scatter(x, y, *args, **kwargs)
-    
-def fill_between(x, y1, y2=0, *args, **kwargs):
-    return _plt.fill_between(x, y1, y2, *args, **kwargs)
-    
-def bar(x, height, *args, **kwargs):
-    return _plt.bar(x, height, *args, **kwargs)
+    def subplot(self, *args, **kwargs):
+        return self.__plt.subplot(*args, **kwargs)
 
-def stackplot(x, *args, **kwargs):
-    return _plt.stackplot(x, *args, **kwargs)
-    
-def boxplot(x, *args, **kwargs):
-    return _plt.boxplot(x, *args, **kwargs)
+    ### Adding Data to the plot
 
-def hist(x, bins=None, *args, **kwargs):
-    return _plt.hist(x, bins, *args, **kwargs)
+    def plot(self, *args, **kwargs):
+        return self.__plt.plot(*args, **kwargs)
 
-### Axis configuration
+    def errorbar(self, x, y, yerr=None, xerr=None, *args, **kwargs):
+        return self.__plt.errorbar(x, y, yerr, xerr, *args, **kwargs)
+        
+    def scatter(self, x, y, *args, **kwargs):
+        return self.__plt.scatter(x, y, *args, **kwargs)
+        
+    def fill_between(self, x, y1, y2=0, *args, **kwargs):
+        return self.__plt.fill_between(x, y1, y2, *args, **kwargs)
+        
+    def bar(self, x, height, *args, **kwargs):
+        return self.__plt.bar(x, height, *args, **kwargs)
 
-def xlabel(label, *args, **kwargs):
-    return _plt.xlabel(label, *args, **kwargs)
+    def stackplot(self, x, *args, **kwargs):
+        return self.__plt.stackplot(x, *args, **kwargs)
+        
+    def boxplot(self, x, *args, **kwargs):
+        return self.__plt.boxplot(x, *args, **kwargs)
 
-def xlim(*args, **kwargs):
-    return _plt.xlim(*args, *kwargs)
+    def hist(self, x, bins=None, *args, **kwargs):
+        return self.__plt.hist(x, bins, *args, **kwargs)
 
-def xscale(value, **kwargs):
-    return _plt.xscale(value, *kwargs)
+    ### Axis configuration
 
-def xticks(ticks=None, labels=None, *args, **kwargs):
-    return _plt.xticks(ticks, labels, *args, *kwargs)
+    def xlabel(self, label, *args, **kwargs):
+        return self.__plt.xlabel(label, *args, **kwargs)
 
-def ylabel(label, *args, **kwargs):
-    return _plt.ylabel(label, *args, *kwargs)
+    def xlim(self, *args, **kwargs):
+        return self.__plt.xlim(*args, *kwargs)
 
-def ylim(*args, **kwargs):
-    return _plt.ylim(*args, *kwargs)
+    def xscale(self, value, **kwargs):
+        return self.__plt.xscale(value, *kwargs)
 
-def yscale(value, **kwargs):
-    return _plt.yscale(value, *kwargs)
+    def xticks(self, ticks=None, labels=None, *args, **kwargs):
+        return self.__plt.xticks(ticks, labels, *args, *kwargs)
 
-def yticks(ticks=None, labels=None, *args, **kwargs):
-    return _plt.yticks(ticks, labels, *args, *kwargs)
+    def ylabel(self, label, *args, **kwargs):
+        return self.__plt.ylabel(label, *args, *kwargs)
 
-def suptitle(t, **kwargs):
-    return _plt.suptitle(t, **kwargs)
+    def ylim(self, *args, **kwargs):
+        return self.__plt.ylim(*args, *kwargs)
 
-def title(label, *args, **kwargs):
-    return _plt.title(label, *args, **kwargs)
+    def yscale(self, value, **kwargs):
+        return self.__plt.yscale(value, *kwargs)
 
-### Output
+    def yticks(self, ticks=None, labels=None, *args, **kwargs):
+        return self.__plt.yticks(ticks, labels, *args, *kwargs)
 
-def draw():
-    return _plt.draw()
+    def suptitle(self, t, **kwargs):
+        return self.__plt.suptitle(t, **kwargs)
 
-def show(*args, **kwargs):
-    print("SHOWING")
-    return _plt.show(*args, **kwargs)
+    def title(self, label, *args, **kwargs):
+        return self.__plt.title(label, *args, **kwargs)
 
-### Utility
+    ### Output
 
-def set_figure_class_arg(kwargs):
-    if kwargs: kwargs['FigureClass'] = Eval_Figure
-    else: kwargs = {'FigureClass': Eval_Figure}
-    return kwargs
+    def draw(self):
+        return self.__plt.draw()
 
-def setup():
-    register_projection(Eval_Axes)
-    _plt.close('all')
-    figure()
-setup()
+    def show(self, *args, **kwargs):
+        return self.__plt.show(*args, **kwargs)
+
+    ### Utility
+
+    def set_figure_class_arg(self, kwargs):
+        if kwargs: kwargs['FigureClass'] = Eval_Figure
+        else: kwargs = {'FigureClass': Eval_Figure}
+        return kwargs
+
+    def setup(self):
+        register_projection(Eval_Axes)
+        self.__plt.close('all')
+        self.figure()
