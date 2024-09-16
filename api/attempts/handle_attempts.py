@@ -122,6 +122,7 @@ def transform_edit(edit):
 async def log_attempt_state(state: NestedAttemptState, user: User = Depends(current_active_verified_user)):
     attempt = await database.get_attempt(state.attempt_id)
     #TODO: Handle case whre data collection settings are changed!
+    #TODO: Handle sequences that are too long to process (1500 max length).
     if user.settings["dataCollection"] == True:
         state.id = str(PydanticObjectId())
         if len(attempt.state_log) > 0:
