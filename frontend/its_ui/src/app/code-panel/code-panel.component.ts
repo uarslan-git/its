@@ -162,7 +162,6 @@ export class CodePanelComponent {
       if ((!this.contentReloaded) || (this.current_task_id=='course completed')) {
         //ensure that code has changed
         if((this.lastSavedCode == newContentList[newContentList.length-1])) {
-          console.log("same code detected");
           return;};
         const body = {
           'attempt_id': this.currentAttemptId,

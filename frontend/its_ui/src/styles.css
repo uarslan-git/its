@@ -9,6 +9,9 @@
 /* Use Angular Theme */
 @import '~@angular/material/prebuilt-themes/purple-green.css';
 
+
+@import '~css-star-rating/css/star-rating';
+
 *::after,
 *::before {
   padding: 0;
@@ -128,3 +131,4 @@ p {
   .a:hover{
     color: rgb(104, 164, 255);
   }
+  

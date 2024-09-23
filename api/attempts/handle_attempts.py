@@ -36,8 +36,8 @@ async def get_attempt_state(task_unique_name, user: User = Depends(current_activ
         if user.settings["dataCollection"] == True:
             compiled_current_state = compile_state_log("", attempt.state_log)
             if compiled_current_state != logged_current_state:
+                #TODO: How do we want to query for Bug-reports?
                 state = f"\nA problem occured. We are not sure what your last state is.\nWe have compiled the following state:\n{compiled_current_state}\n but logged the following:\n{logged_current_state}"
-                #TODO: repair state_log functionality
                 return({"attempt_id": str(attempt.id), "code": state})
         return({"attempt_id": str(attempt.id), "code": logged_current_state})
 
