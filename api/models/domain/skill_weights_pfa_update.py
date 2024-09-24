@@ -5,16 +5,18 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 
-class Skill_parameters_update():
+class Skill_parameters_pfa_update():
     
     async def select(self, course: Course):
-
+        if course.domain == "Surveys":
+            return
         #get all the task completions and order it for users and time stamps (last submissions available?) call all_course_submissions + correctness
         
         all_enrolled_users = await database.get_all_enrolled_users(course.unique_name)
 
         q_matrix = course.q_matrix
-        num_skills = course.skills_number
+        num_skills = len(course.competencies)
+        course_parameters_new = course.course_parameters.copy()
 
         #user_completed_tasks = course_enrollment.tasks_completed
         #user_attempted_tasks = course_enrollment.tasks_attempted
@@ -48,6 +50,7 @@ class Skill_parameters_update():
         pfa_model.fit(Xlogreg_reg, Ylogreg)
 
         coefficients = (-pfa_model.coef_[0]).tolist()
+        course_parameters_new["skill_weights_pfa"] = coefficients
 
-        await database.update_course(course, {"skill_weights": coefficients})
+        await database.update_course(course, {"course_parameters": course_parameters_new})
         return 

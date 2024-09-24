@@ -13,11 +13,13 @@ class CourseSettings(Document):
 
 class Course(Document):
     curriculum: list
+    mandatory_curriculum: Optional[list] = None
     unique_name: str
     display_name: str
     #TODO: change naming to "topic"
     domain: str
     sub_domains: list
+    competencies: Optional[list] = None
     #course_options: list
     course_settings: Optional[CourseSettings] = None
     course_settings_list: Optional[list]
@@ -25,8 +27,7 @@ class Course(Document):
     sample_settings: list
     # Model related
     q_matrix: Optional[dict] = None
-    skills_number: Optional[int] = None
-    skill_weights: Optional[list] = None
+    course_parameters: Optional[dict] = None
 
 class CourseInfo(Document):
     course_list: list[dict]

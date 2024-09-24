@@ -6,6 +6,7 @@ from os import path
 import ast
 from users.handle_users import current_active_verified_user
 from db.db_connector_beanie import User
+from db import database
 from submissions.schemas import Code_submission, Tested_code_submission
 from tasks.schemas import Task
 from config import config
@@ -154,19 +155,29 @@ async def handle_mc_submission(submission: Code_submission, user: User = Depends
     selected_choices = submission.selected_choices
     choice_explanations = task_json.choice_explanations
 
-    # Check which choices were made
-    answers = [element in selected_choices for element in possible_choices]
-    # Check which choices are correct
-    results = [a == b for a, b in zip(answers, correct_choices)]
-    # Check if all choices are correct
-    valid_solution = all(results)
-    
-    success_text = "Test success:" if valid_solution else "Test failure:"
-    result_msg = f"{success_text} \n"
+    course = await database.get_course(submission.course_unique_name)
 
-    for choice, correct, explanation in zip(possible_choices, results, choice_explanations):
-        correct_choice_msg = "correct" if correct else f"incorrect Reason: \n{explanation}"
-        result_msg = f"{result_msg}{choice} is {correct_choice_msg}\n\n"
+    if course.domain=="Surveys":
+        if len(selected_choices) != 1:
+            result_msg="Only 1 answer is expected. Please choose only 1 option."
+            valid_solution = False
+        else:
+            result_msg="Test success."
+            valid_solution = True
+    else: 
+        # Check which choices were made
+        answers = [element in selected_choices for element in possible_choices]
+        # Check which choices are correct
+        results = [a == b for a, b in zip(answers, correct_choices)]
+        # Check if all choices are correct
+        valid_solution = all(results)
+        
+        success_text = "Test success:" if valid_solution else "Test failure:"
+        result_msg = f"{success_text} \n"
+
+        for choice, correct, explanation in zip(possible_choices, results, choice_explanations):
+            correct_choice_msg = "correct" if correct else f"incorrect Reason: \n{explanation}"
+            result_msg = f"{result_msg}{choice} is {correct_choice_msg}\n\n"
 
     test_result = {"test_name": "test_for_mc", "status": valid_solution, "message": result_msg}
     test_results.append(test_result)
