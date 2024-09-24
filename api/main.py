@@ -7,6 +7,8 @@ from submissions.schemas import Code_submission, Tested_code_submission
 from tasks import handle_tasks
 from feedback import handle_feedback
 from courses import handle_courses
+from surveys import handle_surveys
+from surveys.schemas import Survey
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from users import handle_users
@@ -70,6 +72,7 @@ app.include_router(handle_courses.router, prefix=f"{prefix}")
 app.include_router(handle_runs.router, prefix=f"{prefix}/run")
 app.include_router(retrieve_info.router, prefix=f"{prefix}/info")
 app.include_router(handle_settings.router, prefix=f"{prefix}/settings")
+app.include_router(handle_surveys.router, prefix=f"{prefix}/surveys")
 
 # User Router and database setup
 app.include_router(
@@ -110,7 +113,7 @@ async def on_startup():
             User, Code_submission, Tested_code_submission, 
             Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings,
               Task, Attempt, AttemptState, NestedAttemptState, AppSettings, Url,
-            user_schemas.GlobalAccountList, 
+            user_schemas.GlobalAccountList, Survey
         ],
     )
     await initialize_settings(db_connection_beanie)
@@ -130,7 +133,10 @@ async def course_parameter_update():
     updater = Skill_parameters_pfa_update()
     for course in courses:
         if (not course.q_matrix is None):
-            await updater.select(course=course)
+            try:
+                await updater.select(course=course)
+            except:
+                pass
 
 async def coroutine_updater():
     return await course_parameter_update()

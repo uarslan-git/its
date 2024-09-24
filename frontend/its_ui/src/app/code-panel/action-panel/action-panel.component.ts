@@ -111,7 +111,6 @@ export class ActionPanelComponent {
       this.eventShareService.emitFeedbackButtonClick();
       this.inCooldown = true;
       setTimeout(() => {
-        console.log("unset cooldown");
         this.inCooldown = false;
       }, this.course.course_settings.feedback_cooldown*1000);
     }

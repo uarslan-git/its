@@ -8,14 +8,15 @@ class Attempt(Document):
     course_unique_name: str
     state_log: list
     current_state: str
+    start_time_list: list
+    duration_list: list
+
 class AttemptState(Document):
     state_datetime: Optional[dict]=None
     diff: Optional[tuple]=str
     submission_id: Optional[str]=None
-    dataCollection: bool
 
 class NestedAttemptState(AttemptState):
-
     code_list: list[tuple]
     state_datetime_list: list
     current_state: str

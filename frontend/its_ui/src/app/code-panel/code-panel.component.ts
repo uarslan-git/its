@@ -50,7 +50,8 @@ export class CodePanelComponent {
         {withCredentials: true}).subscribe((data) => {
           /* this.recordChanges(this.codeEditorComponent.newContentList, data.submission_id);
           this.codeEditorComponent.newContentList = []; */
-          this.codeEditorComponent.newContentList.push([[-2, data.submission_id]])
+          //this.codeEditorComponent.newContentList.push([[-2, data.submission_id]])
+          this.codeEditorComponent.appendContent([[-2, data.submission_id]]);
           this.eventShareService.emitTestReadyEvent(data.submission_id);
         }
       );
@@ -67,7 +68,9 @@ export class CodePanelComponent {
               {withCredentials: true}).subscribe((data) => {
                 /* this.recordChanges(this.codeEditorComponent.newContentList, data.submission_id);
                 this.codeEditorComponent.newContentList = []; */
-                this.codeEditorComponent.newContentList.push([[-2, data.submission_id]])
+                //this.codeEditorComponent.newContentList.push([[-2, data.submission_id]])
+                //this.codeEditorComponent.appendContent([[-2, data.submission_id]]);
+                this.codeEditorComponent.appendContent([[-2, data.submission_id]]);
                 this.eventShareService.emitTestReadyEvent(data.submission_id);
       });
     }
@@ -76,8 +79,8 @@ export class CodePanelComponent {
   //Run Button
   handleRunEvent(parameters: any) {
     var runCode = this.codeEditorComponent.userContentControl;
-    const body = {task_unique_name: this.current_task_id, 
-                course_unique_name: sessionStorage.getItem("courseID"),   
+    const body = {task_unique_name: this.current_task_id,
+                course_unique_name: sessionStorage.getItem("courseID"),
                 code: runCode,
                 log: "True", 
                 selected_choices: [],
@@ -85,7 +88,7 @@ export class CodePanelComponent {
                 run_arguments: parameters, type: "run"};
     this.client.post<any>(`${environment.apiUrl}/run/run_code`, body, {withCredentials: true}).subscribe(
       (data) => {
-        this.codeEditorComponent.newContentList.push([[-2, data.run_id]])
+        this.codeEditorComponent.appendContent([[-2, data.run_id]])
         this.eventShareService.emitCodeRunReadyEvent(data.run_id);
       }
     );
@@ -159,14 +162,14 @@ export class CodePanelComponent {
       if ((!this.contentReloaded) || (this.current_task_id=='course completed')) {
         //ensure that code has changed
         if((this.lastSavedCode == newContentList[newContentList.length-1])) {
-          console.log("same code detected");
           return;};
         const body = {
           'attempt_id': this.currentAttemptId,
           'code_list': newContentList, 
           'state_datetime_list': this.codeEditorComponent.datetimeList,
           'dataCollection': sessionStorage.getItem('dataCollection'),
-          'current_state': this.codeEditorComponent.contentControl.slice(this.codeEditorComponent.prefix.length)};
+          'current_state': this.codeEditorComponent.lastSnapshot
+        }
         this.client.post<any>(`${environment.apiUrl}/attempt/log`, body, {withCredentials: true}).subscribe(
           () => {
             console.log("State saved");

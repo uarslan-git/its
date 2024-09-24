@@ -12,6 +12,7 @@ from tasks.schemas import Task
 from feedback.schemas import Evaluated_feedback_submission as Feedback_submission
 from system.schemas import AppSettings
 from beanie import PydanticObjectId
+from surveys.schemas import Survey
 
 
 async def get_user_db():
@@ -158,3 +159,19 @@ class database():
     async def get_all_enrolled_users(self, course_unique_name):
         courses = await CourseEnrollment.find(CourseEnrollment.course_unique_name==course_unique_name).to_list()
         return courses
+    
+    async def create_survey(self, survey: Survey):
+        await survey.insert()
+
+    async def get_survey(self, corresponding_id, id_type):
+        surveys = await Survey.find(Survey.corresponding_id==corresponding_id,
+                                    Survey.corresponding_id_type==id_type).to_list()
+        if len(surveys) > 1:
+            raise Exception("More than one survey for one survey item!")
+        if len(surveys) == 0:
+            return None
+        else:
+            return surveys[0]
+    
+    async def update_survey(self, survey: Survey):
+        await survey.save()

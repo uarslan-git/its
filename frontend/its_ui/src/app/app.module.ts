@@ -33,6 +33,8 @@ import { CourseSelectionPanelComponent } from './course-selection-panel/course-s
 import { CourseSettingsComponent } from './course-settings/course-settings.component';
 import { SettingsElementComponent } from './course-settings/settings-element/settings-element.component';
 import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
+import { FeedbackSurveyComponent } from './feedback-panel/feedback-survey/feedback-survey.component';
+import { StarRatingModule } from 'angular-star-rating';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,8 @@ import { AdminSettingsComponent } from './admin-settings/admin-settings.componen
     CourseSelectionPanelComponent,
     CourseSettingsComponent,
     SettingsElementComponent,
-    AdminSettingsComponent
+    AdminSettingsComponent,
+    FeedbackSurveyComponent
   ],
   imports: [
     BrowserModule,
@@ -62,6 +65,7 @@ import { AdminSettingsComponent } from './admin-settings/admin-settings.componen
     MatFormFieldModule,
     MatInputModule,
     MatOptionModule,
+    StarRatingModule.forRoot(),
     MarkdownModule.forRoot({
       markedOptions: {
         provide: MarkedOptions,

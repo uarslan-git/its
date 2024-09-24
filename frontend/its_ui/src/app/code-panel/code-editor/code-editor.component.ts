@@ -67,7 +67,7 @@ export class CodeEditorComponent {
 
   appendContent(newContent: any){
     this.newContentList.push(newContent);
-    this.datetimeList.push(this.datetimeService.datetimeNowLocal());
+    this.datetimeList.push(this.datetimeService.datetimeNowUTC());
   }
 
   clearContentList(){
@@ -102,31 +102,6 @@ export class CodeEditorComponent {
     return(newContent);
   }
 
-/*   private deriveDiff(oldSnapshot: string, newSnapshot: string) : any {
-    const lines_old = oldSnapshot.split("\n");
-    const lines_new = newSnapshot.split("\n");
-    const n_old = lines_old.length;
-    const n_new = lines_new.length;
-    const n = Math.max(n_old, n_new);
-    var diff: any[] = []
-    for (let i = 0; i < n; i++){
-      if (i >= n_old){
-        diff.push([i+1, lines_new[i]]);
-        continue;
-      }
-      if (i >= n_new){
-        diff.push([i+1, -1]);
-        continue;
-      }
-      if (lines_old[i] != lines_new[i]){
-        diff.push([i+1, lines_new[i]]);
-      }
-    }
-    if (diff.length > 1){
-      diff = [[-1, newSnapshot]];
-    }
-    return diff
-} */
 
     private deriveDiff(oldSnapshot: string, newSnapshot: string) : any {
       const lines_old = oldSnapshot.split("\n");
