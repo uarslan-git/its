@@ -1,6 +1,8 @@
 
 from models.pedagogical.prototype import Prototype_pedagogical_model
 from models.pedagogical.skipping_tasks_pfa import Skipping_tasks_pfa_pedagogical_model
+from models.pedagogical.llm_feedback_textual import LLM_feedback_textual_pedagogical_model
+from models.pedagogical.llm_feedback_code import LLM_feedback_code_pedagogical_model
 from users.schemas import User
 from courses.schemas import Course
 from db import database
@@ -15,6 +17,8 @@ class Model_manager():
         """
         self.prototype = Prototype_pedagogical_model()
         self.skipping_pfa = Skipping_tasks_pfa_pedagogical_model()
+        self.textual_feedback = LLM_feedback_textual_pedagogical_model()
+        self.code_feedback = LLM_feedback_code_pedagogical_model()
         self.default = Skipping_tasks_pfa_pedagogical_model()
 
     async def pedagogical_model(self, user: User):
@@ -28,7 +32,6 @@ class Model_manager():
         except AttributeError as e:
             print("Warning: Pedagogical Model {model_name} not known, using default.")
             return self.default
-    
     
     async def learner_model(self):
         raise Exception("Not implemented!")

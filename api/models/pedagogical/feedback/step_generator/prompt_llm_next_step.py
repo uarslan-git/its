@@ -25,21 +25,6 @@ class Prompt_llm_step_generator(Base_step_generator):
         next_step = await generate_language(instruction, system=system, model=language_generation_model)
         return next_step
     
-    #async def get_feedback_available(self, task_type):
-    #    settings = await database.get_settings()
-    #    if settings.ollama_url == "" or task_type in ["multiple_choice"]:
-    #        return False
-    #    else:
-    #        return True
-    
-    #def create_instruction(self, previous_step, task_ins="Consider the following programming task:", task="",
-    #                             inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements and no modules that were not imported so far. Also, there should be only the edited code and no further explanations. The reply should be a Markdown code block. The current program state is:", 
-    #                            b_inst="[INST]", e_inst="[/INST]"):
-    #    #system = """You are a tutor who wants to give hints to students learning programming by providing them with next steps in programming tasks. You want to generate a step as small as possible, so that the student can continue on their own."""
-    #    system = "You are a prediction model for human programming behaviour. You want to give hints to students learning programming by providing them with possible next steps in programming tasks."
-    #    instruction = f"""<s> {b_inst} {task_ins}\n"{task}"\n{inst}\n{previous_step} {e_inst}\n**Next Step:**\n"""
-    #    return instruction, system
-    
     def create_instruction(self, previous_step, task_ins="Consider the following programming task:", task="",
                                  inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements and no modules that were not imported so far. Also, there should be only the edited code and no further explanations. The reply should be a Markdown code block. Please consider the students coding style and approach to the problem over the example solution when predicting the next step. NEVER disclose the full example solution. The current program state is:", 
                                 example_solution="Not provided"):
