@@ -90,12 +90,20 @@ async def task_to_json(dir, task_unique_name, db=None):
     task_dict["tests"] = tests
     await database.create_task(task_dict)
 
+#async def parse_all_tasks(dir, db=None):
+#    for task_unique_name in os.listdir(dir):
+#        if not task_unique_name.endswith(".json"):
+#            #TODO: Shouldn't task.md be handled in task_to_json?
+#            task_path = os.path.join(dir, task_unique_name)+"/task.md"
+#            assert task_unique_name.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
+#            task_unique_name_postfix = task_unique_name.removeprefix("task_").split(".")[0]
+#            outfile = "task_{0}.json".format(task_unique_name_postfix)
+#            await task_to_json(dir, task_unique_name, db)
+
 async def parse_all_tasks(dir, db=None):
-    for task_unique_name in os.listdir(dir):
-        if not task_unique_name.endswith(".json"):
-            #TODO: Shouldn't task.md be handled in task_to_json?
-            task_path = os.path.join(dir, task_unique_name)+"/task.md"
-            assert task_unique_name.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
-            task_unique_name_postfix = task_unique_name.removeprefix("task_").split(".")[0]
-            outfile = "task_{0}.json".format(task_unique_name_postfix)
-            await task_to_json(dir, task_unique_name, db)
+    for location in os.listdir(dir):
+        if location.startswith("task_") and (not location.endswith(".json")):
+            assert location.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
+            await task_to_json(dir, location, db)
+        else:
+            await parse_all_tasks(os.path.join(dir, location), db=db)

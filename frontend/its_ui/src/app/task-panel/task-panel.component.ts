@@ -23,9 +23,10 @@ export class TaskPanelComponent {
   code_language: string = 'python';
 
   //@Input() course: {unique_name?: string; curriculum?: string[]} = {}
-  course: {unique_name?: string; curriculum?: string[]} = {}
+  course: {unique_name?: string; curriculum?: string[] | any, topics?: string[], default_topic?: string} = {}
   task: {unique_name?: string; task?: string; type?: string, prefix?: string, 
     arguments?: string[], possible_choices?: string, feedback_available?: string} = {};
+  current_topic: string = "";
 
   constructor(
     private client: HttpClient,
@@ -39,27 +40,43 @@ export class TaskPanelComponent {
 
   selectAndFetchTask(message: string) {
     console.log(message)
-    const curriculum = this.course.curriculum!;
+    const localCurriculum: string[] = this.getLocalCurriculum();
     const current_task_name = this.task.unique_name!;
-    const task_index: number = curriculum.findIndex((element) => element == current_task_name);
+    const task_index: number = localCurriculum.findIndex((element) => element == current_task_name);
     if (message == 'next') {
-      if (task_index == (curriculum.length-1)) {
-        alert("No further task availiable")
+      if (task_index == (localCurriculum.length-1)) {
+        if (this.course.topics != undefined){
+          alert("No further tasks available for this topic.")
+        }
+        else{
+          alert("No further task availiable")
+        }
         return;
       }
-      console.log(curriculum[task_index+1])
-      this.fetch_task(curriculum[task_index+1]);
+      this.fetch_task(localCurriculum[task_index+1]);
     }
     if (message == 'previous') {
       if (task_index == 0) {
         alert("Previous Task doesn't exist");
         return;
       }
-      this.fetch_task(curriculum[task_index-1]);
+      this.fetch_task(localCurriculum[task_index-1]);
     }
     if (message == 'personal') {
       this.fetch_task();
     }
+  }
+
+  getLocalCurriculum(){
+    const curriculum = this.course.curriculum!;
+    var localCurriculum: string[];
+    if (this.course.topics != undefined) {
+      localCurriculum = this.course.curriculum[this.current_topic];
+    }
+    else {
+      localCurriculum = curriculum;
+    }
+    return localCurriculum;
   }
 
   fetch_task(task_unique_name?: string) {
@@ -71,7 +88,7 @@ export class TaskPanelComponent {
       task_url = `${environment.apiUrl}/task/by_name/${task_unique_name}`;
     }
     this.client.get<any>(task_url, {withCredentials: true}).subscribe(
-      (data) => { 
+      (data) => {
       this.task = {
         unique_name: data.unique_name,
         task: data.task,
@@ -127,7 +144,11 @@ export class TaskPanelComponent {
   ngAfterViewInit(){
     this.courseSettingsService.getCourse().subscribe((course) =>
     {
-      this.course = course
+      this.course = course;
+      if (this.course.default_topic != undefined) {
+        this.current_topic = this.course.default_topic!;
+        sessionStorage.setItem("currentTopic", this.current_topic!);
+      }
       if (this.initTask == null) {
         this.fetch_task();
       }
@@ -135,7 +156,6 @@ export class TaskPanelComponent {
         this.fetch_task(this.initTask);
       }
     });
-
   }
 
   ngOnDestroy() {

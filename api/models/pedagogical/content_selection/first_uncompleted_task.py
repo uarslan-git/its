@@ -4,7 +4,7 @@ from users.schemas import User
 
 class First_uncompleted_task_selector(Base_task_selector):
 
-    async def select(self, user: User):
+    async def select(self, user: User, topic=None):
         """Task select method fo the ITS prototype. This is not a sophisticated Outer Loop, only very basic curriculum-aware task selection.
 
         Args:
@@ -19,10 +19,18 @@ class First_uncompleted_task_selector(Base_task_selector):
         user_completed_tasks = course_enrollment.tasks_completed
 
         # Flatten the curriculum from a list of task lists to a normal list of tasks
-        if type(curriculum[0]) == list:
+        if isinstance(curriculum, list) and isinstance(curriculum[0], list):
             curriculum = [item for sublist in curriculum for item in sublist]
-            print("curriculum: \n", curriculum)
+
+        if topic is None:
+            _curriculum = []
+            for key in curriculum.keys():
+                _curriculum.extend(curriculum[key])
+            curriculum = _curriculum
+        else:
+            curriculum = curriculum[topic]
 
         uncompleted_tasks = [curriculum_task for curriculum_task in curriculum if curriculum_task not in user_completed_tasks]
         print(uncompleted_tasks)
         return(uncompleted_tasks[0])
+        

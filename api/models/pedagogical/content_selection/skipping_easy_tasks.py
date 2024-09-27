@@ -22,8 +22,8 @@ class Skipping_task_selector(Base_task_selector):
         curriculum = course.curriculum
         user_completed_tasks = course_enrollment.tasks_completed
 
-        # Flatten the curriculum from a list of task lists to a normal list of tasks
-        if type(curriculum[0]) == list:
+        # Flatten the curriculum from a dict of task lists to a normal list of tasks
+        if isinstance(curriculum, list) and isinstance(curriculum[0], list):
             curriculum = [item for sublist in curriculum for item in sublist]
             print("curriculum: \n", curriculum)
 

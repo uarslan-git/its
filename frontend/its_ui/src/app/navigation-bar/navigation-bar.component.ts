@@ -3,6 +3,7 @@ import { EventShareService } from '../shared/services/event-share.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { RolesService } from '../shared/services/roles.service';
+import { CourseSettingsService } from '../shared/services/course-settings-service.service';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -24,6 +25,9 @@ export class NavigationBarComponent {
   title: string = 'Tutoring System for Programming';
   task_name: string = '';
   course?: any;
+  course_topics: string[] = [];
+  current_topic: string = "";
+  current_topic_index: number = 0;
 
   roles: string[] = [];
 
@@ -33,13 +37,23 @@ export class NavigationBarComponent {
   constructor(
     private eventShareService: EventShareService,
     private httpClient: HttpClient,
-    private rolesService: RolesService
+    private rolesService: RolesService,
+    private courseSettingsService: CourseSettingsService
     ){
       this.eventShareService.newTaskFetched$.subscribe(
         () => {
           this.task_name = sessionStorage.getItem("taskId")!
+          if (this.course == undefined || this.course.unique_name != sessionStorage.getItem("CourseID")) {
+            console.log("fetching course.")
+            this.courseSettingsService.getCourse().subscribe((course) =>
+              {
+                this.course = course;
+                this.updateTopics();
+                this.updateDisplayElements();
+              });
+          }
         }
-      )
+      );
       rolesService.getRoles().subscribe((roles) => {
         this.roles = roles.roles;
       });
@@ -53,9 +67,29 @@ export class NavigationBarComponent {
 
   updateDisplayElements(){
     if(this._currentPageName == "tutoringView"){
-      this.display_elements.add("taskSelection")
-      this.display_elements.add("courseSettings")
+      this.display_elements.add("taskSelection");
+      this.display_elements.add("courseSettings");
+      if (this.course_topics.length > 0){
+        this.display_elements.add("topicSelection");
+      }
     }
+    setTimeout(() => {}, 0);
+  }
+
+  updateTopics(){
+    const curriculum: any = this.course.curriculum
+    if (this.course.topics == undefined) {
+      this.course_topics = []
+    }
+    else {
+      this.course_topics = this.course.topics
+      this.current_topic = sessionStorage.getItem("currentTopic")!;
+      this.current_topic_index = this.course_topics.findIndex((topic) => topic === this.current_topic) + 1;
+    }
+  }
+
+  topicSelected(topic: string){
+    this.eventShareService
   }
 
   ngAfterViewInit() {

@@ -18,6 +18,12 @@ async def parse_course(dir):
         course_dict["course_settings"]["course_unique_name"] = course_dict["unique_name"]
     elif course_dict["course_settings"]["course_unique_name"] != course_dict["unique_name"]:
         raise Exception("Course Settings do not seem to have the same course_unique_name as course.")
+    
+    if isinstance(course_dict["curriculum"], dict):
+        if not "topics" in course_dict.keys():
+            raise Exception("Your curriculum looks like you want to structure it into topics. Please include the topics field as well.")
+        if set(course_dict["topics"]) != set(course_dict["curriculum"].keys()):
+            raise Exception("The topics do not match the curriculum.")
 
     if type(course_dict["course_settings"]) != list:
 

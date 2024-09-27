@@ -1,5 +1,5 @@
 from beanie import Document
-from typing import Optional
+from typing import Optional, Union
 
 
 class CourseSettings(Document):
@@ -12,7 +12,7 @@ class CourseSettings(Document):
     #curriculum: Optional[list] = None
 
 class Course(Document):
-    curriculum: list
+    curriculum: Union[dict, list]
     mandatory_curriculum: Optional[list] = None
     unique_name: str
     display_name: str
@@ -28,6 +28,8 @@ class Course(Document):
     # Model related
     q_matrix: Optional[dict] = None
     course_parameters: Optional[dict] = None
+    default_topic: Optional[str] = None
+    topics: Optional[list] = None
 
 class CourseInfo(Document):
     course_list: list[dict]
