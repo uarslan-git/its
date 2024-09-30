@@ -6,12 +6,12 @@
       <li *ngIf="display_elements.has('topicSelection')">
         <div class="dropdown">
           <li>
-            <button class="dropbtn">{{current_topic_index}} {{current_topic}}
+            <button class="dropbtn">{{current_topic_index}}. {{current_topic}}
               <i class="fa fa-caret-down"></i>
             </button>
           </li>
           <div class="dropdown-content">
-            <li *ngFor="let topic of course_topics; index as i"><a (click)="topicSelected(topic)">{{i+1}} {{topic}}</a></li>
+            <li *ngFor="let topic of course_topics; index as i"><a (click)="topicSelected(topic)">{{i+1}}. {{topic}}</a></li>
           </div>
         </div>
       </li>

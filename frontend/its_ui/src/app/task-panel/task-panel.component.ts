@@ -19,6 +19,7 @@ export class TaskPanelComponent {
   @Input() initTask?: string | null = null;
 
   private eventSubscription: Subscription;
+  private topicSelectionSubscription: Subscription;
   task_markdown: string = '';
   code_language: string = 'python';
 
@@ -36,6 +37,11 @@ export class TaskPanelComponent {
       this.eventSubscription = this.eventShareService.newTaskEvent$.subscribe((message) => {
         this.selectAndFetchTask(message);
       });
+      this.topicSelectionSubscription = this.eventShareService.topicSelected$.subscribe((topic) => {
+        this.current_topic = topic;
+        sessionStorage.setItem("currentTopic", topic);
+        this.selectAndFetchTask("personal");
+      })
     }
 
   selectAndFetchTask(message: string) {
@@ -63,7 +69,13 @@ export class TaskPanelComponent {
       this.fetch_task(localCurriculum[task_index-1]);
     }
     if (message == 'personal') {
-      this.fetch_task();
+      if (this.current_topic != undefined) {
+        this.fetch_task(undefined, this.current_topic);
+      }
+      else{
+        this.fetch_task();
+      }
+      
     }
   }
 
@@ -79,10 +91,13 @@ export class TaskPanelComponent {
     return localCurriculum;
   }
 
-  fetch_task(task_unique_name?: string) {
+  fetch_task(task_unique_name?: string, topic?: string) {
     var task_url: string;
     if (typeof task_unique_name == 'undefined') {
-      task_url = `${environment.apiUrl}/task/for_user`;
+      task_url = `${environment.apiUrl}/task/for_user/`;
+      if (topic != undefined){
+        task_url = task_url + `${topic}`
+      }
     }
     else {
       task_url = `${environment.apiUrl}/task/by_name/${task_unique_name}`;
@@ -160,6 +175,7 @@ export class TaskPanelComponent {
 
   ngOnDestroy() {
     this.eventSubscription.unsubscribe();
+    this.topicSelectionSubscription.unsubscribe();
   }
 
 }

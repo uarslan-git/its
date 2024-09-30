@@ -85,4 +85,11 @@ export class EventShareService {
     this.viewChangeSubject.next(view);
   }
 
+  // Topic Selected Event
+  private topicSelectedSubject = new Subject<string>();
+  topicSelected$ = this.topicSelectedSubject.asObservable();
+
+  emitTopicSelected(topic: string) {
+    this.topicSelectedSubject.next(topic);
+  }
 }

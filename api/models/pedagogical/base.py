@@ -10,8 +10,8 @@ class Base_pedagogical_model():
     task_selector: Base_task_selector
 
     #Outer Loop
-    async def select_task(self, user: User):
-        return await self.task_selector.select(user)
+    async def select_task(self, user: User, topic: str = None):
+        return await self.task_selector.select(user, topic)
     
     #Inner Loop
     async def provide_feedback(self, submission: Code_submission):

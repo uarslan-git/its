@@ -3,18 +3,23 @@ from fastapi import HTTPException
 from users.schemas import User
 from users.handle_users import current_active_verified_user
 from models import manager
+from typing import Optional
 
 import db
 
 router = APIRouter()
 
 @router.get("/task/for_user/")
-async def get_task_for_user(user: User = Depends(current_active_verified_user)):
+async def get_task_for_user(topic: Optional[str] = None, user: User = Depends(current_active_verified_user)):
     pedagogical_model = await manager.pedagogical_model(user)
-    task_unique_name = await pedagogical_model.select_task(user)
+    task_unique_name = await pedagogical_model.select_task(user, topic)
     if task_unique_name == "course completed":
         return({"unique_name": "course completed", "task": ""})
     return(await read_task(task_unique_name, user))
+
+@router.get("/task/for_user/{topic}")
+async def get_task_for_user_with_topic(topic: str, user: User = Depends(current_active_verified_user)):
+    return await get_task_for_user(topic, user)
 
 
 @router.get("/task/by_name/{unique_name}")

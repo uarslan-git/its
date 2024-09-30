@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { RolesService } from '../shared/services/roles.service';
 import { CourseSettingsService } from '../shared/services/course-settings-service.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -16,7 +17,9 @@ export class NavigationBarComponent {
   @Output() homeButtonClicked: EventEmitter<string> = new EventEmitter<string>;
   @Output() settingButtonClicked: EventEmitter<string> = new EventEmitter<string>;
 
-  @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>
+  @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>;
+
+  taskFetchedSubscription: Subscription;
 
   aboutMarkdown: string = '';
 
@@ -40,7 +43,7 @@ export class NavigationBarComponent {
     private rolesService: RolesService,
     private courseSettingsService: CourseSettingsService
     ){
-      this.eventShareService.newTaskFetched$.subscribe(
+      this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe(
         () => {
           this.task_name = sessionStorage.getItem("taskId")!
           if (this.course == undefined || this.course.unique_name != sessionStorage.getItem("CourseID")) {
@@ -89,7 +92,9 @@ export class NavigationBarComponent {
   }
 
   topicSelected(topic: string){
-    this.eventShareService
+    console.log(topic);
+    this.eventShareService.emitTopicSelected(topic);
+    this.current_topic = topic;
   }
 
   ngAfterViewInit() {
@@ -132,6 +137,10 @@ export class NavigationBarComponent {
 
   emitAdminSettingsRequested(){
     this.settingButtonClicked.emit("adminSettingsRequest")
+  }
+
+  ngOnDestroy(){
+    this.taskFetchedSubscription.unsubscribe();
   }
 
 }
