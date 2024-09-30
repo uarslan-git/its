@@ -17,7 +17,7 @@ class First_uncompleted_task_selector(Base_task_selector):
         course = await database.get_course(user_course_unique_name)
         curriculum = course.curriculum
         user_completed_tasks = course_enrollment.tasks_completed
-
+        
         # Flatten the curriculum from a list of task lists to a normal list of tasks
         if isinstance(curriculum, list) and isinstance(curriculum[0], list):
             curriculum = [item for sublist in curriculum for item in sublist]
@@ -30,6 +30,7 @@ class First_uncompleted_task_selector(Base_task_selector):
         else:
             curriculum = curriculum[topic]
 
+        #TODO: Handle a completed course case.
         uncompleted_tasks = [curriculum_task for curriculum_task in curriculum if curriculum_task not in user_completed_tasks]
         print(uncompleted_tasks)
         return(uncompleted_tasks[0])
