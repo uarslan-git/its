@@ -4,8 +4,9 @@ from fastapi import APIRouter, Depends
 import asyncio
 from os import path
 import ast
-from users.handle_users import current_active_user
+from users.handle_users import current_active_verified_user
 from db.db_connector_beanie import User
+from db import database
 from submissions.schemas import Code_submission, Tested_code_submission
 from tasks.schemas import Task
 from config import config
@@ -90,12 +91,13 @@ async def run_tests(task_json, submission):
     return test_results, valid_solution
 
 @router.post("/code_submit")
-async def handle_code_submission(submission: Code_submission, user: User = Depends(current_active_user)):
+async def handle_code_submission(submission: Code_submission, user: User = Depends(current_active_verified_user)):
     """Preprocess coda and run a series of test cases on a code submission.
 
     Args:
         submission (Code_submission): Submission object as defined in schemas.py
     """
+    course_enrollment = await database.get_course_enrollment(user, course_unique_name=submission.course_unique_name)
     user_id = user.id
     task_id = submission.task_unique_name
     task_json = await database.get_task(str(task_id))
@@ -115,6 +117,7 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
             valid_solution = False """
     # Log code submit to database
     tested_submission = Tested_code_submission(task_unique_name = submission.task_unique_name, 
+                                               course_unique_name=submission.course_unique_name,
                                                code = submission.code,
                                                possible_choices = [],
                                                correct_choices = [],
@@ -124,20 +127,22 @@ async def handle_code_submission(submission: Code_submission, user: User = Depen
                                                type="submission",
                                                submission_time=submission.submission_time, 
                                                valid_solution=valid_solution)
-    #TODO: implement student model for this.
-    if valid_solution and (not submission.task_unique_name in user.tasks_completed):
-        user.tasks_completed.append(submission.task_unique_name)
-        course = await database.get_course(unique_name=user.enrolled_courses[0])
-        if course.curriculum == user.tasks_completed:
-            if user.enrolled_courses[0] not in user.courses_completed:
-                user.courses_completed.append(user.enrolled_courses[0]) #TODO: Unsafe, secure this
-        await database.update_user(user, {"courses_completed": user.courses_completed, "tasks_completed": user.tasks_completed})
+    #TODO: implement learner model for this.
+    if valid_solution and (not submission.task_unique_name in course_enrollment.tasks_completed):
+        course_enrollment.tasks_completed.append(submission.task_unique_name)
+        course = await database.get_course(unique_name=user.current_course)
+        if course.curriculum == course_enrollment.tasks_completed:
+            if course_enrollment.course_unique_name not in course_enrollment.completed:
+                course_enrollment.completed = True
+        await database.update_course_enrollment(course_enrollment, {"completed": course_enrollment.completed, 
+                                                                    "tasks_completed": course_enrollment.tasks_completed})
     await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
 #TODO: unify mc_submit and code_submit
 @router.post("/mc_submit")
-async def handle_mc_submission(submission: Code_submission, user: User = Depends(current_active_user)):
+async def handle_mc_submission(submission: Code_submission, user: User = Depends(current_active_verified_user)):
+    course_enrollment = await database.get_course_enrollment(user, course_unique_name=submission.course_unique_name)
     user_id = user.id
     task_id = submission.task_unique_name
     task_json = await database.get_task(str(task_id))
@@ -150,25 +155,36 @@ async def handle_mc_submission(submission: Code_submission, user: User = Depends
     selected_choices = submission.selected_choices
     choice_explanations = task_json.choice_explanations
 
-    # Check which choices were made
-    answers = [element in selected_choices for element in possible_choices]
-    # Check which choices are correct
-    results = [a == b for a, b in zip(answers, correct_choices)]
-    # Check if all choices are correct
-    valid_solution = all(results)
-    
-    success_text = "Test success:" if valid_solution else "Test failure:"
-    result_msg = f"{success_text} \n"
+    course = await database.get_course(submission.course_unique_name)
 
-    for choice, correct, explanation in zip(possible_choices, results, choice_explanations):
-        correct_choice_msg = "correct" if correct else f"incorrect Reason: \n{explanation}"
-        result_msg = f"{result_msg}{choice} is {correct_choice_msg}\n\n"
+    if course.domain=="Surveys":
+        if len(selected_choices) != 1:
+            result_msg="Only 1 answer is expected. Please choose only 1 option."
+            valid_solution = False
+        else:
+            result_msg="Test success."
+            valid_solution = True
+    else: 
+        # Check which choices were made
+        answers = [element in selected_choices for element in possible_choices]
+        # Check which choices are correct
+        results = [a == b for a, b in zip(answers, correct_choices)]
+        # Check if all choices are correct
+        valid_solution = all(results)
+        
+        success_text = "Test success:" if valid_solution else "Test failure:"
+        result_msg = f"{success_text} \n"
+
+        for choice, correct, explanation in zip(possible_choices, results, choice_explanations):
+            correct_choice_msg = "correct" if correct else f"incorrect Reason: \n{explanation}"
+            result_msg = f"{result_msg}{choice} is {correct_choice_msg}\n\n"
 
     test_result = {"test_name": "test_for_mc", "status": valid_solution, "message": result_msg}
     test_results.append(test_result)
 
     # Log code submit to database
     tested_submission = Tested_code_submission(task_unique_name = submission.task_unique_name, 
+                                               course_unique_name=submission.course_unique_name,
                                                code = submission.code, 
                                                possible_choices = possible_choices,
                                                correct_choices = correct_choices,
@@ -178,14 +194,15 @@ async def handle_mc_submission(submission: Code_submission, user: User = Depends
                                                type="submission",
                                                submission_time=submission.submission_time, 
                                                valid_solution=valid_solution)
-    #TODO: implement student model for this.
-    if valid_solution and (not submission.task_unique_name in user.tasks_completed):
-        user.tasks_completed.append(submission.task_unique_name)
-        course = await database.get_course(unique_name=user.enrolled_courses[0])
-        if course.curriculum == user.tasks_completed: # TODO: Handle potential problems from curriculum options
-            if user.enrolled_courses[0] not in user.courses_completed:
-                user.courses_completed.append(user.enrolled_courses[0]) #TODO: Handle multiple enrolled courses 
-        await database.update_user(user, {"courses_completed": user.courses_completed, "tasks_completed": user.tasks_completed})
+    #TODO: implement learner model for this.
+    if valid_solution and (not submission.task_unique_name in course_enrollment.tasks_completed):
+        course_enrollment.tasks_completed.append(submission.task_unique_name)
+        course = await database.get_course(unique_name=user.current_course)
+        if course.curriculum == course_enrollment.tasks_completed:
+            if course_enrollment.course_unique_name not in course_enrollment.completed:
+                course_enrollment.completed = True
+        await database.update_course_enrollment(course_enrollment, {"completed": course_enrollment.completed, 
+                                                                    "tasks_completed": course_enrollment.tasks_completed})
     await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 

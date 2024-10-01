@@ -1,6 +1,6 @@
 
 
-<div class="login-container" *ngIf="!registering">
+<div class="login-container" *ngIf="currentForm==='login'">
   <div class="login-form">
     <h2>Login</h2>
     <input #loginUsername placeholder="Username" /><br />
@@ -8,28 +8,44 @@
     <div class="centered-button">
       <button (click)="login(loginUsername.value, loginPassword.value)">Login</button>
     </div>
-    <p>Don't have an account yet? You can <a (click)="setRegistering(true)"><u>register here!</u></a></p>
+    <p>Don't have an account yet? You can <a (click)="setForm('register')"><u>register here!</u></a></p>
+    <p> <a (click)="setForm('forgot-pw')"><u>Forgot your password?</u></a> Request a reset-token using the reset key you received on registration.</p>
     <div class="impressum"><p><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></p></div>
   </div>
   </div>
-  
-  <div class="login-container" *ngIf="registering">
+
+  <div class="login-container" *ngIf="currentForm==='forgot-pw'">
+    <div class="login-form">
+      <h2>Forgot Password</h2>
+      <input #loginUsername placeholder="Username" /><br />
+      <input #verificationEmail placeholder="Email for verification" /><br />
+      <input #resetTokenKey placeholder="Reset key" /><br />
+      <div class="centered-button">
+        <button (click)="forgotPassword(loginUsername.value, resetTokenKey.value, verificationEmail.value)">Request reset-token</button>
+      </div>
+      <p>Don't have an account yet? You can <a (click)="setForm('register')"><u>register here!</u></a></p>
+      <div class="impressum"><p><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></p></div>
+    </div>
+    </div>
+
+  <div class="login-container" *ngIf="currentForm==='reset-pw'">
+    <div class="login-form">
+      <h2>Reset Password</h2>
+      <input #loginPassword type="password" placeholder="New Password" /><br />
+      <input #resetToken type="password" placeholder="Reset Token" /><br />
+      <div class="centered-button">
+        <button (click)="resetPassword(loginPassword.value, resetToken.value)">Reset Password</button>
+      </div>
+      <p>Don't have an account yet? You can <a (click)="setForm('register')"><u>register here!</u></a></p>
+      <div class="impressum"><p><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></p></div>
+    </div>
+    </div>
+
+  <div class="login-container" *ngIf="currentForm==='register'">
     <div class="login-form">
       <h2>Register</h2>
 
-      <div class="course-selection">
-        <label for="courses">For Course:</label>
-        <select #courseSelection name="courses" id="cars">
-          <option value="none">no selection</option>
-          <option value="Exam_Preparation_DM">Data Mining: Exam Preparation</option>
-          <!-- <option value="ITS_Course">Test course ITS</option> -->
-          <!-- <option value="Intro_to_DM">Introduction to Data Mining</option> -->
-          <option value="Intro_to_ML">Introduction to Machine Learning</option>
-          <!-- <option value="Intro_to_PY">Introduction to Python</option> -->
-          <!-- <option value="Intro_to_DS">Introduction to Data Security</option> -->
-        </select>
-      </div>
-
+      <input #email placeholder="Email" /><br />
       <input #registerUsername placeholder="Username" /><br />
       <input #registerPassword type="password" placeholder="Password" /><br />
 
@@ -57,8 +73,8 @@
       <hr>
 
     <div class="centered-button">
-      <button (click)="register(registerUsername.value, registerPassword.value, consentCheckboxYes.checked, courseSelection.value)">Register</button>
+      <button (click)="register(email.value, registerUsername.value, registerPassword.value, consentCheckboxYes.checked)">Register</button>
     </div>
-      <p>Do you already have an account? If so, you can <a (click)="setRegistering(false)"><u>login here!</u></a></p>
+      <p>Do you already have an account? If so, you can <a (click)="setForm('login')"><u>login here!</u></a></p>
     </div>
   </div>

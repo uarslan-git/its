@@ -2,7 +2,7 @@ import { Component, Renderer2,  AfterViewChecked, AfterViewInit, ElementRef, OnD
 import { DatePipe } from '@angular/common';
 
 //Prism
-import { fromEvent, Subscription } from 'rxjs';
+import { fromEvent, Subscription, timeout } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { EventShareService } from '../shared/services/event-share.service';
@@ -41,13 +41,17 @@ export class CodePanelComponent {
         {
           selected_choices: this.multipleChoiceComponent.checked,
           task_unique_name: this.current_task_id, 
+          course_unique_name: sessionStorage.getItem("courseID"),
           code: this.submitted_code,
           log: "True", 
           type: "submission",
           submission_time: this.datetimeService.datetimeNow()
         },
         {withCredentials: true}).subscribe((data) => {
-          this.recordChanges(this.submitted_code, data.submission_id);
+          /* this.recordChanges(this.codeEditorComponent.newContentList, data.submission_id);
+          this.codeEditorComponent.newContentList = []; */
+          //this.codeEditorComponent.newContentList.push([[-2, data.submission_id]])
+          this.codeEditorComponent.appendContent([[-2, data.submission_id]]);
           this.eventShareService.emitTestReadyEvent(data.submission_id);
         }
       );
@@ -56,12 +60,17 @@ export class CodePanelComponent {
       this.submitted_code = this.codeEditorComponent.userContentControl;
       this.client.post<any>(`${environment.apiUrl}/code_submit`, 
             {task_unique_name: this.current_task_id, code: this.submitted_code, 
+              course_unique_name: sessionStorage.getItem("courseID"),
               log: "True", type: "submission",
               selected_choices: [],
               submission_time: this.datetimeService.datetimeNow()
             },
               {withCredentials: true}).subscribe((data) => {
-                this.recordChanges(this.submitted_code, data.submission_id);
+                /* this.recordChanges(this.codeEditorComponent.newContentList, data.submission_id);
+                this.codeEditorComponent.newContentList = []; */
+                //this.codeEditorComponent.newContentList.push([[-2, data.submission_id]])
+                //this.codeEditorComponent.appendContent([[-2, data.submission_id]]);
+                this.codeEditorComponent.appendContent([[-2, data.submission_id]]);
                 this.eventShareService.emitTestReadyEvent(data.submission_id);
       });
     }
@@ -70,13 +79,16 @@ export class CodePanelComponent {
   //Run Button
   handleRunEvent(parameters: any) {
     var runCode = this.codeEditorComponent.userContentControl;
-    const body = {task_unique_name: this.current_task_id, code: runCode,
+    const body = {task_unique_name: this.current_task_id,
+                course_unique_name: sessionStorage.getItem("courseID"),
+                code: runCode,
                 log: "True", 
                 selected_choices: [],
                 submission_time: this.datetimeService.datetimeNow(),
                 run_arguments: parameters, type: "run"};
     this.client.post<any>(`${environment.apiUrl}/run/run_code`, body, {withCredentials: true}).subscribe(
       (data) => {
+        this.codeEditorComponent.appendContent([[-2, data.run_id]])
         this.eventShareService.emitCodeRunReadyEvent(data.run_id);
       }
     );
@@ -96,11 +108,22 @@ export class CodePanelComponent {
 
   ngAfterViewInit(){
     this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe((data) => {
-      this.current_task_id = sessionStorage.getItem("taskId")!;
-      this.getCurrentAttemptState();
       this.isMultipleChoice = sessionStorage.getItem("taskType")! == "multiple_choice";
-      this.feedbackAvailable = sessionStorage.getItem("feedbackAvailable") == "true" 
-    });
+      setTimeout(() => {
+        this.current_task_id = sessionStorage.getItem("taskId")!;
+        this.feedbackAvailable = sessionStorage.getItem("feedbackAvailable") == "true";
+        if (sessionStorage.getItem("taskType")! != "multiple_choice"){
+          if(this.codeEditorComponent.contentControl != this.lastSavedCode) {
+          this.recordChanges(this.codeEditorComponent.newContentList);
+          this.codeEditorComponent.newContentList = [];
+          }
+        }
+        if (!this.isMultipleChoice){
+          this.codeEditorComponent.prefix = sessionStorage.getItem("taskPrefix")!;
+        }
+        this.getCurrentAttemptState();
+      }, 0); // 0 timeout to let DOM load first.
+      })
   }
 
     // Tracking Users Coding process, also functionality to save and restore attempts.
@@ -117,7 +140,9 @@ export class CodePanelComponent {
             this.multipleChoiceComponent.choices = choices;
           }
           else {
-            this.codeEditorComponent.form.setValue({'content': sessionStorage.getItem('taskPrefix') + data.code});
+            //this.codeEditorComponent.form.setValue({'content': sessionStorage.getItem('taskPrefix') + data.code});
+            this.codeEditorComponent.setEditorContent(sessionStorage.getItem('taskPrefix') + data.code);
+            this.codeEditorComponent.lastSnapshot = data.code;
           }
           this.contentReloaded = true;
           this.lastSavedCode = data.code;
@@ -125,21 +150,26 @@ export class CodePanelComponent {
       )
     }
 
-    recordChanges(newContent: string, submissionId: string='') {
+    recordChanges(newContentList: string[]) {
       /* newContent = this.codeEditorComponent.userContentControl; */
       const prefix = sessionStorage.getItem("taskPrefix")!;
-      if (newContent.startsWith(prefix)) {
-        newContent = newContent.slice(prefix.length);
-      } 
+      //if (newContentList.startsWith(prefix)) {
+      //  newContent = newContent.slice(prefix.length);
+      //} 
+/*       if (newContentList.length == 0){
+        return;
+      } */
       if ((!this.contentReloaded) || (this.current_task_id=='course completed')) {
         //ensure that code has changed
-        if((this.lastSavedCode == newContent) && (submissionId == '')) {return};
+        if((this.lastSavedCode == newContentList[newContentList.length-1])) {
+          return;};
         const body = {
           'attempt_id': this.currentAttemptId,
-          'code': newContent, 
-          'state_datetime': this.datetimeService.datetimeNow(),
-          'submission_id': submissionId,
-          'dataCollection': sessionStorage.getItem('dataCollection')};
+          'code_list': newContentList, 
+          'state_datetime_list': this.codeEditorComponent.datetimeList,
+          'dataCollection': sessionStorage.getItem('dataCollection'),
+          'current_state': this.codeEditorComponent.lastSnapshot
+        }
         this.client.post<any>(`${environment.apiUrl}/attempt/log`, body, {withCredentials: true}).subscribe(
           () => {
             console.log("State saved");
@@ -147,7 +177,7 @@ export class CodePanelComponent {
         )
       }
         this.contentReloaded = false;
-        this.lastSavedCode = newContent;
+        this.lastSavedCode = newContentList[newContentList.length-1];
     }
 
     handleFeedbackEvent() {
@@ -156,9 +186,10 @@ export class CodePanelComponent {
         this.submitted_code = this.codeEditorComponent.userContentControl;
         this.client.post<any>(`${environment.apiUrl}/feedback`, 
           {
-            // TODO: check the payload!
+            // TODO: Do we need to include selected choices since MC is excluded?
             selected_choices: [],
             task_unique_name: this.current_task_id, 
+            course_unique_name: sessionStorage.getItem("courseID"),
             code: this.submitted_code,
             log: "True", 
             type: "feedback_request",
@@ -172,10 +203,9 @@ export class CodePanelComponent {
     }
 
     ngOnDestroy(){
-    if(this.codeEditorComponent.contentControl != this.lastSavedCode) {
-      this.recordChanges(this.codeEditorComponent.contentControl);
+    if(this.codeEditorComponent != undefined && this.codeEditorComponent.contentControl != this.lastSavedCode) {
+      this.recordChanges(this.codeEditorComponent.newContentList);
     }
     this.taskFetchedSubscription?.unsubscribe();
    }
-
 }

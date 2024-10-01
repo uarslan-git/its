@@ -11,9 +11,14 @@ x-logging:
 services:
   
   angular-app:
+    environment:
+      #TODO: Should this be set in the .env or not?
+      ITS_ENV: ${ITS_ENV}
     build: 
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        BUILD_ENV: ${ITS_ENV}
     ports:
       - "8080:80"
       - "4200:4200"
@@ -28,6 +33,7 @@ services:
     build: ./api
     command: python main.py
     environment:
+      ITS_ENV: ${ITS_ENV}
       DB_SERVICE_PW: ${DB_SERVICE_PW?}
       JWT_SECRET: ${JWT_SECRET}
       USER_VERIFICATION_SECRET: ${USER_VERIFICATION_SECRET}
@@ -40,7 +46,8 @@ services:
       - its_network
 
   mongodb:
-    image: mongo:4.4.6
+    #image: mongo:4.4.6
+    image: mongo:5.0
     environment:
       #Credentials for The root user of the db
       #Store credenials in a file called .env
@@ -50,6 +57,7 @@ services:
       DB_SERVICE_PW: ${DB_SERVICE_PW?}
     volumes:
       - mongodb_data:/data/db
+      #TODO: If possible, get rid of the mongo-init dependency?
       - ./database_scripts/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
     command:
       - mongod

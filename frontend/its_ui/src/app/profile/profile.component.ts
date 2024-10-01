@@ -25,16 +25,11 @@ export class ProfileComponent {
   email: string = '';
   name: string = '';
   registeredDatetime: string = '';
-  user: {email?: string, register_datetime?: any, settings?: any, enrolled_courses?: string[], roles?: string[]} = {};
-  enrolledCourse: string = '';
-  displayApiSettings: boolean = false;
+  user: {register_datetime?: any, settings?: any, enrolled_courses?: string[], roles?: string[], username?: string, current_course?: string} = {};
+  enrolledCourses: string = "";
 
   constructor(private http: HttpClient,
-    private eventShareService: EventShareService) {
-/*       this.eventShareService.profileButtonClick$.subscribe((data) => {
-        this.show_profile();
-      }); */
-    }
+    private eventShareService: EventShareService) {}
 
     ngAfterViewInit() {
       this.show_profile()
@@ -44,24 +39,20 @@ export class ProfileComponent {
       this.http.get<any>(`${this.apiUrl}/users/me`, {"withCredentials": true}).subscribe(
         (data)  => {
         this.user = {
-          email: data.email,
           register_datetime: data.register_datetime,
           settings: data.settings,
           enrolled_courses: data.enrolled_courses,
-          roles: data.roles
+          roles: data.roles,
+          username: data.username,
+          current_course: data.current_course
         };
-        this.email = this.user.email!;
-        this.name = this.user.email!.split("@")[0];
         this.registeredDatetime = this.user.register_datetime["local"];
-        this.enrolledCourse = this.user.enrolled_courses![0];
+        this.enrolledCourses = this.user.enrolled_courses!.join("\n");
         if(this.user.settings.dataCollection) {
           this.consentCheckbox.nativeElement.checked = true;
         }
         else {
           this.consentCheckbox.nativeElement.checked = false;
-        }
-        if(data.roles.includes("admin")){
-          this.displayApiSettings = true;
         }
       });
     }
@@ -85,11 +76,4 @@ export class ProfileComponent {
       }
     }
 
-    saveApiUrl(url: string) {
-      this.http.post(`${this.apiUrl}/feedback/set_llm_url`,{"url": url}, {withCredentials: true}).subscribe(
-        (data) => {
-
-        }
-      );
-    }
 }

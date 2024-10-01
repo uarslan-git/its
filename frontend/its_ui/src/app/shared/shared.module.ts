@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { MarkdownModule } from 'ngx-markdown';
 import { MarkdownPanelComponent } from './components/markdown-panel/markdown-panel.component';
 import { DataTermsPopupComponent } from './components/data-terms-popup/data-terms-popup.component';
+import { MonacoCodeEditorComponent } from './components/monaco-code-editor/monaco-code-editor.component';
 
 
 @NgModule({
-  declarations: [MarkdownPanelComponent, DataTermsPopupComponent],
+  declarations: [MarkdownPanelComponent, DataTermsPopupComponent, MonacoCodeEditorComponent],
   imports: [
     CommonModule,
     MarkdownModule.forChild(),
     // ReactiveFormsModule
   ],
-  exports: [MarkdownPanelComponent, DataTermsPopupComponent]
+  exports: [MarkdownPanelComponent, DataTermsPopupComponent, MonacoCodeEditorComponent]
 })
 export class SharedModule {}

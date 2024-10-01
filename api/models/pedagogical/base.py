@@ -1,17 +1,18 @@
-from models.pedagogical.feedback.base import Base_feedback_generator, Base_step_generator
+from models.pedagogical.feedback.base import Base_step_feedback_module
 from models.pedagogical.content_selection.base import Base_task_selector
+from users.schemas import User
+from submissions.schemas import Code_submission
 
 
 class Base_pedagogical_model():
 
-    step_generator: Base_step_generator
-    feedback_generator: Base_feedback_generator
+    feedback_module: Base_step_feedback_module
     task_selector: Base_task_selector
 
     #Outer Loop
-    def select_task():
-        raise Exception("Not implemented")
+    async def select_task(self, user: User, topic: str = None):
+        return await self.task_selector.select(user, topic)
     
     #Inner Loop
-    def give_feedback():
-        raise Exception("Not implemented")
+    async def provide_feedback(self, submission: Code_submission):
+        return await self.feedback_module.provide_feedback(submission)

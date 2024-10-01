@@ -4,3 +4,4 @@ tasks/task_folder/
 *.pyc
 *.pyo
 *.pytest_cache
+*.zip

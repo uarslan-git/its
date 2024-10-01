@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CodeEditorComponent } from './code-editor.component';
+import { CodeEditorNewComponent } from './code-editor-new.component';
 
-describe('CodeEditorComponent', () => {
-  let component: CodeEditorComponent;
-  let fixture: ComponentFixture<CodeEditorComponent>;
+describe('CodeEditorNewComponent', () => {
+  let component: CodeEditorNewComponent;
+  let fixture: ComponentFixture<CodeEditorNewComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [CodeEditorComponent]
+      declarations: [CodeEditorNewComponent]
     });
-    fixture = TestBed.createComponent(CodeEditorComponent);
+    fixture = TestBed.createComponent(CodeEditorNewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

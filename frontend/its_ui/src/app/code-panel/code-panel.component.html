@@ -4,6 +4,7 @@
     <app-code-editor *ngIf="!isMultipleChoice" (codeChangeEvent)="recordChanges($event)"></app-code-editor>
     <app-multiple-choice *ngIf="isMultipleChoice"></app-multiple-choice>
   </div>
+
   
   <div class="actionPanel">
     <app-action-panel 

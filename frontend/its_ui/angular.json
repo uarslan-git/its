@@ -22,7 +22,12 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/monaco-editor",
+                "output": "assets/monaco-editor"
+              }
             ],
             "styles": [
               "src/styles.css",
@@ -31,7 +36,8 @@
             "scripts": [
               "node_modules/marked/marked.min.js",
               "node_modules/katex/dist/katex.min.js",
-              "node_modules/katex/dist/contrib/auto-render.min.js"
+              "node_modules/katex/dist/contrib/auto-render.min.js",
+              "node_modules/monaco-editor/min/vs/loader.js"
             ]
           },
           "configurations": {
@@ -64,6 +70,20 @@
                 }
               ]
             },
+            "development-docker": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.staging.ts"
+                }
+              ]
+            },
             "staging": {
               "buildOptimizer": false,
               "optimization": false,
@@ -92,6 +112,9 @@
             },
             "development": {
               "browserTarget": "its_ui:build:development"
+            },
+            "development-docker": {
+              "browserTarget": "its_ui:build:staging"
             }
           },
           "defaultConfiguration": "development"
@@ -99,7 +122,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "its_ui:build"
+            "browserTarget": "its_ui:build" 
           }
         },
         "test": {
@@ -112,7 +135,12 @@
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/monaco-editor",
+                "output": "assets/monaco-editor"
+              }
             ],
             "styles": [
               "src/styles.css"

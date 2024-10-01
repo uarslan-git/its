@@ -5,7 +5,6 @@ import { FormBuilder } from '@angular/forms'
 import { fromEvent, Subscription } from 'rxjs';
 import { PrismHighlightService } from 'src/app/shared/services/prism-highlight.service'
 
-import { DataShareService } from 'src/app/shared/services/data-share.service';
 import { EventShareService } from 'src/app/shared/services/event-share.service';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
 
@@ -28,6 +27,7 @@ export class MultipleChoiceComponent {
   ) {
     this.newTaskSubscription = this.eventShareService.newTaskFetched$.subscribe(() => {
       this.choices = [];
+      //TODO: trigger an attempt-log to register start time!
     });
   }
 

@@ -1,9 +1,9 @@
-import { Component, ElementRef, ViewChild, Input } from '@angular/core';
+import { Component, ElementRef, ViewChild, Input, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { EventShareService } from '../shared/services/event-share.service';
-import { DataShareService } from '../shared/services/data-share.service';
 import { Subscription, delay } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { CourseSettingsService } from '../shared/services/course-settings-service.service';
 
 import { MarkdownPanelComponent } from '../shared/components/markdown-panel/markdown-panel.component';
 
@@ -19,58 +19,91 @@ export class TaskPanelComponent {
   @Input() initTask?: string | null = null;
 
   private eventSubscription: Subscription;
+  private topicSelectionSubscription: Subscription;
   task_markdown: string = '';
   code_language: string = 'python';
 
-  course: {unique_name?: string; curriculum?: string[]} = {}
-  task: { unique_name?: string; task?: string; type?: string, prefix?: string, 
+  //@Input() course: {unique_name?: string; curriculum?: string[]} = {}
+  course: {unique_name?: string; curriculum?: string[] | any, topics?: string[], default_topic?: string} = {}
+  task: {unique_name?: string; task?: string; type?: string, prefix?: string, 
     arguments?: string[], possible_choices?: string, feedback_available?: string} = {};
+  current_topic: string = "";
 
   constructor(
     private client: HttpClient,
     private eventShareService: EventShareService,
-    private dataShareService: DataShareService,
+    private courseSettingsService: CourseSettingsService
     ){
       this.eventSubscription = this.eventShareService.newTaskEvent$.subscribe((message) => {
         this.selectAndFetchTask(message);
       });
+      this.topicSelectionSubscription = this.eventShareService.topicSelected$.subscribe((topic) => {
+        this.current_topic = topic;
+        sessionStorage.setItem("currentTopic", topic);
+        this.selectAndFetchTask("personal");
+      })
     }
 
   selectAndFetchTask(message: string) {
     console.log(message)
-    const curriculum = this.course.curriculum!;
+    const localCurriculum: string[] = this.getLocalCurriculum();
     const current_task_name = this.task.unique_name!;
-    const task_index: number = curriculum.findIndex((element) => element == current_task_name);
+    const task_index: number = localCurriculum.findIndex((element) => element == current_task_name);
     if (message == 'next') {
-      if (task_index == (curriculum.length-1)) {
-        alert("No further task availiable")
+      if (task_index == (localCurriculum.length-1)) {
+        if (this.course.topics != undefined){
+          alert("No further tasks available for this topic.")
+        }
+        else{
+          alert("No further task availiable")
+        }
         return;
       }
-      console.log(curriculum[task_index+1])
-      this.fetch_task(curriculum[task_index+1]);
+      this.fetch_task(localCurriculum[task_index+1]);
     }
     if (message == 'previous') {
       if (task_index == 0) {
         alert("Previous Task doesn't exist");
         return;
       }
-      this.fetch_task(curriculum[task_index-1]);
+      this.fetch_task(localCurriculum[task_index-1]);
     }
     if (message == 'personal') {
-      this.fetch_task();
+      if (this.current_topic != undefined) {
+        this.fetch_task(undefined, this.current_topic);
+      }
+      else{
+        this.fetch_task();
+      }
+      
     }
   }
 
-  fetch_task(task_unique_name?: string) {
+  getLocalCurriculum(){
+    const curriculum = this.course.curriculum!;
+    var localCurriculum: string[];
+    if (this.course.topics != undefined) {
+      localCurriculum = this.course.curriculum[this.current_topic];
+    }
+    else {
+      localCurriculum = curriculum;
+    }
+    return localCurriculum;
+  }
+
+  fetch_task(task_unique_name?: string, topic?: string) {
     var task_url: string;
     if (typeof task_unique_name == 'undefined') {
-      task_url = `${environment.apiUrl}/task/for_user`;
+      task_url = `${environment.apiUrl}/task/for_user/`;
+      if (topic != undefined){
+        task_url = task_url + `${topic}`
+      }
     }
     else {
       task_url = `${environment.apiUrl}/task/by_name/${task_unique_name}`;
     }
     this.client.get<any>(task_url, {withCredentials: true}).subscribe(
-      (data) => { 
+      (data) => {
       this.task = {
         unique_name: data.unique_name,
         task: data.task,
@@ -95,34 +128,54 @@ export class TaskPanelComponent {
     sessionStorage.setItem("taskPrefix", this.task['prefix']!);
     sessionStorage.setItem("taskChoices", JSON.stringify(this.task['possible_choices']!));
     sessionStorage.setItem("feedbackAvailable", this.task["feedback_available"]!);
-    this.eventShareService.emitNewTaskFetchedEvent();
     this.markdownPanelComponent.resetScroll();
+    this.eventShareService.emitNewTaskFetchedEvent();
 
   });
  }
 
-  ngOnInit(): void {
+/*   ngOnInit(): void {
     // Fetch the first task with timeout in order to load the whole app.
-    setTimeout(()=>{                           
-      if (this.initTask == null) {
-        this.fetch_task();
-      }
-      else {
-        this.fetch_task(this.initTask);
-      }
-      this.client.get<any>(`${environment.apiUrl}/course/get`, {withCredentials: true}).subscribe(
+    setTimeout(()=>{  
+      const courseID = sessionStorage.getItem("courseID")
+      this.client.get<any>(`${environment.apiUrl}/course/get/${courseID}`, {withCredentials: true}).subscribe(
         (data) => {
           this.course = {
             unique_name: data.unique_name,
             curriculum: data.curriculum,
           }
         }
-      );
+      ); 
+      console.log(this.initTask);                        
+      if (this.initTask == null) {
+        this.fetch_task();
+      }
+      else {
+        this.fetch_task(this.initTask);
+      }
   }, 300);
+  } */
+
+  ngAfterViewInit(){
+    this.courseSettingsService.getCourse().subscribe((course) =>
+    {
+      this.course = course;
+      if (this.course.default_topic != undefined) {
+        this.current_topic = this.course.default_topic!;
+        sessionStorage.setItem("currentTopic", this.current_topic!);
+      }
+      if (this.initTask == null) {
+        this.fetch_task();
+      }
+      else {
+        this.fetch_task(this.initTask);
+      }
+    });
   }
 
   ngOnDestroy() {
     this.eventSubscription.unsubscribe();
+    this.topicSelectionSubscription.unsubscribe();
   }
 
 }

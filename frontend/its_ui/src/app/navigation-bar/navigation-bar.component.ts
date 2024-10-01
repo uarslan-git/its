@@ -1,7 +1,10 @@
-import { Component, AfterViewInit, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild, Input } from '@angular/core';
 import { EventShareService } from '../shared/services/event-share.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { RolesService } from '../shared/services/roles.service';
+import { CourseSettingsService } from '../shared/services/course-settings-service.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -11,26 +14,88 @@ import { environment } from 'src/environments/environment';
 export class NavigationBarComponent {
 
   @Output() profileButtonClicked: EventEmitter<string> = new EventEmitter<string>;
+  @Output() homeButtonClicked: EventEmitter<string> = new EventEmitter<string>;
+  @Output() settingButtonClicked: EventEmitter<string> = new EventEmitter<string>;
 
-  @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>
+  @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>;
 
-  aboutMarkdown: string = ''
+  taskFetchedSubscription: Subscription;
+
+  aboutMarkdown: string = '';
 
   apiUrl: string = environment.apiUrl;
   user_name: string = "INVALID_EMAIL";
-  title: string = 'Tutoring System for Programming'
-  task_name: string = ''
+  title: string = 'Tutoring System for Programming';
+  task_name: string = '';
+  course?: any;
+  course_topics: string[] = [];
+  current_topic: string = "";
+  current_topic_index: number = 0;
+
+  roles: string[] = [];
+
+  display_elements: Set<string> = new Set(); 
+  _currentPageName?: string
 
   constructor(
     private eventShareService: EventShareService,
     private httpClient: HttpClient,
+    private rolesService: RolesService,
+    private courseSettingsService: CourseSettingsService
     ){
-      this.eventShareService.newTaskFetched$.subscribe(
+      this.taskFetchedSubscription = this.eventShareService.newTaskFetched$.subscribe(
         () => {
           this.task_name = sessionStorage.getItem("taskId")!
+          if (this.course == undefined || this.course.unique_name != sessionStorage.getItem("CourseID")) {
+            console.log("fetching course.")
+            this.courseSettingsService.getCourse().subscribe((course) =>
+              {
+                this.course = course;
+                this.updateTopics();
+                this.updateDisplayElements();
+              });
+          }
         }
-      )
+      );
+      rolesService.getRoles().subscribe((roles) => {
+        this.roles = roles.roles;
+      });
+      //this.roles = sessionStorage.getItem("roles")!.split(",")
     }
+
+  @Input() set currentPageName(pageName: string){
+    this._currentPageName = pageName
+    this.updateDisplayElements()
+  }
+
+  updateDisplayElements(){
+    if(this._currentPageName == "tutoringView"){
+      this.display_elements.add("taskSelection");
+      this.display_elements.add("courseSettings");
+      if (this.course_topics.length > 0){
+        this.display_elements.add("topicSelection");
+      }
+    }
+    setTimeout(() => {}, 0);
+  }
+
+  updateTopics(){
+    const curriculum: any = this.course.curriculum
+    if (this.course.topics == undefined) {
+      this.course_topics = []
+    }
+    else {
+      this.course_topics = this.course.topics
+      this.current_topic = sessionStorage.getItem("currentTopic")!;
+      this.current_topic_index = this.course_topics.findIndex((topic) => topic === this.current_topic) + 1;
+    }
+  }
+
+  topicSelected(topic: string){
+    console.log(topic);
+    this.eventShareService.emitTopicSelected(topic);
+    this.current_topic = topic;
+  }
 
   ngAfterViewInit() {
     this.show_profile()
@@ -43,6 +108,7 @@ export class NavigationBarComponent {
     });
   }
 
+
   newTaskButtonClicked(direction: string){
     this.eventShareService.emitNewTaskEvent(direction);
   }
@@ -52,6 +118,11 @@ export class NavigationBarComponent {
     this.profileButtonClicked.emit("profileRequest")
   }
 
+  emitHomeButtonClicked() {
+    //this.eventShareService.emitProfileButtonClick();
+    this.homeButtonClicked.emit("homeRequest")
+  }
+
   openAboutPopup() {
     this.httpClient.get<any>(`${environment.apiUrl}/info/about`)
         .subscribe(data => {
@@ -59,4 +130,17 @@ export class NavigationBarComponent {
         });
     this.aboutPopup.nativeElement.showModal();
   }
+
+  emitCourseSettingsRequested() {
+    this.settingButtonClicked.emit("courseSettingsRequest")
+  }
+
+  emitAdminSettingsRequested(){
+    this.settingButtonClicked.emit("adminSettingsRequest")
+  }
+
+  ngOnDestroy(){
+    this.taskFetchedSubscription.unsubscribe();
+  }
+
 }

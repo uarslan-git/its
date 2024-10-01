@@ -26,6 +26,8 @@ export class FeedbackPanelComponent {
   feedback:  { test_results?: Array<any>; task_id?: string; submission_id?: string; 
     valid_solution?: boolean, output?: boolean, feedback?: string} = {};
   submissionId: string = '';
+  displayFeedbackSurvey = false;
+  currentFeedbackID: string = "";
   
 
   constructor(
@@ -34,28 +36,34 @@ export class FeedbackPanelComponent {
     //Subscriptions for code submit
     this.submitSubscription = this.eventShareService.submitButtonClick$.subscribe((data) => {
       this.feedback_markdown = 'Code submitted, waiting for feedback...';
+      this.displayFeedbackSurvey = false;
     });
     this.testReadySubscription = this.eventShareService.testReady$.subscribe((data) => {
+      this.displayFeedbackSurvey = false;
       const submissionId = data
       this.fetchSubmissionFeedback(submissionId);
     });
     // New Task subscription
     this.newTaskSubscription = this.eventShareService.newTaskEvent$.subscribe(() => {
+      this.displayFeedbackSurvey = false;
       this.feedback_markdown = '';
     });
     // Subscriptions for code run
     this.codeRunSubscription = this.eventShareService.runButtonClick$.subscribe(
       () => {
+        this.displayFeedbackSurvey = false;
         this.feedback_markdown = 'Code Experiment started, waiting for results...'
       }
     );
     this.codeRunReadySubscription = this.eventShareService.codeRunReady$.subscribe(
       (run_id) => {
+        this.displayFeedbackSurvey = false;
         this.fetchRunExperiment(run_id);
     })
     // Subscriptions for feedback requests
     this.feedbackRequestSubscription = this.eventShareService.feedbackButtonClick$.subscribe(
       () => {
+        this.displayFeedbackSurvey = false;
         console.log("Request arrived")
         this.feedback_markdown = 'Feedback requested, waiting for results...'
       }
@@ -63,7 +71,28 @@ export class FeedbackPanelComponent {
     this.feedbackReadySubscription = this.eventShareService.feedbackReady$.subscribe(
       (feedback_id) => {
         this.fetchRequestedFeedback(feedback_id);
+        this.currentFeedbackID = feedback_id;
+        this.displayFeedbackSurvey = true;
+        setTimeout(() => {}, 0);
     })
+  }
+
+  sendSurveyResults(surveyValue: any){
+    const url = `${environment.apiUrl}/surveys/submit`;
+    const data = {
+      corresponding_id: this.currentFeedbackID,
+      corresponding_id_type: "feedback_id",
+      survey_results: surveyValue,
+    }
+    this.client.post(url, data, {withCredentials: true}).subscribe(
+      (data) => {
+        console.log("Survey results send")
+      }
+    );
+  }
+
+  hideSurveyForm(){
+    this.displayFeedbackSurvey = false;
   }
 
   fetchSubmissionFeedback(submission_id: string) {
@@ -95,25 +124,25 @@ export class FeedbackPanelComponent {
   }
 
   fetchRunExperiment(runId: string) {
-    const endpoint_url = `${environment.apiUrl}/submission/feedback/${runId}`;
-    this.client.get<any>(endpoint_url, ).subscribe((data) => { 
-      this.feedback = {
-        output: data.run_output,
-        task_id: data.task_unique_name,
-    };
-    this.feedback_markdown = data.run_output;
-  });
+      const endpoint_url = `${environment.apiUrl}/submission/feedback/${runId}`;
+      this.client.get<any>(endpoint_url, ).subscribe((data) => { 
+        this.feedback = {
+          output: data.run_output,
+          task_id: data.task_unique_name,
+      };
+      this.feedback_markdown = data.run_output;
+    });
   }
 
   fetchRequestedFeedback(feedbackID: string) {
-    const endpoint_url = `${environment.apiUrl}/submission/feedback/${feedbackID}`;
-    this.client.get<any>(endpoint_url, ).subscribe((data) => { 
-      this.feedback = {
-        feedback: data.feedback,
-        task_id: data.task_unique_name,
-    };
-    this.feedback_markdown = data.feedback;
-  });
+      const endpoint_url = `${environment.apiUrl}/submission/feedback/${feedbackID}`;
+      this.client.get<any>(endpoint_url, ).subscribe((data) => { 
+        this.feedback = {
+          feedback: data.feedback,
+          task_id: data.task_unique_name,
+      };
+      this.feedback_markdown = data.feedback;
+    });
   }
 
   openValidSolutionDialog()

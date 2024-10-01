@@ -10,4 +10,12 @@
          </button>
     </div>
 </dialog>
-<app-markdown-panel [markdownString]="feedback_markdown"></app-markdown-panel>
+<div class="feedback-container">
+    <div class="feedback-panel">
+        <app-markdown-panel [markdownString]="feedback_markdown"></app-markdown-panel>
+    </div>
+    <div class="feedback-survey" *ngIf="displayFeedbackSurvey" feedbackID="currentFeedbackID">
+        <app-feedback-survey (surveyFilled)="sendSurveyResults($event)"
+                                (hideForm)="hideSurveyForm()"></app-feedback-survey>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 import { Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { PrismHighlightService } from '../../services/prism-highlight.service';
 
 @Component({
   selector: 'app-markdown-panel',
@@ -10,6 +11,9 @@ export class MarkdownPanelComponent {
   @ViewChild("markdownContainer", {static: true}) markdownContainer!: ElementRef;
 
 
+  constructor(private prismService: PrismHighlightService){
+    prismService.highlightAll();
+  }
 
   resetScroll(){
     this.markdownContainer.nativeElement.scrollTop = 0;
