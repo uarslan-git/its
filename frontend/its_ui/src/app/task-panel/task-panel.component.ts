@@ -55,7 +55,7 @@ export class TaskPanelComponent {
           alert("No further tasks available for this topic.")
         }
         else{
-          alert("No further task availiable")
+          alert("No further task availiable.")
         }
         return;
       }

@@ -192,5 +192,4 @@ if __name__ == "__main__":
     db_connection_beanie = db_connector_beanie.database(database_host=database_host, 
                                                         database_user=config.database_usr, database_pwd=config.database_pwd)
 
-
     uvicorn.run(app, host="0.0.0.0", port=8000, )

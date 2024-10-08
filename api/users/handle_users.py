@@ -36,7 +36,7 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
         reset_token_key = request._json["resetKey"]
         verification_hash = hashlib.sha256((verification_email + str(reset_token_key)).encode("utf-8")).hexdigest()
         if user.verification_email == verification_hash:
-            send_mail(f"""
+            await send_mail(f"""
 Dear User,
 someone has requested to change the password of your account.
 Please use the following reset-token to generate a new password.
@@ -51,7 +51,7 @@ The Curious Camel Team
         self, user: User, token: str, request: Optional[Request] = None
     ):
         message = f"Hello new User,\nplease veriy your account using the following verification token:\n{token}"     
-        send_mail(message, user.verification_email)
+        await send_mail(message, user.verification_email)
         print(f"Verification requested for user {user.id}. Verification token: {token}")
 
     async def on_after_login(self, user: User, request: Request | None = None, response: Response | None = None) -> None:
@@ -72,7 +72,7 @@ Since it is possible to reset your password with the reset token, please keep th
 Best wishes
 The Curious Camel Team
 """
-        send_mail(message, user.verification_email)
+        await send_mail(message, user.verification_email)
 
         global_accounts_list = await database.get_global_accounts_list()
         hashed_email = hashlib.sha256((user.verification_email).encode("utf-8")).hexdigest()
@@ -97,7 +97,7 @@ The Curious Camel Team
         class EmailDomainNotAllowedException(exceptions.FastAPIUsersException):
             pass
         if not allowed_mail_adress:
-            send_mail("Dear User,\nan account using this email-adress already exists. Please try to recover it or contact your admin.\n",
+            await send_mail("Dear User,\nan account using this email-adress already exists. Please try to recover it or contact your admin.\n",
                       user_create.verification_email)
             raise EmailDomainNotAllowedException
         return await BaseUserManager.create(self, user_create, safe, request)
