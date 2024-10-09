@@ -22,13 +22,15 @@ class First_uncompleted_task_selector(Base_task_selector):
         if isinstance(curriculum, list) and isinstance(curriculum[0], list):
             curriculum = [item for sublist in curriculum for item in sublist]
 
-        if topic is None:
+        if topic is None and isinstance(curriculum, dict):
             _curriculum = []
             for key in curriculum.keys():
                 _curriculum.extend(curriculum[key])
             curriculum = _curriculum
-        else:
+        elif not topic is None and isinstance(curriculum, dict):
             curriculum = curriculum[topic]
+        else:
+            pass
 
         uncompleted_tasks = [curriculum_task for curriculum_task in curriculum if curriculum_task not in user_completed_tasks]
 
