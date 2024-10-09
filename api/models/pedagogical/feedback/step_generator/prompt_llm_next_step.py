@@ -18,18 +18,31 @@ class Prompt_llm_step_generator(Base_step_generator):
         task_json = await database.get_task(submission.task_unique_name)
         previous_step = task_json.prefix+submission.code
         example_solution = task_json.prefix+task_json.example_solution
+        test_messages = "\n".join([test["message"] for test in submission.test_results])
         task = task_json.task
-        instruction, system = self.create_instruction(previous_step, task=task, example_solution=example_solution) #TODO: get short version of tasks or differentiate between local and server.
+        instruction, system = self.create_instruction(previous_step, task=task) #TODO: Get short version of tasks or differentiate between local and server.
         course_settings = await database.get_course_settings_for_user(submission.user_id, submission.course_unique_name)
         language_generation_model = course_settings["language_generation_model"]
         next_step = await generate_language(instruction, system=system, model=language_generation_model)
         return next_step
     
-    def create_instruction(self, previous_step, task_ins="Consider the following programming task:", task="",
-                                 inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements and no modules that were not imported so far. Also, there should be only the edited code and no further explanations. The reply should be a Markdown code block. Please consider the students coding style and approach to the problem over the example solution when predicting the next step. NEVER disclose the full example solution. The current program state is:", 
-                                example_solution="Not provided"):
-        #system = """You are a tutor who wants to give hints to students learning programming by providing them with next steps in programming tasks. You want to generate a step as small as possible, so that the student can continue on their own."""
-        system = "You are a prediction model for human programming behaviour. You want to give hints to students learning programming by providing them with possible next steps in programming tasks."
-        instruction = f"""{task_ins}\n"{task}"\n**Example Solution:**\n{example_solution}\n{inst}\n{previous_step}\n**Next Step:**\n"""
+    def create_instruction(self, previous_step, task="", example_solution="Not provided", test_messages="Not provided"):
+        system = """You are a prediction model for human programming behavior. You want to give hints to students learning programming by providing them with reasonable next steps in programming tasks."""
+        instruction = f"""Consider the following programming task:
+"{task}"
+
+**Example Solution:**
+{example_solution}
+
+
+Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements and no modules that were not imported so far. Also, there should be only the edited code and no further explanations. The reply should be a Markdown code block. Please consider the students coding style and approach to the problem when predicting the next step. NEVER disclose the full solution. The current program state is: 
+{previous_step}
+
+Additionally, you can consider the failure messages from automated unit-tests on the students current state. They can hint at problems in the student code.
+But be careful, the unit-test messages can also be incomplete and misleading. The unit test Messages are: 
+{test_messages}
+
+**Next Step:**
+"""
         return instruction, system
     

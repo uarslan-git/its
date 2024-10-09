@@ -20,6 +20,7 @@ export class NavigationBarComponent {
   @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>;
 
   taskFetchedSubscription: Subscription;
+  topicInducedSubscription: Subscription;
 
   aboutMarkdown: string = '';
 
@@ -55,8 +56,15 @@ export class NavigationBarComponent {
                 this.updateDisplayElements();
               });
           }
+        });
+
+      this.topicInducedSubscription = this.eventShareService.topicInduced$.subscribe(
+        (topic) => {
+          this.current_topic = topic;
+          this.updateTopics();
         }
-      );
+      )
+      
       rolesService.getRoles().subscribe((roles) => {
         this.roles = roles.roles;
       });
@@ -141,6 +149,7 @@ export class NavigationBarComponent {
 
   ngOnDestroy(){
     this.taskFetchedSubscription.unsubscribe();
+    this.topicInducedSubscription.unsubscribe();
   }
 
 }

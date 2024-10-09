@@ -46,25 +46,50 @@ export class TaskPanelComponent {
 
   selectAndFetchTask(message: string) {
     console.log(message)
-    const localCurriculum: string[] = this.getLocalCurriculum();
+    var localCurriculum: string[] = this.getLocalCurriculum();
     const current_task_name = this.task.unique_name!;
     const task_index: number = localCurriculum.findIndex((element) => element == current_task_name);
     if (message == 'next') {
       if (task_index == (localCurriculum.length-1)) {
         if (this.course.topics != undefined){
-          alert("No further tasks available for this topic.")
+          const topicIndex = this.course.topics.findIndex((element) => element==this.current_topic)
+          if (topicIndex < this.course.topics.length -1){
+            this.current_topic = this.course.topics[topicIndex + 1];
+            this.eventShareService.emitTopicInduced(this.current_topic);
+            sessionStorage.setItem("currentTopic", this.current_topic);
+            localCurriculum = this.getLocalCurriculum()
+            this.fetch_task(localCurriculum[0]);
+            return
+          }
+          else{
+            alert("No further tasks available")
+            return;
+          }
         }
         else{
           alert("No further task availiable.")
+          return;
         }
-        return;
       }
       this.fetch_task(localCurriculum[task_index+1]);
     }
     if (message == 'previous') {
       if (task_index == 0) {
-        alert("Previous Task doesn't exist");
-        return;
+        if (this.course.topics != undefined){
+          const topicIndex = this.course.topics.findIndex((element) => element==this.current_topic)
+          if (topicIndex != 0){
+            this.current_topic = this.course.topics[topicIndex - 1];
+            this.eventShareService.emitTopicInduced(this.current_topic);
+            sessionStorage.setItem("currentTopic", this.current_topic);
+            localCurriculum = this.getLocalCurriculum()
+            this.fetch_task(localCurriculum[localCurriculum.length - 1]);
+            return
+          }
+        }
+        else{
+          alert("Previous Task doesn't exist");
+          return;
+        }
       }
       this.fetch_task(localCurriculum[task_index-1]);
     }
@@ -75,7 +100,6 @@ export class TaskPanelComponent {
       else{
         this.fetch_task();
       }
-      
     }
   }
 
@@ -113,6 +137,7 @@ export class TaskPanelComponent {
         possible_choices: data.possible_choices,
         feedback_available: data.feedback_available,
     };
+    
     console.log("new task request")
     if (this.task['unique_name'] == "course completed") {
       delay(100);
@@ -130,9 +155,22 @@ export class TaskPanelComponent {
     sessionStorage.setItem("feedbackAvailable", this.task["feedback_available"]!);
     this.markdownPanelComponent.resetScroll();
     this.eventShareService.emitNewTaskFetchedEvent();
-
   });
  }
+
+
+ /*updateTopic(taskUniqueName: string){
+  if (!this.course.curriculum[this.current_topic].includes(taskUniqueName))
+  {
+    for (let i = 0; i < this.course.topics!.length; i++) {
+      const topic = this.course.topics![i];
+      if (this.course.curriculum[this.course.topics![i]].includes(taskUniqueName)){
+        this.current_topic = topic
+
+      }
+    }
+  }
+ } */
 
 /*   ngOnInit(): void {
     // Fetch the first task with timeout in order to load the whole app.
@@ -165,10 +203,10 @@ export class TaskPanelComponent {
         sessionStorage.setItem("currentTopic", this.current_topic!);
       }
       if (this.initTask == null) {
-        this.fetch_task();
+        this.fetch_task(undefined, this.current_topic);
       }
       else {
-        this.fetch_task(this.initTask);
+        this.fetch_task(this.initTask, this.current_topic);
       }
     });
   }

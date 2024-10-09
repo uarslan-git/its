@@ -33,6 +33,7 @@ export class AppComponent {
     });
   }
 
+  //TODO: Make origin-page a stack in order to enable navigating through navbar. 
   setView(status: string) {
     switch (status) {
       case 'loggedIn':

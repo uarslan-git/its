@@ -30,8 +30,10 @@ class First_uncompleted_task_selector(Base_task_selector):
         else:
             curriculum = curriculum[topic]
 
-        #TODO: Handle a completed course case.
         uncompleted_tasks = [curriculum_task for curriculum_task in curriculum if curriculum_task not in user_completed_tasks]
-        print(uncompleted_tasks)
-        return(uncompleted_tasks[0])
+
+        if len(uncompleted_tasks) > 0:
+            return uncompleted_tasks[0]
+        else:
+            return curriculum[-1]
         

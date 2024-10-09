@@ -26,14 +26,24 @@ class LLM_conceptual_explanation_generator(Base_feedback_generator):
     
     def generate_instruction(self, predicted_step, previous_state, task_description, test_messages):
         system = """You are a tutor suporting a student in programming. You are a professional, helpful and kind. 
-        You want to provide just enough support, so that the student can continue on their own."""
-        instruction = f"""This is a programming task that a student tried to solve: {task_description}.
-The current state of the students attempt at the task is: {previous_state}
-A prediction model has predicted the following next step: {predicted_step}
+You want to provide just enough support, so that the student can continue on their own."""
+        instruction = f"""This is a programming task that a student tried to solve: 
+{task_description}
+
+The current state of the students attempt at the task is: 
+{previous_state}
+
+A prediction model has predicted the following next step: 
+{predicted_step}
+
 Additionally, you can consider the failure messages from automated unit-tests on the students current state. They can hint at problems in the student code.
-But be careful, the unit-test messages can also be incomplete and misleading. The unit test Messages are: {test_messages}
+But be careful, the unit-test messages can also be incomplete and misleading. The unit test Messages are: 
+{test_messages}
+
 Please explain to the student in one or two sentences the key concept they need to arrive from the current state at this particular next step.
 Note that the predicted step is not known by the student as they have not yet taken it. Be careful to not reveal the full solution or any further steps.
 Adress the student directly.
-**Explanation:** """
+
+**Explanation:**
+"""
         return instruction, system
