@@ -38,6 +38,9 @@ async def task_to_json(dir, task_unique_name, db=None):
     tests = {}
     for file_name in os.listdir(os.path.join(dir, task_unique_name)):
         file_path = os.path.join(dir, task_unique_name, file_name)
+        if os.path.isdir(file_path):
+            print(f"'{file_name}' is a directory was ignored.")
+            continue
         content_docstring = process_file(file_path)
         if file_name.startswith("test"):
             #test_name = file_name.split("_", 1)[1]
@@ -64,7 +67,7 @@ async def task_to_json(dir, task_unique_name, db=None):
             task_type = content_docstring.split("!#")[0]
             task_type = task_type[2:]
             task_dict["type"] = task_type
-            if task_type not in ["function", "print"]:
+            if task_type not in ["function", "print", "plot"]:
                 raise Exception(f"Invalid task-type use function or print, not {task_type}")
             #json.dump({"example_solution": content_docstring}, outfile, ensure_ascii=False)
             prefix = content_docstring.split("#!prefix!#")[0]
@@ -76,6 +79,9 @@ async def task_to_json(dir, task_unique_name, db=None):
                 task_dict["function_name"] = get_function_names(file_path)[0] #TODO: Secure for example solutions with multiple functions.
                 arguments = extract_argument_names(task_dict["prefix"] + "\n" + task_dict["example_solution"])
                 task_dict["arguments"] = arguments
+            if task_type == "plot":
+                # TODO implement
+                pass
         elif file_name == "multiple_choice.py":
             task_dict["type"] = "multiple_choice"
             task_dict["prefix"] = "no_prefix"
@@ -93,9 +99,5 @@ async def task_to_json(dir, task_unique_name, db=None):
 async def parse_all_tasks(dir, db=None):
     for task_unique_name in os.listdir(dir):
         if not task_unique_name.endswith(".json"):
-            #TODO: Shouldn't task.md be handled in task_to_json?
-            task_path = os.path.join(dir, task_unique_name)+"/task.md"
             assert task_unique_name.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
-            task_unique_name_postfix = task_unique_name.removeprefix("task_").split(".")[0]
-            outfile = "task_{0}.json".format(task_unique_name_postfix)
             await task_to_json(dir, task_unique_name, db)

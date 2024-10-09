@@ -22,7 +22,7 @@ class Course(Document):
     course_settings: Optional[CourseSettings] = None
     course_settings_list: Optional[list]
     # Use p-array
-    sample_settings: list
+    sample_settings: Optional[list] = None
 
 class CourseInfo(Document):
     course_list: list[dict]
