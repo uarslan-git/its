@@ -13,12 +13,12 @@ class Model_manager():
     """
     
     def __init__(self):
-        """In the constructor all variants of models should be registered (and instantiated) for later selection.
+        """In the constructor all variants of models should be registered (and instantiated) for later select^ion.
         """
         self.prototype = Prototype_pedagogical_model()
         self.skipping_pfa = Skipping_tasks_pfa_pedagogical_model()
-        self.textual_feedback = LLM_feedback_textual_pedagogical_model()
-        self.code_feedback = LLM_feedback_code_pedagogical_model()
+        self.prototype_textual_feedback = LLM_feedback_textual_pedagogical_model()
+        self.prototype_code_feedback = LLM_feedback_code_pedagogical_model()
         self.default = Skipping_tasks_pfa_pedagogical_model()
 
     async def pedagogical_model(self, user: User):

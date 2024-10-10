@@ -4,9 +4,7 @@
 
 It is pleasure to welcome you to our Intelligent Tutoring System! While we hope that you will have a great experience with it, we would also like to mention that 
 this ITS is in its pre-alpha stage, so not all the intended functionality is yet available. 
-Before you start sloving the tasks, we would like to ask you to complete a short questionnare: 
-
-- [Learning Preferences ](https://utfragen.uni-bielefeld.de/index.php/594985?lang=en) 
+Before you start sloving the tasks, we would like to ask you to complete a short questionnare. You can access the questionaire by navigating back to the course selection page and clicking on the learning personality course.
 
 This will help us immensely to understand what methods are the best for the further improvement of the ITS. 
 
