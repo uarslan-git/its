@@ -65,7 +65,7 @@ For an input list of numbers, please define a following function:
 def second_sum(input):
     ...
 ```
-Which outputs the sum of every second number of the list. 
+Which outputs the sum of every second number of the list starting from the second number.
 This way, for an input [1, 2, 3, 4, 5], the expected output should be (2 + 4):
 
 ```
