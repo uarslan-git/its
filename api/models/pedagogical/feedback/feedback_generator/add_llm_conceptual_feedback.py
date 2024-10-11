@@ -22,7 +22,7 @@ class LLM_conceptual_explanation_generator(Base_feedback_generator):
         if self.textual_feedback_only: 
             return conceptual_explanation
         else:
-            return "Predicted step:\n" + predicted_step + "\nExplanation:\n" + conceptual_explanation
+            return predicted_step + "\n" + conceptual_explanation
     
 #    def generate_instruction(self, predicted_step, previous_state, task_description, test_messages):
 #        system = """You are a tutor suporting a student in programming. You are a professional, helpful and kind. 
@@ -82,7 +82,7 @@ def get_larger_elements(int_list, thresh):
 **Explanation:**
 Well done, you are almost ready. There are just a few small corrections to be done. First of all, you should consider how the range function works in python. 
 The lower limit (first parameter) of range will be included in the resulting indices, but the upper limit (second parameter) not.
-Additionally, reread the task-description carefully to spot the second mistake. Hint: it has to do with how you compare the size of two numbers.
+Additionally, re-read the task-description carefully to spot the second mistake. Hint: it has to do with how you compare the size of two numbers.
 
 ### Example 2
 
