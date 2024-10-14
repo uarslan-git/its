@@ -58,9 +58,9 @@ Please use the following reset-token to generate a new password.
     async def on_after_verify(
         self, user: User, request: Optional[Request] = None
     ) -> None:
-        reset_token_key = random.randint(10000000, 90000000)
+        reset_token_key = random.randint(100000000000, 900000000000)
         #Only the hashed concatenation of email+reset_token_key is stored, so that users real identities stay unknown to the admins.
-        hashed_email = hashlib.sha256((user.verification_email + str(reset_token_key)).encode("utf-8")).hexdigest()
+        encrypted_email = hashlib.sha256((user.verification_email + str(reset_token_key)).encode("utf-8")).hexdigest()
         message=f"""Dear User,
 
 your account is now activated, this mail contains important information on how to retrieve your account credentials.
@@ -75,7 +75,7 @@ Since it is possible to reset your password with the reset token, please keep th
         global_accounts_list.hashed_email_list.append(hashed_email)
         await database.update_global_accounts_list({"hashed_email_list": global_accounts_list.hashed_email_list})
 
-        update_dict = {"verification_email": hashed_email}
+        update_dict = {"verification_email": encrypted_email}
         await database.update_user(user, update_dict)
 
     #Create has to be ovewritten in order to allow for checking for dublicate users based on hashed emails
