@@ -41,8 +41,8 @@ services:
       EMAIL_PWD: ${EMAIL_PWD}
       EMAIL_HOST: ${EMAIL_HOST}
       EMAIL_SENDER: ${EMAIL_SENDER}
-      EMAIL_PORT: ${EMAIL_PORT}
       EMAIL_USR: ${EMAIL_USR}
+      EMAIL_POSTFIX: ${EMAIL_POSTFIX}
     ports:
       - "8888:8000"
     depends_on:
