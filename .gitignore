@@ -370,6 +370,5 @@ pyrightconfig.json
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,node,angular
 
 ## Custom
-*/Intro_to_ML
 codellama-7b-nxt.gguf
 *.zip
