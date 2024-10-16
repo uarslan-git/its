@@ -72,7 +72,9 @@ export class FeedbackPanelComponent {
       (feedback_id) => {
         this.fetchRequestedFeedback(feedback_id);
         this.currentFeedbackID = feedback_id;
-        this.displayFeedbackSurvey = true;
+        if (sessionStorage.getItem("dataCollection") == "true"){
+          this.displayFeedbackSurvey = true;
+        }
         setTimeout(() => {}, 0);
     })
   }

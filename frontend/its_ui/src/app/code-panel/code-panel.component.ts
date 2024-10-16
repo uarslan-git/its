@@ -48,10 +48,6 @@ export class CodePanelComponent {
           submission_time: this.datetimeService.datetimeNow()
         },
         {withCredentials: true}).subscribe((data) => {
-          /* this.recordChanges(this.codeEditorComponent.newContentList, data.submission_id);
-          this.codeEditorComponent.newContentList = []; */
-          //this.codeEditorComponent.newContentList.push([[-2, data.submission_id]])
-          this.codeEditorComponent.appendContent([[-2, data.submission_id]]);
           this.eventShareService.emitTestReadyEvent(data.submission_id);
         }
       );
