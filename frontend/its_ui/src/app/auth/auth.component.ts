@@ -23,9 +23,7 @@ export class AuthComponent {
   @ViewChild('dataTermsPopupComponent', { static: false }) dataTermsPopupComponent!: DataTermsPopupComponent;
   @ViewChild('consentCheckboxYes', {static: false}) consentCheckboxYes!: ElementRef;
   @ViewChild('consentCheckboxNo', {static: false}) consentCheckboxNo!: ElementRef;
-  //TODO: Fetch availiable courses directly from database.
-  @ViewChild('courseSelection', {static: false}) courseSelection!: ElementRef;
-
+  
   //showDataTermPopup: boolean = false;
   showDataTermPopup() {
     this.dataTermsPopupComponent!.showPopup();

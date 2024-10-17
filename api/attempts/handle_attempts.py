@@ -9,6 +9,8 @@ from datetime import datetime, timedelta, timezone
 from edist.sed import sed_backtrace
 from edist import edits
 from edist.edits import Insertion, Deletion, Replacement, Script
+from fastapi import HTTPException
+from attempts.exceptions import EditorFileSizeException
 
 router = APIRouter(prefix="/attempt")
 
@@ -36,7 +38,6 @@ async def get_attempt_state(task_unique_name, user: User = Depends(current_activ
         if user.settings["dataCollection"] == True:
             compiled_current_state = compile_state_log("", attempt.state_log)
             if compiled_current_state != logged_current_state:
-                #TODO: How do we want to query for Bug-reports?
                 state = f"\nA problem occured. We are not sure what your last state is.\nWe have compiled the following state:\n{compiled_current_state}\n but logged the following:\n{logged_current_state}"
                 return({"attempt_id": str(attempt.id), "code": state})
         return({"attempt_id": str(attempt.id), "code": logged_current_state})
@@ -70,7 +71,7 @@ def compile_state_log(previous_state, change_log: list):
         return compile_state_log(next_state, change_log[1:])
     
 
-def get_line_diff(previous_code: str, line_update: tuple):
+def get_diff(previous_code: str, line_update: tuple):
     changed_line = line_update[0][0]
     change_to = line_update[0][1]
     previous_lines = previous_code.split("\n")
@@ -84,13 +85,17 @@ def get_line_diff(previous_code: str, line_update: tuple):
         if len(previous_lines) <= changed_line:
             next_step_lines.extend(["" for i in range(0, changed_line-len(previous_lines))])
         next_step_lines[changed_line - 1] = change_to
-        next_step = "\n".join(next_step_lines)
+    if len(next_step_lines) > 1500:
+        raise EditorFileSizeException("Script exeeeded maximum number of lines (1500)")
     line_alignment = sed_backtrace(previous_lines, next_step_lines)
     script_lines = edits.alignment_to_script(line_alignment, previous_lines, next_step_lines)
     for i, edit in enumerate(script_lines):
         if edit.__class__.__name__ == "Replacement":
-            char_diff = sed_backtrace(previous_lines[edit._index] , edit._label)
-            char_alignment = edits.alignment_to_script(char_diff, previous_lines[edit._index] , edit._label)
+            to_replace_line = previous_lines[edit._index]
+            if len(to_replace_line) > 1500:
+                raise EditorFileSizeException(f"Line {edit._index} exeeds lengh-limit (1500)")
+            char_diff = sed_backtrace(to_replace_line , edit._label)
+            char_alignment = edits.alignment_to_script(char_diff, to_replace_line , edit._label)
             script_lines[i]._label = char_alignment
     return script_lines
     
@@ -121,8 +126,7 @@ def transform_edit(edit):
 @router.post("/log")
 async def log_attempt_state(state: NestedAttemptState, user: User = Depends(current_active_verified_user)):
     attempt = await database.get_attempt(state.attempt_id)
-    #TODO: Handle case whre data collection settings are changed!
-    #TODO: Handle sequences that are too long to process (1500 max length).
+    #TODO: Handle case where data collection settings are changed!
     if user.settings["dataCollection"] == True:
         state.id = str(PydanticObjectId())
         if len(attempt.state_log) > 0:
@@ -130,7 +134,10 @@ async def log_attempt_state(state: NestedAttemptState, user: User = Depends(curr
         else: 
             previous_code = ""
         for i, code in enumerate(state.code_list):
-            diff = get_line_diff(previous_code, code)
+            try:
+                diff = get_diff(previous_code, code)
+            except EditorFileSizeException as e:
+                raise HTTPException(500, str(e))
             submission_id = code[0][1] if code[0][0] == -2 else ""
             storage_diff = [transform_edit(edit) for edit in diff]
             code_state = AttemptState(state_datetime=state.state_datetime_list[i], 
@@ -140,6 +147,8 @@ async def log_attempt_state(state: NestedAttemptState, user: User = Depends(curr
                 attempt.state_log.append(code_state)
             previous_code = apply_diff(previous_code, diff)
     #TODO: Check diff here and repair if necessary!
+    if previous_code != state.current_state:
+        raise NotImplementedError("State log is broken, repair not implemented!")
     if len(state.state_datetime_list) > 0:
         current_attempt_time = datetime.strptime(state.state_datetime_list[-1]["utc"], "%d.%m.%Y %H:%M:%S.%f")
         current_start_time = datetime.strptime(attempt.start_time_list[-1], "%d.%m.%Y %H:%M:%S")
