@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./feedback-panel.component.css']
 })
 export class FeedbackPanelComponent {
+  show: boolean = true
 
   @ViewChild("taskSolvedDialog", {static: true}) taskSolvedDialog!: ElementRef<HTMLDialogElement>;
 
@@ -102,6 +103,9 @@ export class FeedbackPanelComponent {
         task_id: data.task_unique_name,
     };
     this.feedback_markdown = data.run_output;
+    if(sessionStorage.getItem('taskType') == 'plot') {
+      this.feedback_markdown += '\n <img src="data:image/png;base64,' + data.plot_uri + '" style="max-width:100%" >'
+    }
   });
   }
 

@@ -20,7 +20,8 @@ async def handle_submission(submission: Base_Submission, user: User):
             return await handle_code_submission(submission, user)
         case "multiple_choice":
             return await handle_mc_submission(submission, user)
-        # TODO add graph tasks "plot"
+        case "plot": # TODO
+            raise NotImplementedError("Hande Plot Submission not implemented.")
         case _:
             raise ValueError(f"Task type '{task.type}' not recognized.")
 

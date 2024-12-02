@@ -1,4 +1,7 @@
-/* .feedback-panel {
-    height: 100%; 
+.feedback-grid-container{
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 1fr);
+    height: 100%;
     width: 100%;
-} */
+    overflow-y: auto;
+}

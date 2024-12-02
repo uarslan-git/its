@@ -58,17 +58,49 @@ print("##!serialization!##")""".format(task_json.prefix, submission.code, task_j
             run_code = "raise Exception('{0}')".format(arg_message)
     elif task_type == "print":
         run_code = """{0}{1}""".format(task_json.prefix, submission.code)
+    elif task_type == "plot":
+        run_arguments, arg_message = parse_argument_types(submission.run_arguments)
+        print("REPLACES", task_json, run_arguments)
+        run_code = """{0}
+    global plt
+    global plot_stringIObytes
+    {1}
+import io
+import base64
+plot_stringIObytes = io.BytesIO()
+run_result = {2}(**{3})
+plot_stringIObytes.seek(0)
+plot_base64 = base64.b64encode(plot_stringIObytes.read()).decode()
+""".format(task_json.prefix, submission.code, task_json.function_name, run_arguments)
+        run_code = run_code.replace(".show()", ".savefig(plot_stringIObytes, format='png')")
+        print("CODE\n"+run_code)
     else:
-        raise Exception("Task type not known.")
+        raise Exception(f"Task type \"{task_type}\" not recognized.")
     if task_json.prefix == "":
         prefix_lines = []
     else:
         prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
-    run_result = await execute_code(run_code, prefix_lines)
-    evaluated_submission = Evaluated_run_code_submission(
-        code = submission.code, selected_choices = [], submission_time=submission.submission_time, run_arguments=submission.run_arguments,
-        run_output=str(run_result), task_unique_name=submission.task_unique_name, type="run", user_id=user_id, course_unique_name=submission.course_unique_name
-    )
+    
+    # TEMPORARY FIX so plt does not get passed to judge0
+    if task_type == 'plot':
+        locals = {}
+        exec(run_code, globals(), locals)
+        print(locals)
+        plot_uri = locals['plot_base64']
+        run_result = ''
+        evaluated_submission = Evaluated_run_code_submission(
+            code = submission.code, selected_choices = [], submission_time=submission.submission_time, run_arguments=submission.run_arguments,
+            run_output=str(run_result), task_unique_name=submission.task_unique_name, type="run", user_id=user_id, course_unique_name=submission.course_unique_name,
+            plot_uri = plot_uri
+        )
+    # TEMPORARY FIX end
+    else: 
+        run_result = await execute_code(run_code, prefix_lines)
+        evaluated_submission = Evaluated_run_code_submission(
+            code = submission.code, selected_choices = [], submission_time=submission.submission_time, run_arguments=submission.run_arguments,
+            run_output=str(run_result), task_unique_name=submission.task_unique_name, type="run", user_id=user_id, course_unique_name=submission.course_unique_name
+        )
+    
     await database.log_code_submission(evaluated_submission)
     return  {"run_id": str(evaluated_submission.id)}
 

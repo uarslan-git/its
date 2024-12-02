@@ -1,6 +1,6 @@
 #!plot!#
-import matplotlib as plt
-def plot_points(X):
+import matplotlib.pyplot as plt
+def plot_points():
 #!prefix!#
-    plt.plot(X)
+    plt.plot([1, 3, 2, 4])
     plt.show()
