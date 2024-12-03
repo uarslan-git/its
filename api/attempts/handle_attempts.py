@@ -123,6 +123,7 @@ def transform_edit(edit):
     return storage_edit
     
 
+#TODO: In first log entry very often \r string occurs. This is probably a monaco artifact and should be handled somehow!
 @router.post("/log")
 async def log_attempt_state(state: NestedAttemptState, user: User = Depends(current_active_verified_user)):
     attempt = await database.get_attempt(state.attempt_id)

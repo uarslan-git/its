@@ -15,6 +15,8 @@ from db import database
 from sys import __stdout__
 import aiohttp
 import json
+import base64
+import re
 
 router = APIRouter()
 
@@ -39,7 +41,7 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
             "max_file_size": "1000", #kb
             #"max_processes_and_or_threads": "1",
             "memory_limit": 100000, #kb
-            "source_code": code_payload,
+            "source_code": base64.b64encode(bytes(code_payload, 'utf-8')).decode("ascii"),
             #"stack_limit": "null",
             #"stdin": "null",
             "wall_time_limit": "10", #sec
@@ -47,7 +49,7 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
             "enable_network": "false",
             "redirect_stderr_to_stdout": "true",
             }
-        async with session.post(f"{url}/submissions/?base64_encoded=false", data=payload) as response:
+        async with session.post(f"{url}/submissions/?base64_encoded=true", data=payload) as response:
             run_token = await response.text()
             run_token = json.loads(run_token)["token"]
         max_iter = 100
@@ -236,14 +238,19 @@ print(json.dumps({{'test_message': test_message, 'test_result': test_result}}, d
 print("##!serialization!##")
     """.format(submission_code, test_code, run_test_code, json_serialize)
     try:
-        
         save = check_user_code(submission_code, prefix_lines)
         if save:
             result_string = await execute_code_judge0(test_submission_code)
             if "##!serialization!##" in result_string:
-                result_string = result_string.split("##!serialization!##")[1]
-                result_string = result_string.split("##!serialization!##")[0]
-                result_dict = json.loads(result_string)
+                pattern = r".*?\##!serialization!##(.*?)\##!serialization!##.*"
+                parsed_result_string = re.findall(pattern, result_string, re.DOTALL)
+                if len(parsed_result_string)==1:
+                    parsed_result_string = parsed_result_string[0].strip()
+                else:
+                    raise Exception("Bad Judge0 parsing!")
+                #result_string = result_string.split("##!serialization!##")[1]
+                #result_string = result_string.split("##!serialization!##")[0]
+                result_dict = json.loads(parsed_result_string)
                 test_message = result_dict["test_message"]
                 test_result = result_dict["test_result"]
             else:
