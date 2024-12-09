@@ -5,7 +5,10 @@ import os
 import ast
 import io
 import ast
+import re
+import base64
 from db import database
+from PIL import Image
 
 def process_file(file_path):
     # Process the content of the text file as needed.
@@ -31,6 +34,12 @@ def extract_argument_names(func_str):
     except Exception as e:
         raise ValueError(f"Error extracting arguments: {e}")
 
+async def parse_all_tasks(dir, db=None):
+    for task_unique_name in os.listdir(dir):
+        if not task_unique_name.endswith(".json"):
+            assert task_unique_name.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
+            await task_to_json(dir, task_unique_name, db)
+
 async def task_to_json(dir, task_unique_name, db=None):
     # Iterate through the files in the folder
     task_dict = {}
@@ -40,6 +49,9 @@ async def task_to_json(dir, task_unique_name, db=None):
         file_path = os.path.join(dir, task_unique_name, file_name)
         if os.path.isdir(file_path):
             print(f"'{file_name}' is a directory was ignored.")
+            continue
+        elif file_name.endswith("png"):
+            # PNGs cannot be read with utf-8
             continue
         content_docstring = process_file(file_path)
         if file_name.startswith("test"):
@@ -52,14 +64,12 @@ async def task_to_json(dir, task_unique_name, db=None):
             test = content_docstring.split("#!cut_imports!#")[1]
             #json.dump({"test_{0}".format(test_number): test}, outfile, ensure_ascii=False)
             tests[test_name] = test
-        # TODO: find a way to include pictures in the database
-        elif file_name.endswith("png"):
-            pass
         elif file_name.endswith("md"):
             header = content_docstring.split("\n")[0]
             if not header.startswith("# "):
-                raise Exception("task.md should contain the first line '# task_display_name'")
+                raise ValueError(f"'{file_path}' should contain the first line '# task_display_name'")
             task_display_name = header.split("#")[1].strip()
+            content_docstring = replace_images(content_docstring, task_unique_name, dir)
             task_dict["display_name"] = task_display_name
             task_dict["task"] = content_docstring
             #json.dump({"task": content_docstring}, outfile, ensure_ascii=False)
@@ -79,22 +89,35 @@ async def task_to_json(dir, task_unique_name, db=None):
                 task_dict["function_name"] = get_function_names(file_path)[0] #TODO: Secure for example solutions with multiple functions.
                 arguments = extract_argument_names(task_dict["prefix"] + "\n" + task_dict["example_solution"])
                 task_dict["arguments"] = arguments
-        elif file_name == "multiple_choice.py":
+        elif file_name.startswith("multiple_choice"):
             task_dict["type"] = "multiple_choice"
             task_dict["prefix"] = "no_prefix"
             task_dict["example_solution"] = ""
-
-            json_section = content_docstring.split("#!json!#")[1]
-            mc_json = json.loads(json_section)
-
+            if file_name.endswith(".py"):
+                json_section = content_docstring.split("#!json!#")[1]
+                mc_json = json.loads(json_section)
+            elif file_name.endswith(".json"):
+                mc_json = json.loads(content_docstring)
+            else: raise TypeError("'multiple_choice' has to be of type '.py' or '.json'.")
             task_dict["possible_choices"] = mc_json["possible_choices"]
             task_dict["correct_choices"] = mc_json["correct_choices"]
             task_dict["choice_explanations"] = mc_json["choice_explanations"]
+            
     task_dict["tests"] = tests
     await database.create_task(task_dict)
 
-async def parse_all_tasks(dir, db=None):
-    for task_unique_name in os.listdir(dir):
-        if not task_unique_name.endswith(".json"):
-            assert task_unique_name.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
-            await task_to_json(dir, task_unique_name, db)
+# replaces markdown images with base64 html containers
+def replace_images(content_docstring: str, task_unique_name: str, dir: str) -> str:
+    matches = re.findall("!\[[^\]]*\]\([^)]*\)", content_docstring)
+    for match in matches:
+        # split at brackets
+        split_match = re.split("[\[|\]|(|)]", match)
+        img_label = split_match[1]
+        img_path = split_match[3]
+        img_format = img_path.split('.')[-1]
+        
+        with open(os.path.join(dir, task_unique_name, img_path), mode='rb') as img:
+            img_base64 = base64.b64encode(img.read()).decode()
+        replacement = f"<img title='{img_label}' src='data:image/{img_format};base64,{img_base64}' style='max-width:88%; padding: 0% 5% 0% 5%'>"
+        content_docstring = content_docstring.replace(match, replacement)
+    return content_docstring
