@@ -108,17 +108,41 @@ async def task_to_json(dir, task_unique_name, db=None):
 
 # replaces markdown images with base64 html containers
 def replace_images(content_docstring: str, task_unique_name: str, dir: str) -> str:
-    matches = re.findall("!\[[^\]]*\]\([^)]*\)", content_docstring)
+    # find html images and convert to base64
+    matches = re.findall(r"<img\s+.+>", content_docstring)
+    for match in matches:
+        img_path, img_format = None, None
+        split_match = re.split(r"""['|"]""", match)
+        for i, split in enumerate(split_match):
+            if split.endswith("src="):
+                img_path = split_match[i+1]
+        # skip if already data image
+        if not img_path: continue
+        if "data:image" in img_path: continue
+        img_format = img_path.split('.')[-1]
+        
+        with open(os.path.join(dir, task_unique_name, img_path), mode='rb') as img:
+            img_base64 = base64.b64encode(img.read()).decode()
+        # layered replace to ensure only the current one gets replaced
+        match_replacement = f"data:image/{img_format};base64,{img_base64}"
+        replacement = match.replace(img_path, match_replacement)
+        content_docstring = content_docstring.replace(match, replacement)
+    
+    # find and convert markdown image to html base64 image
+    matches = re.findall(r"!\[[^\]]*\]\([^)]*\)", content_docstring)
     for match in matches:
         # split at brackets
-        split_match = re.split("[\[|\]|(|)]", match)
+        split_match = re.split(r"[\[|\]|(|)]", match)
         img_label = split_match[1]
         img_path = split_match[3]
         img_format = img_path.split('.')[-1]
         img_style = "max-width:88%; padding: 0% 5% 0% 5%"
         
-        with open(os.path.join(dir, task_unique_name, img_path), mode='rb') as img:
-            img_base64 = base64.b64encode(img.read()).decode()
-        replacement = f"<img title='{img_label}' src='data:image/{img_format};base64,{img_base64}' style='{img_style}'>"
+        # skip if already data image
+        if not "data:image" in img_path:
+            with open(os.path.join(dir, task_unique_name, img_path), mode='rb') as img:
+                img_base64 = base64.b64encode(img.read()).decode()
+        else: img_base64 = img_path
+        replacement = f"<img alt='{img_label}' src='data:image/{img_format};base64,{img_base64}' style='{img_style}'>"
         content_docstring = content_docstring.replace(match, replacement)
     return content_docstring
