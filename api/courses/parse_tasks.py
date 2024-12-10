@@ -115,9 +115,10 @@ def replace_images(content_docstring: str, task_unique_name: str, dir: str) -> s
         img_label = split_match[1]
         img_path = split_match[3]
         img_format = img_path.split('.')[-1]
+        img_style = "max-width:88%; padding: 0% 5% 0% 5%"
         
         with open(os.path.join(dir, task_unique_name, img_path), mode='rb') as img:
             img_base64 = base64.b64encode(img.read()).decode()
-        replacement = f"<img title='{img_label}' src='data:image/{img_format};base64,{img_base64}' style='max-width:88%; padding: 0% 5% 0% 5%'>"
+        replacement = f"<img title='{img_label}' src='data:image/{img_format};base64,{img_base64}' style='{img_style}'>"
         content_docstring = content_docstring.replace(match, replacement)
     return content_docstring
