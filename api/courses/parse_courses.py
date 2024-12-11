@@ -27,7 +27,7 @@ async def parse_course(dir):
 
     if type(course_dict["course_settings"]) != list:
 
-        if "pedagogical_model" not in course_dict.keys():
+        if "pedagogical_model" not in course_dict["course_settings"].keys():
             course_dict["course_settings"]["pedagogical_model"] = "default"
 
         if "language_generation_model" not in course_dict.keys():
