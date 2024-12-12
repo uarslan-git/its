@@ -18,3 +18,11 @@ def get_about():
     with open(filepath) as f:
         data_collection_markdown = f.read()
     return({"data_collection_markdown": data_collection_markdown})
+
+@router.get("/privacy_policy")
+def get_policy():
+    filepath = os.path.join(os.path.dirname(__file__), "privacy_policy.md")
+    print(filepath)
+    with open(filepath) as f:
+        privacy_policy_markdown = f.read()
+    return({"privacy_policy_markdown": privacy_policy_markdown})
