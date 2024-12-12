@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "one-parameter item response theory",
+        "performance factors analysis",
+        "performance factors analysis with item difficulty parameters",
+        "three-parameter item response theory"
+    ],
+    "correct_choices": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "choice_explanations": [
+        "No, this can be solved with logistic regression.",
+        "No, this can be solved with logistic regression.",
+        "No, this can be solved with logistic regression.",
+        "Correct."
+    ]
+}

@@ -9,6 +9,8 @@
     "trigonometry", "eigen_of_diagonal", "simulate_dice_rolls"],
     "course_settings": {
         "feedback_init_time": 60,
-        "feedback_cooldown": 30
+        "feedback_cooldown": 30,
+        "pedagogical_model": "prototype",
+        "language_generation_model": "default"
         }
 }

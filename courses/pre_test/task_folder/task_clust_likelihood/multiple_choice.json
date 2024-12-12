@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "The NLL is convex.",
+        "The NLL is upper-bounded by the negative log posterior.",
+        "The NLL is a lower bound for the expected NLL given the posterior for the latent variables.",
+        "The NLL is equivalent to the Kullback-Leibler divergence between latent variables and data distribution."
+    ],
+    "correct_choices": [
+        false,
+        false,
+        true,
+        false
+    ],
+    "choice_explanations": [
+        "No, the NLL is not convex, in general.",
+        "Not quite. The negative log posterior for the latent variables is involved here, but it is not an upper bound.",
+        "Correct. That is the core of the expectation maximization approach to minimize the NLL.",
+        "Not quite. The KL divergence is part of the NLL decomposition, but only one."
+    ]
+}
