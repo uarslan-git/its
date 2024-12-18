@@ -22,14 +22,6 @@ Phone: +49 521 106-87838
 
 E-Mail [its@techfak.de](mailto:its@techfak.de)
 
-### Data Protection and Information Security Coordinator of the Technical Faculty (Bielefeld University)
-
-[Prof. Dr. Philipp Cimiano ](https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=15020699) 
-
-Office: CITEC 2-307 \
-Tel.: +49 521 106-12249   \
-E-Mail: [cimiano@techfak.uni-bielefeld.de ](cimiano@techfak.uni-bielefeld.de ) 
-
    
 
 ### Data Protection Officer of the Bielefeld University
@@ -40,6 +32,12 @@ Office: U8-105 \
 Tel.: +49 521 106-5225 \
 E-Mail: [anja.schmid@uni-bielefeld.de](mailto:anja.schmid@uni-bielefeld.de) \
 oder [datenschutzbeauftragte@uni-bielefeld.de](mailto:datenschutzbeauftragte@uni-bielefeld.de) 
+
+### Responsible supervisory authorities
+
+Ministry of Culture and Science in North Rhine-Westphalia 
+Völklinger Straße 49
+40221 Düsseldorf
 
 ## Storage of browser data
 
