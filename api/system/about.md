@@ -15,9 +15,9 @@ Funding by the [Faculty of Technology of Bielefeld University](https://www.uni-b
 # Imprint
 
 
-Universität Bielefeld
-Technische Fakultät
-Postfach 10 01 31
+Universität Bielefeld \
+Technische Fakultät \
+Postfach 10 01 31 \
 33501 Bielefeld 
 
 Faculty of Technology is a part of the Bielefeld University. It is officially represented by the Dean, Prof. Dr. Markus Nebel. Bielefeld University is a state-supported institution bound to public law. It is officially represented by the Rector, Prof. Dr. Angelika Epple. 
