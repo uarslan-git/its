@@ -35,9 +35,13 @@ oder [datenschutzbeauftragte@uni-bielefeld.de](mailto:datenschutzbeauftragte@uni
 
 ### Responsible supervisory authorities
 
-Ministry of Culture and Science in North Rhine-Westphalia \
-Völklinger Straße 49 \
-40221 Düsseldorf
+
+Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
+
+Kavalleriestraße 2-4 \
+40213 Düsseldorf \
+Tel.: +49 211/384 24-0 \
+E-Mail: poststelle@ldi.nrw.de 
 
 ## Storage of browser data
 
