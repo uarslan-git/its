@@ -12,13 +12,13 @@ Bielefeld University is a state-supported institution bound to public law. It is
 
 Contact details of responsible parties
 
-AG Knowledge Representation and Machine Learning
-CITEC
-Inspiration 1
-33619 Bielefeld
+AG Knowledge Representation and Machine Learning \
+CITEC \
+Inspiration 1 \
+33619 Bielefeld \
 
 
-Phone: +49 521 106-87838
+Phone: +49 521 106-87838 \
 
 E-Mail [its@techfak.de](mailto:its@techfak.de)
 
@@ -26,19 +26,20 @@ E-Mail [its@techfak.de](mailto:its@techfak.de)
 
 [Prof. Dr. Philipp Cimiano ](https://ekvv.uni-bielefeld.de/pers_publ/publ/PersonDetail.jsp?personId=15020699) 
 
-Office: CITEC 2-307 
-Tel.: +49 521 106-12249   
-E-Mail: [cimiano@techfak.uni-bielefeld.de ](cimiano@techfak.uni-bielefeld.de )
+Office: CITEC 2-307 \
+Tel.: +49 521 106-12249   \
+E-Mail: [cimiano@techfak.uni-bielefeld.de ](cimiano@techfak.uni-bielefeld.de ) \
 
    
 
 ### Data Protection Officer of the Bielefeld University
 
 [Anja Schmid](https://www.uni-bielefeld.de/verwaltung/datenschutz/kontakt/) 
-Office: U8-105
-Tel.: +49 521 106-5225
-E-Mail: [anja.schmid@uni-bielefeld.de](mailto:anja.schmid@uni-bielefeld.de)
-oder [datenschutzbeauftragte@uni-bielefeld.de](mailto:datenschutzbeauftragte@uni-bielefeld.de)
+
+Office: U8-105 \
+Tel.: +49 521 106-5225 \
+E-Mail: [anja.schmid@uni-bielefeld.de](mailto:anja.schmid@uni-bielefeld.de) \
+oder [datenschutzbeauftragte@uni-bielefeld.de](mailto:datenschutzbeauftragte@uni-bielefeld.de) \
 
 ## Storage of browser data
 
