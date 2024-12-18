@@ -18,7 +18,7 @@ Inspiration 1 \
 33619 Bielefeld 
 
 
-Phone: +49 521 106-87838 \
+Phone: +49 521 106-87838 
 
 E-Mail [its@techfak.de](mailto:its@techfak.de)
 
