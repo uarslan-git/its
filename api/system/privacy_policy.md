@@ -35,8 +35,8 @@ oder [datenschutzbeauftragte@uni-bielefeld.de](mailto:datenschutzbeauftragte@uni
 
 ### Responsible supervisory authorities
 
-Ministry of Culture and Science in North Rhine-Westphalia 
-Völklinger Straße 49
+Ministry of Culture and Science in North Rhine-Westphalia \
+Völklinger Straße 49 \
 40221 Düsseldorf
 
 ## Storage of browser data
