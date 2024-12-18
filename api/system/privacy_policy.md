@@ -15,7 +15,7 @@ Contact details of responsible parties
 AG Knowledge Representation and Machine Learning \
 CITEC \
 Inspiration 1 \
-33619 Bielefeld \
+33619 Bielefeld 
 
 
 Phone: +49 521 106-87838 \
@@ -28,7 +28,7 @@ E-Mail [its@techfak.de](mailto:its@techfak.de)
 
 Office: CITEC 2-307 \
 Tel.: +49 521 106-12249   \
-E-Mail: [cimiano@techfak.uni-bielefeld.de ](cimiano@techfak.uni-bielefeld.de ) \
+E-Mail: [cimiano@techfak.uni-bielefeld.de ](cimiano@techfak.uni-bielefeld.de ) 
 
    
 
@@ -39,7 +39,7 @@ E-Mail: [cimiano@techfak.uni-bielefeld.de ](cimiano@techfak.uni-bielefeld.de ) \
 Office: U8-105 \
 Tel.: +49 521 106-5225 \
 E-Mail: [anja.schmid@uni-bielefeld.de](mailto:anja.schmid@uni-bielefeld.de) \
-oder [datenschutzbeauftragte@uni-bielefeld.de](mailto:datenschutzbeauftragte@uni-bielefeld.de) \
+oder [datenschutzbeauftragte@uni-bielefeld.de](mailto:datenschutzbeauftragte@uni-bielefeld.de) 
 
 ## Storage of browser data
 
