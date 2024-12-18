@@ -16,19 +16,20 @@ Additionally, within the system we provide questionnaires (learning personality 
 ## Additional Instructions
 To preserve your anonymity, we implore you to use following measures while interacting with the ITS: 
 
-    • please choose a login name that cannot be tracked to you personally (Max_Mustermann is not good, if  Max Mustermann is your name, but data_mining_master_42 is good). \
-    • please do not enter any personal data in the code editor: this data is saved automatically.
+please choose a login name that cannot be tracked to you personally (Max_Mustermann is not good, if  Max Mustermann is your name, but data_mining_master_42 is good). \
+
+please do not enter any personal data in the code editor: this data is saved automatically.
 
 ## Responsibility for the ITS 
 In case of any question, please refer to the party responsible for the its.techfak.de (or the controllers mentioned in the Privacy Policy).
  
 Contact details of responsible parties:
 
-AG Knowledge Representation and Machine Learning 
-CITEC 
-Inspiration 1 
-33619 Bielefeld 
-Phone: +49 521 106-87838 
+AG Knowledge Representation and Machine Learning \
+CITEC \
+Inspiration 1 \ 
+33619 Bielefeld \ 
+Phone: +49 521 106-87838 \ 
 E-Mail: ag-kml@techfak.uni-bielefeld.de
 
 Last update: 18.12.2024.
