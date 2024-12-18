@@ -16,7 +16,7 @@ Additionally, within the system we provide questionnaires (learning personality 
 ## Additional Instructions
 To preserve your anonymity, we implore you to use following measures while interacting with the ITS: 
 
-please choose a login name that cannot be tracked to you personally (Max_Mustermann is not good, if  Max Mustermann is your name, but data_mining_master_42 is good). \
+please choose a login name that cannot be tracked to you personally (Max_Mustermann is not good, if  Max Mustermann is your name, but data_mining_master_42 is good). 
 
 please do not enter any personal data in the code editor: this data is saved automatically.
 
