@@ -11,7 +11,8 @@ from pymongo.collation import Collation
 class User(BeanieBaseUser, Document):
     email: str
     username: str
-    verification_email: str
+    verification_email: Optional[str] = None
+    encrypted_email: Optional[str] = None
     current_course: str
     enrolled_courses: list
     register_datetime: dict
