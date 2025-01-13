@@ -45,7 +45,7 @@ async def get_attempt_state(task_unique_name, user: User = Depends(current_activ
 
 def compile_state_log(previous_state, change_log: list):
     if not isinstance(previous_state, list):
-        previous_state = previous_state.split("\n")
+        previous_state = previous_state.splitlines()
     if len(change_log) == 0:
         return "\n".join(previous_state)
     else:
@@ -74,9 +74,9 @@ def compile_state_log(previous_state, change_log: list):
 def get_diff(previous_code: str, line_update: tuple):
     changed_line = line_update[0][0]
     change_to = line_update[0][1]
-    previous_lines = previous_code.split("\n")
+    previous_lines = previous_code.splitlines()
     if changed_line == -1:
-        next_step_lines = change_to.split("\n")
+        next_step_lines = change_to.splitlines()
     elif changed_line == -2:
         #-2 is the code for submissions
         return Script(lst=[])
@@ -101,7 +101,7 @@ def get_diff(previous_code: str, line_update: tuple):
     
 def apply_diff(previous_code: str, diff):
     #char_list = list(previous_code)
-    line_list = previous_code.split("\n")
+    line_list = previous_code.splitlines()
     for i, line_edit in enumerate(diff):
         if line_edit.__class__.__name__ == "Replacement":
             rep_line = list(line_list[line_edit._index])
@@ -127,6 +127,7 @@ def transform_edit(edit):
 @router.post("/log")
 async def log_attempt_state(state: NestedAttemptState, user: User = Depends(current_active_verified_user)):
     attempt = await database.get_attempt(state.attempt_id)
+    state.current_state =  "\n".join(state.current_state.splitlines())
     #TODO: Handle case where data collection settings are changed!
     if user.settings["dataCollection"] == True:
         state.id = str(PydanticObjectId())
@@ -147,13 +148,13 @@ async def log_attempt_state(state: NestedAttemptState, user: User = Depends(curr
             if user.settings["dataCollection"] == True:
                 attempt.state_log.append(code_state)
             previous_code = apply_diff(previous_code, diff)
-    #TODO: Check diff here and repair if necessary!
-    if previous_code != state.current_state:
-        raise NotImplementedError("State log is broken, repair not implemented!")
+        if previous_code != state.current_state:
+            raise NotImplementedError("State log is broken, repair not implemented!")
     if len(state.state_datetime_list) > 0:
         current_attempt_time = datetime.strptime(state.state_datetime_list[-1]["utc"], "%d.%m.%Y %H:%M:%S.%f")
         current_start_time = datetime.strptime(attempt.start_time_list[-1], "%d.%m.%Y %H:%M:%S")
         attempt.duration_list[-1] = str(current_attempt_time - current_start_time)
         attempt.current_state = state.current_state
+    #TODO: Check diff here and repair if necessary!
     await database.update_attempt(attempt)
 
