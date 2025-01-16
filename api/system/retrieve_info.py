@@ -26,3 +26,11 @@ def get_policy():
     with open(filepath) as f:
         privacy_policy_markdown = f.read()
     return({"privacy_policy_markdown": privacy_policy_markdown})
+
+@router.get("/imprint")
+def get_imprint():
+    filepath = os.path.join(os.path.dirname(__file__), "imprint.md")
+    print(filepath)
+    with open(filepath) as f:
+        imprint_markdown = f.read()
+    return({"imprint_markdown": imprint_markdown})

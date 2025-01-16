@@ -60,7 +60,8 @@
           <div class="dropdown-content">
             <!-- <li><a href="#" (click)="newTaskButtonClicked('personal')">New Task</a></li> -->
             <li><a (click)="openAboutPopup()" href="#">About</a></li>
-            <li><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></li>
+            <li><a (click)="openImprintPopup()" href="#">Impressum</a></li>
+            <li><a (click)="openPrivacyPolicyPopup()" href="#">Privacy Policy</a></li>
             <li><a href="#" (click)="emitProfileButtonClicked()">Profile</a></li>
           </div>
         </div>
@@ -72,7 +73,6 @@
   <dialog #aboutPopup class="popup-dialog-container">
     <div class="popup-dialog">
       <app-markdown-panel [markdownString]="aboutMarkdown"></app-markdown-panel>
-      <div class="impressum"><p><a href="https://www.uni-bielefeld.de/impressum/">Impressum</a></p></div>
         <div class="ok-button-container">
           <button class="popup-dialog-button" (click)="aboutPopup.close()">
             Close
@@ -81,3 +81,24 @@
     </div>
   </dialog>
 
+  <dialog #privacyPolicyPopup class="popup-dialog-container">
+    <div class="popup-dialog">
+      <app-markdown-panel [markdownString]="privacyPolicyMarkdown"></app-markdown-panel>
+        <div class="ok-button-container">
+          <button class="popup-dialog-button" (click)="privacyPolicyPopup.close()">
+            Close
+         </button>
+        </div>
+    </div>
+
+
+  <dialog #imprintPopup class="popup-dialog-container">
+    <div class="popup-dialog">
+      <app-markdown-panel [markdownString]="imprintMarkdown"></app-markdown-panel>
+        <div class="ok-button-container">
+          <button class="popup-dialog-button" (click)="imprintPopup.close()">              
+            Close
+           </button>
+        </div>
+     </div>
+  

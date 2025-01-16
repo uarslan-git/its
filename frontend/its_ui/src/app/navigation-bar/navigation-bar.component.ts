@@ -18,11 +18,15 @@ export class NavigationBarComponent {
   @Output() settingButtonClicked: EventEmitter<string> = new EventEmitter<string>;
 
   @ViewChild('aboutPopup', {static: true}) aboutPopup!: ElementRef<HTMLDialogElement>;
+  @ViewChild('imprintPopup', {static: true}) imprintPopup!: ElementRef<HTMLDialogElement>;
+  @ViewChild('privacyPolicyPopup', {static: true}) privacyPolicyPopup!: ElementRef<HTMLDialogElement>;
 
   taskFetchedSubscription: Subscription;
   topicInducedSubscription: Subscription;
 
   aboutMarkdown: string = '';
+  imprintMarkdown: string = '';
+  privacyPolicyMarkdown: string = '';
 
   apiUrl: string = environment.apiUrl;
   user_name: string = "INVALID_EMAIL";
@@ -138,7 +142,22 @@ export class NavigationBarComponent {
         });
     this.aboutPopup.nativeElement.showModal();
   }
+  openImprintPopup() {
+    this.httpClient.get<any>(`${environment.apiUrl}/info/imprint`)
+        .subscribe(data => {
+          this.aboutMarkdown = data.imprint_markdown;
+        });
+        console.log('bloody hell')
+    this.aboutPopup.nativeElement.showModal();
+  }
 
+  openPrivacyPolicyPopup() {
+    this.httpClient.get<any>(`${environment.apiUrl}/info/privacy_policy`)
+        .subscribe(data => {
+          this.privacyPolicyMarkdown = data.privacy_policy_markdown;
+        });
+    this.privacyPolicyPopup.nativeElement.showModal();
+  }
   emitCourseSettingsRequested() {
     this.settingButtonClicked.emit("courseSettingsRequest")
   }
