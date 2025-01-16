@@ -4,10 +4,12 @@ This privacy statement informs you as a user  of this Intelligent Tutoring Syste
 With this privacy statement, the representatives of this website as the data controller fulfil their obligation to provide information in accordance with Art. 13 of the EU General Data Protection Regulation (EU-GDPR). 
 This statement describes how and what data is or will be processed: both during the login and during the interaction within the systes. Additional information is provided on the processing of personal data gathered there.
 
-## Representation
+## Data Controller
+
+The controller within the meaning of the General Data Protection Regulation and other national data protection laws of the member states as well as other data protection regulations is Bielefeld University. The University is a statutory body under public law supported by the State of North Rhine-Westphalia. It is represented by the Rector, Prof. Dr. Angelika Epple.
+
 The its.techfak.de is maintained by AG Knowledge Representation and Machine Learning at the Faculty of Technology at the Bielefeld University. AG Knowledge Representation and Machine Learning is officially represented by Prof. Dr. Benjamin Paaßen.
-Faculty of Technology is a part of the Bielefeld University. It is officially represented by the Dean, Prof. Dr. Markus Nebel.
-Bielefeld University is a state-supported institution bound to public law. It is officially represented by the Rector, Prof. Dr. Angelika Epple. 
+Faculty of Technology is a part of the Bielefeld University. 
 
 
 Contact details of responsible parties
@@ -26,28 +28,18 @@ E-Mail [its@techfak.de](mailto:its@techfak.de)
 
 ### Data Protection Officer of the Bielefeld University
 
-[Anja Schmid](https://www.uni-bielefeld.de/verwaltung/datenschutz/kontakt/) 
+The data protection officers of Bielefeld University can be contacted by post at the above address or as follows:
 
 Office: U8-105 \
 Tel.: +49 521 106-5225 \
-E-Mail: [anja.schmid@uni-bielefeld.de](mailto:anja.schmid@uni-bielefeld.de) \
-oder [datenschutzbeauftragte@uni-bielefeld.de](mailto:datenschutzbeauftragte@uni-bielefeld.de) 
+E-Mail: [datenschutzbeauftragte@uni-bielefeld.de](mailto:datenschutzbeauftragte@uni-bielefeld.de) 
 
-### Responsible supervisory authorities
-
-
-Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen
-
-Kavalleriestraße 2-4 \
-40213 Düsseldorf \
-Tel.: +49 211/384 24-0 \
-E-Mail: poststelle@ldi.nrw.de 
 
 ## Storage of browser data
 
 Generally, when you visit a website, information is automatically stored for technical reasons in server log files that your browser transmits to us. This information consists of:
 
-    IP address
+    IP address 
     access status (http status code)
     amount of data retrieved
     date and time of the server request
@@ -63,8 +55,8 @@ Upon registering, the ITS collects the user data as:
     date and time of the server request
     referrer URL
 	login name
-	hashed passwort used for the login
-	hashed email (only used to send the recovery token)
+	hashed password used for the login
+	email (used to send the recovery token, and hashed after the recovery token is issued)
 
 Because after issueing the access and recovery tokens the email addresses are not saved, please make sure to save the token in a safe place, should you need to recover your account.
 
@@ -89,6 +81,20 @@ These collected data are used for purposes of identification and to detect unaut
 This data is used for the functioning of the system (for example, to suggest a hint, the system needs to use the current state of the code), however, we would also like to use this data for the research (in an anonymized form). To consent to the scientific data collection, you can
 check respective field in the user profile. Please note that you can withdraw your consent at any point.  
 
+### Cookies 
+
+Cookies
+
+Your browser also stores so-called "cookies". Cookies are small files that can be stored by the website provider in the directory of the browser programme on the user's computer. These files contain text information and can be read again by the provider when the page is revisited. The provider can use these cookies, for example, to always deliver pages in the language selected by the user.
+
+The storage of cookies can be switched off in your browser settings or assigned an expiry date. By deactivating cookies, however, you may not be able to use certain functions of the website that are managed via cookies which could have a negative impact upon the usability of the website.
+
+This ITS uses cookies for the following purposes on its website:
+
+**Name of the cookie**: fastapiuserauth
+**Expiration**: 7200 s.
+**About the cookie**: This cookie is an absolute technical nessessity. The purpose is to store login token of the user to enable continuous interaction within the ITS. 
+
 ## Processing
 
 Ag KML collects and processes the above-named data and log files required for the technical operation of the website in order to safeguard the technical security of the systems and ensure the functionality of the ITS. 
@@ -101,7 +107,18 @@ In some circumstances, this may be necessary if we are required by law to do so,
 Where technical service providers have access to personal data, this happens on the basis of a contract pursuant to Art. 28 of EU GDPR.
 No personal data is transferred to countries outside the European Economic Area and associated countries (no third country transfer). If this should become necessary you will be informed.
 
-The anonymized system interaction data (if consented to) will be used for research and scientific purposes and might be published in the form of an anonymized archive, hence the following application and use of the data are not known.
+To enable the feedback functionality (per-request service within the ITS), the current code state in a respective task of the user who requested the feedback is forwarded to the Research Center Jülich, where it processed with help of a Large Language Model: ollama-70B.
+
+Forschungszentrum Jülich GmbH \
+Wilhelm-Johnen-Straße \
+52428 Jülich \
+Deutschland \
+
+Website: [www.fz-juelich.de](www.fz-juelich.de)
+E-Mail: [info@fz-juelich.de](mailto:info@fz-juelich.de)
+
+
+The anonymized system interaction data (if consented to) will be used for research and scientific purposes and might be published in the form of an anonymized archive, hence the following application and use of the data are not known. The anonymization in the winter semester 2024-2025 takes place by **31.03.2025**. 
 
 
 ### Your rights as a data subject
@@ -117,9 +134,16 @@ As a data subject, you can assert the rights granted to you by the EU-GDPR at an
 In order to operate and maintain the web services of the ITS it is necessary that we collect data and store data in log files. Users may therefore not object to this. Although IP addresses may be regarded as personal data, the ITS does not assign them to individuals. 
 Because of this, the University cannot fulfil a request by the user for information as there is no IP address associated with them.
 
-In addition to the aforementioned rights, you have the right to lodge a complaint with the respective data protection supervisory authority (Art. 77 EU GDPR).
+In addition to the aforementioned rights, you have the right to lodge a complaint with the respective data protection supervisory authority (Art. 77 EU GDPR):
+
+Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen \
+Kavalleriestraße 2-4 \
+40213 Düsseldorf \
+Tel.: +49 211/384 24-0\ 
+E-Mail: [poststelle@ldi.nrw.de](mailto:poststelle@ldi.nrw.de)
+
 
 ### Validity of this privacy statement
 
 We reserve the right to amend our privacy policy, in order to adapt to changes in relevant laws and regulation and to better meet your needs as the user of our website.
-Last Updated: 18.12.2024
+Last Updated: 18.01.2025
