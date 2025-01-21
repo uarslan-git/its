@@ -40,7 +40,97 @@ const HaskellITS = () => {
     },
   };
 
-  const syntaxBasics = `-- Haskell Syntax Basics\n\n-- Define a function\nadd :: Int -> Int -> Int\nadd x y = x + y\n\n-- Use recursion\nfactorial :: Integer -> Integer\nfactorial 0 = 1\nfactorial n = n * factorial (n - 1)\n\n-- Use higher-order functions\nlet numbers = [1, 2, 3]\nlet squares = map (\\x -> x * x) numbers\n\n-- Define a data type\ndata Shape = Circle Float | Rectangle Float Float\n`;
+  const syntaxBasics = `-- Haskell Syntax Basics
+
+-- Initializing Variables
+-- Variables in Haskell are immutable and can be defined using the let or where keyword.
+
+-- Using let in a local context:
+let x = 10
+let y = 20
+let sum = x + y  -- sum will be 30
+
+-- Using where in function definitions:
+calculateArea radius = pi * radius * radius
+  where pi = 3.14159
+
+-- Global definitions (not scoped to a block):
+myConstant :: Int
+myConstant = 42
+
+-- Define a function
+-- Functions in Haskell are defined using a name, type signature, and implementation.
+add :: Int -> Int -> Int
+add x y = x + y
+
+-- Use recursion
+-- Recursion is fundamental in Haskell and is often used instead of loops.
+factorial :: Integer -> Integer
+factorial 0 = 1
+factorial n = n * factorial (n - 1)
+
+-- Use higher-order functions
+-- Higher-order functions take other functions as arguments or return them as results.
+let numbers = [1, 2, 3]
+let squares = map (\\x -> x * x) numbers
+let evens = filter even numbers
+let sumOfSquares = foldr (+) 0 squares
+
+-- Define a data type
+-- Haskell allows defining custom data types with the data keyword.
+data Shape = Circle Float | Rectangle Float Float
+
+-- Pattern match to handle different cases for custom data types.
+area :: Shape -> Float
+area (Circle r) = pi * r * r
+area (Rectangle w h) = w * h
+
+-- Use lists
+-- Lists are a fundamental data structure in Haskell, and they are immutable.
+let emptyList = []
+let myList = [1, 2, 3]
+let listHead = head myList
+let listTail = tail myList
+let concatenatedList = myList ++ [4, 5]
+
+-- Lambda expressions
+-- Lambdas are anonymous functions defined using the \\ syntax.
+let addOne = \\x -> x + 1
+let result = addOne 5  -- Result: 6
+
+-- List comprehensions
+-- A concise way to generate lists based on existing ones.
+let squaresOfEvens = [x * x | x <- [1..10], even x]
+
+-- Guards
+-- A clean way to define multiple cases in a function.
+classifyNumber :: Int -> String
+classifyNumber n
+  | n < 0 = "Negative"
+  | n == 0 = "Zero"
+  | otherwise = "Positive"
+
+-- Case expressions
+-- An alternative to guards for pattern matching.
+describeList :: [a] -> String
+describeList xs = case xs of
+  [] -> "Empty list"
+  [x] -> "Singleton list"
+  _ -> "A longer list"
+
+-- Typeclasses
+-- Haskell uses typeclasses to define shared behavior for types.
+class Eq a where
+  (==) :: a -> a -> Bool
+
+-- An example of using the built-in Eq typeclass for comparison.
+instance Eq Bool where
+  True == True = True
+  False == False = True
+  _ == _ = False
+`;
+
+
 
   const handleRunCode = () => {
     try {
@@ -208,7 +298,6 @@ const HaskellITS = () => {
         </Grid>
       </Grid>
 
-      {/* Footer */}
       <Box sx={{ position: 'fixed', bottom: 0, width: '100%' }}>
         <LinearProgress variant="determinate" value={progress} />
         <Typography align="center" sx={{ py: 1 }}>
