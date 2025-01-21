@@ -80,7 +80,7 @@ Since it is possible to reset your password with the reset token, please keep th
     async def on_after_verify(
         self, user: User, request: Optional[Request] = None
     ) -> None:
-        hashed_email = User.verification_email
+        hashed_email = user.verification_email
         global_accounts_list = await database.get_global_accounts_list()
         global_accounts_list.hashed_email_list.append(hashed_email)
         await database.update_global_accounts_list({"hashed_email_list": global_accounts_list.hashed_email_list})

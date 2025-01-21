@@ -63,6 +63,10 @@ export class CourseSelectionPanelComponent {
       this.client.post<any>(url, formData,{"withCredentials": true}).subscribe(
         () => {
           console.log("Course Uploaded!")
+        },
+        error => {
+          console.error('Upload error:', error);
+          alert("A problem occured during course uploading. Please refer to logs for details.")
         }
       );
     }

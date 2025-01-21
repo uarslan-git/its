@@ -37,7 +37,11 @@ async def parse_all_tasks(dir, db=None):
     for location in os.listdir(dir):
         if location.startswith("task_") and (not location.endswith(".json")):
             assert location.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
-            await task_to_json(dir, location, db)
+            try:
+                await task_to_json(dir, location, db)
+            except Exception as e:
+                print(f"A problem occured during uploading task {location}")
+                raise e
         else:
             await parse_all_tasks(os.path.join(dir, location), db=db)
 
@@ -59,6 +63,8 @@ async def task_to_json(dir, task_unique_name, db=None):
             #test_name = file_name.split("_", 1)[1]
             test_name = file_name.split(".")[0]
             test_name_alt = get_function_names(file_path)
+            if len(test_name_alt == 1):
+                pass
             assert len(test_name_alt) == 1, "Too many test functions defined in single test file. Define only one!"
             assert test_name == test_name_alt[0], "Name of the test function should be the same as the filename"
             #Split on stop-symbol for imports

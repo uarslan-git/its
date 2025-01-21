@@ -124,6 +124,10 @@ export class CourseSettingsComponent {
       this.client.post<any>(url, formData,{"withCredentials": true}).subscribe(
         () => {
           console.log("Tasks updated!")
+        },
+        error => {
+          console.error('Upload error:', error);
+          alert("A problem occured during task uploading. Please refer to logs for details.")
         }
       );
     }
