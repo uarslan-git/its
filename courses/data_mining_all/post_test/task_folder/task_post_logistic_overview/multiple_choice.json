@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "one-parameter item response theory",
+        "two-parameter item response theory",
+        "performance factors analysis",
+        "performance factors analysis with ability parameters"
+    ],
+    "correct_choices": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "choice_explanations": [
+        "No, this can be solved by logistic regression.",
+        "Correct. While logistic regression is used for the M-step of the Box-Aitkin approach, the full model can not be solved with logistic regression.",
+        "No, this can be solved by logistic regression.",
+        "No, this can be solved by logistic regression."
+    ]
+}

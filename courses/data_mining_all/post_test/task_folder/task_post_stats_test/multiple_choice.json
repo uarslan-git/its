@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "A Welch t-test.",
+        "A correlation analysis.",
+        "A Wilcoxon signed-rank test.",
+        "A Shapiro-Wilk test."
+    ],
+    "correct_choices": [
+        true,
+        false,
+        false,
+        false
+    ],
+    "choice_explanations": [
+        "Correct.",
+        "No, this would not be applicable.",
+        "Not quite. We usually don't have paired data, here.",
+        "Not quite. This would only check whether the data cannot be explained by a Gaussian."
+    ]
+}

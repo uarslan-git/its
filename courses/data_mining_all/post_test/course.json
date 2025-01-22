@@ -1,0 +1,23 @@
+{
+    "display_name": "Data Mining: Post-Test",
+    "domain": "Data Mining",
+    "sub_domains": [],
+    "unique_name": "dm_post_test",
+    "competencies": ["Probability Theory", "Statistical Testing", "PCA", "Clustering", "logistic_models", "Markov Models", "Deep Models", "Recommenders"],
+    "curriculum": [["post_proba_dice", "post_proba_joint_conditional", "post_proba_independence"], 
+                   ["post_stats_p_value", "post_stats_test", "post_stats_formulae"], 
+                   ["post_pca_eigenvalues", "post_pca_component", "post_pca_fa"], 
+                   ["post_clust_k_means", "post_clust_convergence", "post_clust_agglomerative"], 
+                   ["post_logistic_overview", "post_logistic_irt", "post_logistic_pfa"], 
+                   ["post_markov_chain", "post_markov_bkt_derivation","post_markov_bkt_understanding"],
+                   ["post_deep_training", "post_deep_vae","post_deep_dkt"],
+                   ["post_rec_collaborative_filtering", "post_rec_matrix_factorization","post_rec_cold_start"]
+                 ],
+    "course_settings": {
+        "feedback_init_time": 60,
+        "feedback_cooldown": 30,
+        "pedagogical_model": "prototype",
+        "language_generation_model": "default"
+    }
+}
+

@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "P(X_t = 1 | Z_t = 1) = 1 - p_slip",
+        "The probability for Z_t = 1 given all previous observations eventually converges to 1 for t to infinity.",
+        "P(Z_1 = 1) > 0.5.",
+        "P(X_t = 1 | Z_t = 0) = p_slip"
+    ],
+    "correct_choices": [
+        true,
+        false,
+        false,
+        false
+    ],
+    "choice_explanations": [
+        "Correct.",
+        "Not quite. If all observations are zero, this is not the case.",
+        "No, p_start can be smaller than 0.5 (and is smaller, in most cases).",
+        "Not quite. This is p_guess."
+    ]
+}

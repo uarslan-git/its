@@ -1,0 +1,51 @@
+    {
+        "display_name": "Intro to Data Mining: Exam Preparation",
+        "domain": "Data Mining",
+        "sub_domains": [],
+        "competencies":["Probability Theory", "Statistical Testing", "PCA", "Clustering", "logistic_models", "Markov Models", "Deep Models", "Recommenders"],
+        "unique_name": "dm_exam_prep",
+        "topics": ["Probability Theory", "Statistical Testing", "PCA", "Clustering", "logistic_models", "Markov Models", "Deep Models", "Recommenders"],
+        "default_topic": "Probability Theory",
+        "curriculum": {"Probability Theory": ["bayes", "dice","independence", "mean_and_std"],
+                       "Statistical Testing": ["pearson", "pooled-variance", "wilcoxon"],
+                       "PCA": ["principal_components", "factor_sampling", "variance_coverage"], 
+                       "Clustering": ["kmeans", "ward_linkage","optimal_gmm_clusters"], 
+                       "logistic_models": ["IRT_logreg", "icc", "pfa_inference"], 
+                       "Markov Models": ["most_likely_to_follow", "hmm_sampling", "bkt"], 
+                       "Deep Models": ["dkt_input", "training_loop", "vae_sampling"], 
+                       "Recommenders":["ndcg_at_k", "user_similarity_explicit", "user_similarity_cosine"]
+                      },
+        "q_matrix":{
+            "bayes":[1,0,0,0,0,0,0,0],
+            "dice":[1,0,0,0,0,0,0,0],
+            "independence":[1,0,0,0,0,0,0,0],
+            "mean_and_std":[1,1,0,0,0,0,0,0],
+            "pearson":[1,1,0,0,0,0,0,0],
+            "pooled-variance":[0,1,0,0,0,0,0,0],
+            "wilcoxon":[0,1,0,0,0,0,0,0],
+            "principal_components":[0,0,1,0,0,0,0,0],
+            "factor_sampling":[0,0,1,0,0,0,0,0],
+            "variance_coverage":[0,0,1,0,0,0,0,0],
+            "pfa_inference":[0,0,0,0,1,0,0,0],
+            "kmeans":[0,0,0,1,0,0,0,0],
+            "ward_linkage":[0,0,0,1,0,0,0,0],
+            "optimal_gmm_clusters":[0,0,0,1,0,0,0,0],
+            "IRT_logreg":[0,0,0,0,1,0,0,0],
+            "icc":[0,0,0,0,1,0,0,0],
+            "most_likely_to_follow":[1,0,0,0,0,1,0,0],
+            "hmm_sampling": [0,0,0,0,0,1,0,0],
+            "bkt":[0,0,0,0,0,1,0,0],
+            "dkt_input":[0,0,0,0,0,0,1,0],
+            "training_loop":[0,0,0,0,0,0,1,0],
+            "vae_sampling":[0,0,0,0,0,0,1,0],
+            "ndcg_at_k":[0,0,0,0,0,0,0,1],
+            "user_similarity_explicit":[1,1,0,0,0,0,0,1],
+            "user_similarity_cosine":[0,1,0,0,0,0,0,1]
+            } ,
+
+        "course_settings": {
+            "feedback_init_time": 60,
+            "feedback_cooldown": 30,
+            "pedagogical_model": "prototype"
+            }
+    }

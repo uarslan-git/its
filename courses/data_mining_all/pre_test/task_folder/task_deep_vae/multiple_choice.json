@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "AEs try to minimize the reconstruction error while VAEs do not.",
+        "VAEs assume noise in the input space, while AEs do not.",
+        "VAEs assume a standard Gaussian latent distribution while AEs do not.",
+        "AEs are linear while VAEs are not."
+    ],
+    "correct_choices": [
+        false,
+        false,
+        true,
+        false
+    ],
+    "choice_explanations": [
+        "Not quite. VAEs do that, too - they just have other parts of the loss, as well.",
+        "Not quite. Many AEs do that, too.",
+        "Correct.",
+        "No, AEs can be nonlinear, as well."
+    ]
+}

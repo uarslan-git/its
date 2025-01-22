@@ -19,7 +19,32 @@ def process_file(file_path):
 def get_function_names(file_path):
     with open(file_path, 'r') as file:
         tree = ast.parse(file.read())
-    function_names = [node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)]
+    
+    function_names = []
+    context = []
+
+    
+    class Visitor(ast.NodeVisitor):
+        def visit_FunctionDef(self, node):
+            if not context:
+                function_names.append(node.name)
+            context.append(node)
+            self.generic_visit(node)
+            context.pop()
+
+        def visit_ClassDef(self, node):
+            context.append(node)
+            self.generic_visit(node)
+            context.pop()
+
+        def generic_visit(self, node):
+            for child in ast.iter_child_nodes(node):
+                self.visit(child)
+
+    visitor = Visitor()
+    visitor.visit(tree)
+
+    # function_names = [node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef) and not isinstance(node.parent, ast.FunctionDef)]
     return function_names
 
 def extract_argument_names(func_str):
@@ -63,7 +88,7 @@ async def task_to_json(dir, task_unique_name, db=None):
             #test_name = file_name.split("_", 1)[1]
             test_name = file_name.split(".")[0]
             test_name_alt = get_function_names(file_path)
-            if len(test_name_alt == 1):
+            if len(test_name_alt) == 1:
                 pass
             assert len(test_name_alt) == 1, "Too many test functions defined in single test file. Define only one!"
             assert test_name == test_name_alt[0], "Name of the test function should be the same as the filename"

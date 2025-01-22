@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "The determinant",
+        "The trace",
+        "The rank",
+        "The dimension"
+    ],
+    "correct_choices": [
+        false,
+        false,
+        true,
+        false
+    ],
+    "choice_explanations": [
+        "No, the determinant is just the product of all eigenvalues.",
+        "No, the trace is just the sum of all eigenvalues.",
+        "Correct.",
+        "No, there may also be zero eigenvalues."
+    ]
+}

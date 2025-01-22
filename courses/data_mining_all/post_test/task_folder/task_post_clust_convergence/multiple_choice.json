@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "The loss of K-Means is convex.",
+        "K-Means provably converges after at most K steps.",
+        "K-Means provably converges to a global optimum.",
+        "K-Means provably converges to a local optimum."
+    ],
+    "correct_choices": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "choice_explanations": [
+        "No, the loss itself is not convex - only, if we assume the assignment of data points to clusers to be convex.",
+        "No, it often takes longer.",
+        "No, K-Means may also get stuck in local minima.",
+        "Correct."
+    ]
+}

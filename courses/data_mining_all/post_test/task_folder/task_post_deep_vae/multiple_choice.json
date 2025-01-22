@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "AEs are used for supervised learning while VAEs are used for unsupervised learning.",
+        "VAEs enforce a uniform distribution in the latent space, while AEs do not.",
+        "VAEs permit sampling of new data by decoding standard Gaussian noise, while sampling from AEs is more difficult.",
+        "AEs have a loss function while VAEs do not."
+    ],
+    "correct_choices": [
+        false,
+        false,
+        true,
+        false
+    ],
+    "choice_explanations": [
+        "No, both are used for unsupervised learning.",
+        "No, VAEs enforce a standard Gaussian distribution in the latent space.",
+        "Correct.",
+        "No, both have a loss function."
+    ]
+}

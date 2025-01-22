@@ -1,0 +1,20 @@
+{
+    "possible_choices": [
+        "The probability for Z_t = 1 given all previous observations eventually converges to 1 for t to infinity.",
+        "P(Z_t = 1) > P(Z_{t+1} = 1) for all t.",
+        "P(X_t = 1 | Z_t = 0) = p_slip",
+        "P(X_t = 1 | Z_t = 1) = p_guess"
+    ],
+    "correct_choices": [
+        true,
+        false,
+        false,
+        false
+    ],
+    "choice_explanations": [
+        "Correct.",
+        "Not quite. The inequality should be flipped.",
+        "No, this is p_guess.",
+        "No, this is 1 - p_slip."
+    ]
+}
