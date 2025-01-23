@@ -60,15 +60,18 @@ export class CourseSelectionPanelComponent {
       const formData = new FormData();
       formData.append("file", file);
       const url: string = `${environment.apiUrl}/course/upload_course`;
-      this.client.post<any>(url, formData,{"withCredentials": true}).subscribe(
-        () => {
-          console.log("Course Uploaded!")
-        },
-        error => {
-          console.error('Upload error:', error);
-          alert("A problem occured during course uploading. Please refer to logs for details.")
-        }
-      );
+      if (window.confirm("This action can overwrite existing courses and course settings. It is safer to only update tasks for existing courses."))
+      {
+        this.client.post<any>(url, formData,{"withCredentials": true}).subscribe(
+          () => {
+            console.log("Course Uploaded!")
+          },
+          error => {
+            console.error('Upload error:', error);
+            alert("A problem occured during course uploading. Please refer to logs for details.")
+          }
+        );
+      }
     }
   }
 }
