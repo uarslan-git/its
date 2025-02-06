@@ -1,6 +1,6 @@
 # Readme
 
-Curious Camel (preliminary name) is an Intelligent Tutoring System for programming. In this file, you will find information on how to start using, contributing or hosting Curious Camel. This software is developed and maintained by the Knowledge Representation and Machine Learning (KML) group of Bielefeld University (https://www.uni-bielefeld.de/fakultaeten/technische-fakultaet/arbeitsgruppen/kml/). 
+Curious Camel (preliminary name) is an Intelligent Tutoring System for programming. In this file, you will find information on how to start using, contributing or hosting Curious Camel. This software is developed and maintained by the Knowledge Representation and Machine Learning (KML) group of Bielefeld University (https://www.uni-bielefeld.de/fakultaeten/technische-fakultaet/arbeitsgruppen/kml/).
 
 ## License
 
@@ -82,3 +82,19 @@ Specify .env file with different secrets for the backend.
 ## Contributing
 
 We welcome external contributors to this project. If you want to contribute, we are happy to assist with questions regarding the integration of your contribution with our system. In any case, contributions should align with the general system architecture of the system.
+
+
+## Contributors
+
+### Active Contributors
+
+Alina Deriyeva (primary)
+Arno Gaußelmann
+Benjamin Paaßen
+Jesper Dannath (primary)
+
+### Additional Contributors
+
+Aliena Strathmann
+Björn Buschkämper
+Tobias Hillmer
