@@ -88,13 +88,13 @@ We welcome external contributors to this project. If you want to contribute, we 
 
 ### Active Contributors
 
-Alina Deriyeva (primary)
-Arno Gaußelmann
-Benjamin Paaßen
-Jesper Dannath (primary)
+- Alina Deriyeva (primary)
+- Arno Gaußelmann
+- Benjamin Paaßen
+- Jesper Dannath (primary)
 
 ### Additional Contributors
 
-Aliena Strathmann
-Björn Buschkämper
-Tobias Hillmer
+- Aliena Strathmann
+- Björn Buschkämper
+- Tobias Hillmer
