@@ -1,6 +1,6 @@
 # Readme
 
-Curious Camel is an Intelligent Tutoring System for programming. In this file, you will find information on how to start using, contributing or hosting Curious Camel. This software is developed and maintained by the Knowledge Representation and Machine Learning (KML) group of Bielefeld University (https://www.uni-bielefeld.de/fakultaeten/technische-fakultaet/arbeitsgruppen/kml/). 
+Curious Camel (preliminary name) is an Intelligent Tutoring System for programming. In this file, you will find information on how to start using, contributing or hosting Curious Camel. This software is developed and maintained by the Knowledge Representation and Machine Learning (KML) group of Bielefeld University (https://www.uni-bielefeld.de/fakultaeten/technische-fakultaet/arbeitsgruppen/kml/). 
 
 ## License
 
@@ -18,13 +18,14 @@ This software is distributed under the xxxx license. It shall not be redistribut
 - [x] Print, function and multiple-choice tasks
 - [x] Multiple courses per user
 - [x] E-Mail based login
+- [x] Monaco code editor
+- [x] Upload courses
+- [x] Conceptual Feedback on Steps
+- [x] Course settings
+- [x] Task selection based on user competency
 - [ ] Tasks with image-files
-- [ ] Course settings
-- [ ] Task selection based on user competency
 - [ ] Fill the gap-tasks
-- [ ] Monaco code editor
-- [ ] Upload courses
-- [ ] Conceptual Feedback on Steps
+
 
 
 ## How to use?
@@ -80,4 +81,4 @@ Specify .env file with different secrets for the backend.
 
 ## Contributing
 
-We welcome external contributors to this project. If you want to contribute, we are happy to assist with questions regarding the integration of your contribution with our system. In any case, contributions should align with the documented system architecture guidelines provided in the ..... files.
+We welcome external contributors to this project. If you want to contribute, we are happy to assist with questions regarding the integration of your contribution with our system. In any case, contributions should align with the general system architecture of the system.

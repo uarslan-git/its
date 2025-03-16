@@ -7,10 +7,15 @@ from db import database
 
 class LLM_prototype_feedback_module(Base_step_feedback_module):
 
-    def __init__(self) -> None:
+    def __init__(self, feedback_type="both") -> None:
         self.step_generator = Prompt_llm_step_generator()
         #self.feedback_generator = Identity_feedback_generator()
-        self.feedback_generator = LLM_conceptual_explanation_generator()
+        if feedback_type == "both":
+            self.feedback_generator = LLM_conceptual_explanation_generator(textual_feedback_only=False)
+        if feedback_type == "textual":
+            self.feedback_generator = LLM_conceptual_explanation_generator(textual_feedback_only=True)
+        if feedback_type == "code":
+            self.feedback_generator = Identity_feedback_generator()
 
     async def get_feedback_available(self, task_type):
         settings = await database.get_settings()

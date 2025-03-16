@@ -35,10 +35,12 @@ def extract_argument_names(func_str):
         raise ValueError(f"Error extracting arguments: {e}")
 
 async def parse_all_tasks(dir, db=None):
-    for task_unique_name in os.listdir(dir):
-        if not task_unique_name.endswith(".json"):
-            assert task_unique_name.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
-            await task_to_json(dir, task_unique_name, db)
+    for location in os.listdir(dir):
+        if location.startswith("task_") and (not location.endswith(".json")):
+            assert location.startswith("task_"), "Wrong format for task folders, use task_[task_unique_name]"
+            await task_to_json(dir, location, db)
+        else:
+            await parse_all_tasks(os.path.join(dir, location), db=db)
 
 async def task_to_json(dir, task_unique_name, db=None):
     # Iterate through the files in the folder
@@ -50,8 +52,8 @@ async def task_to_json(dir, task_unique_name, db=None):
         if os.path.isdir(file_path):
             print(f"'{file_name}' is a directory was ignored.")
             continue
+        # PNGs cannot be read with utf-8
         elif file_name.endswith("png"):
-            # PNGs cannot be read with utf-8
             continue
         content_docstring = process_file(file_path)
         if file_name.startswith("test"):

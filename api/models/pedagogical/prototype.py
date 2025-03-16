@@ -6,6 +6,6 @@ class Prototype_pedagogical_model(Base_pedagogical_model):
 
     def __init__(self):
         self.task_selector = First_uncompleted_task_selector()
-        self.feedback_module = LLM_prototype_feedback_module()
+        self.feedback_module = LLM_prototype_feedback_module(feedback_type="both")
         self.feedback_method = "LLM-next-step"
         self.task_summaries = {}

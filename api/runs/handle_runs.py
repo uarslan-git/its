@@ -6,6 +6,7 @@ from fastapi import Depends
 from users.handle_users import current_active_verified_user
 from models.domain.submissions import check_user_code, json_serialize, execute_code_judge0
 import json
+import re
 
 router = APIRouter()
 
@@ -112,7 +113,13 @@ async def execute_code(code, prefix_lines):
     except BaseException as e:
         run_result = f"Error or Exception: {str(e)}"
     if "##!serialization!##" in run_result:
-        run_result = run_result.split("##!serialization!##")[1]
-        run_result = run_result.split("##!serialization!##")[0]
-        run_result = json.loads(run_result)["run_result"]
+        pattern = r".*?\##!serialization!##(.*?)\##!serialization!##.*"
+        parsed_result_string = re.findall(pattern, run_result, re.DOTALL)
+        if len(parsed_result_string)==1:
+            parsed_result_string = parsed_result_string[0].strip()
+        else:
+            raise Exception("Bad Judge0 parsing!")
+        #run_result = run_result.split("##!serialization!##")[1]
+        #run_result = run_result.split("##!serialization!##")[0]
+        run_result = json.loads(parsed_result_string)["run_result"]
     return(run_result)

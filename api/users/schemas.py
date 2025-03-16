@@ -11,17 +11,13 @@ from pymongo.collation import Collation
 class User(BeanieBaseUser, Document):
     email: str
     username: str
-    verification_email: str
+    verification_email: Optional[str] = None
+    encrypted_email: Optional[str] = None
     current_course: str
-    #tasks_completed: list
-    #tasks_attempted: list
     enrolled_courses: list
-    #rand_subdomain_orders: list
-    #courses_completed: list
     register_datetime: dict
     settings: dict
     roles: Optional[list] = None
-    #estimated_compentency: Optional[list]
     class Settings:
         """Here we are overwriting the settings class from BeanieBaseUser in order to allow for the optional roles field.
         Basically this allows us to exclude roles from the UserCreate schema in order to avoid security breaches.
@@ -40,11 +36,7 @@ class UserRead(schemas.BaseUser[PydanticObjectId]):
     email: str
     username: str
     current_course: str
-    #tasks_completed: list
-    #tasks_attempted: list
     enrolled_courses: list
-    #rand_subdomain_orders: list
-    #courses_completed: list
     register_datetime: dict
     settings: dict
     roles: Optional[list] = None
@@ -57,14 +49,9 @@ class UserCreate(schemas.BaseUserCreate):
     verification_email: str
     username: str
     current_course: str
-    #tasks_completed: list
-    #tasks_attempted: list
     enrolled_courses: list
-    #rand_subdomain_orders: list
-    #courses_completed: list
     register_datetime: dict
     settings: dict
-    #roles: Optional[list]
     pass
 
 
@@ -77,7 +64,6 @@ class UserUpdate(schemas.BaseUserUpdate):
     in later iterations. Potentially all such information should be stored in different
     documents.
     """
-    email: str
     username: str
     register_datetime: dict
     settings: dict

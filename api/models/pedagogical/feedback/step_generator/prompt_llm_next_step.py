@@ -18,33 +18,116 @@ class Prompt_llm_step_generator(Base_step_generator):
         task_json = await database.get_task(submission.task_unique_name)
         previous_step = task_json.prefix+submission.code
         example_solution = task_json.prefix+task_json.example_solution
+        test_messages = "\n".join([test["message"] for test in submission.test_results])
         task = task_json.task
-        instruction, system = self.create_instruction(previous_step, task=task, example_solution=example_solution) #TODO: get short version of tasks or differentiate between local and server.
+        instruction, system = self.create_instruction(previous_step, task=task) #TODO: Get short version of tasks or differentiate between local and server.
         course_settings = await database.get_course_settings_for_user(submission.user_id, submission.course_unique_name)
         language_generation_model = course_settings["language_generation_model"]
         next_step = await generate_language(instruction, system=system, model=language_generation_model)
+        next_step = self.extract_code_block(next_step)
         return next_step
+
+    def extract_code_block(self, next_step):
+        next_step = next_step.split("```\n")[0] + "```"
+        return(next_step)
+
+    def create_instruction(self, previous_step, task="", test_messages="Not provided"):
+        system = """You are a prediction model for human programming behavior. You want to give a hint to students learning programming by providing them with a reasonable next step in programming tasks."""
+        instruction = f"""## Examples:
+Here are two Examples of a reasonably predicted next step that a student might take given their previous state:
+
+### Example 1
+
+**Task Description**
+Write a Python code to check if the given number is palindrome. A palindrome number is a number that is the same after reverse. For example, 545 is the palindrome number.
+
+**Previous state**
+```python
+def palindrome(number):
+    original_num = number
     
-    #async def get_feedback_available(self, task_type):
-    #    settings = await database.get_settings()
-    #    if settings.ollama_url == "" or task_type in ["multiple_choice"]:
-    #        return False
-    #    else:
-    #        return True
+    # reverse the given number
+    reverse_num = 0
+    while number > 0:
+        remainder = number % 10
+        reverse_num 
+
+    if original_num == reverse_num:
+        return True
+    else:
+        return False
+```
+
+**Next step**
+```python
+def palindrome(number):
+    original_num = number
     
-    #def create_instruction(self, previous_step, task_ins="Consider the following programming task:", task="",
-    #                             inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements and no modules that were not imported so far. Also, there should be only the edited code and no further explanations. The reply should be a Markdown code block. The current program state is:", 
-    #                            b_inst="[INST]", e_inst="[/INST]"):
-    #    #system = """You are a tutor who wants to give hints to students learning programming by providing them with next steps in programming tasks. You want to generate a step as small as possible, so that the student can continue on their own."""
-    #    system = "You are a prediction model for human programming behaviour. You want to give hints to students learning programming by providing them with possible next steps in programming tasks."
-    #    instruction = f"""<s> {b_inst} {task_ins}\n"{task}"\n{inst}\n{previous_step} {e_inst}\n**Next Step:**\n"""
-    #    return instruction, system
-    
-    def create_instruction(self, previous_step, task_ins="Consider the following programming task:", task="",
-                                 inst="Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements and no modules that were not imported so far. Also, there should be only the edited code and no further explanations. The reply should be a Markdown code block. Please consider the students coding style and approach to the problem over the example solution when predicting the next step. NEVER disclose the full example solution. The current program state is:", 
-                                example_solution="Not provided"):
-        #system = """You are a tutor who wants to give hints to students learning programming by providing them with next steps in programming tasks. You want to generate a step as small as possible, so that the student can continue on their own."""
-        system = "You are a prediction model for human programming behaviour. You want to give hints to students learning programming by providing them with possible next steps in programming tasks."
-        instruction = f"""{task_ins}\n"{task}"\n**Example Solution:**\n{example_solution}\n{inst}\n{previous_step}\n**Next Step:**\n"""
+    # reverse the given number
+    reverse_num = 0
+    while number > 0:
+        remainder = number % 10
+        reverse_num = (reverse_num * 10) + remainder
+        number = number // 10
+
+    if original_num == reverse_num:
+        return True
+    else:
+        return False
+```
+
+### Example 2
+**Task Description**
+For an input lists x and y, compute their Pearson correlation. Using the NumPy package.
+
+**Previous state**
+```python
+def pearson_correlation(x, y):
+
+    # Check if the input arrays have the same length
+    if len(x) != len(y):
+        raise ValueError("Input arrays must have the same length for Pearson correlation calculation.")
+
+    # Calculate means
+    mean_x = np.mean(x)
+    mean_y = np.mean(y)
+
+    # Calculate numerator and denominators
+    numerator = np.sum((x - mean_x) * (y - mean_y))
+```
+
+**Next step**
+```python
+def pearson_correlation(x, y):
+
+    # Check if the input arrays have the same length
+    if len(x) != len(y):
+        raise ValueError("Input arrays must have the same length for Pearson correlation calculation.")
+
+    # Calculate means
+    mean_x = np.mean(x)
+    mean_y = np.mean(y)
+
+    # Calculate numerator and denominators
+    numerator = np.sum((x - mean_x) * (y - mean_y))
+    denominator_x = np.sqrt(np.sum((x - mean_x)**2))
+    denominator_y = np.sqrt(np.sum((y - mean_y)**2))
+```
+
+## 2. Task Description:    
+Consider the following programming task:
+"{task}"
+
+
+## 3. Previous State:
+Predict a reasonable next step of the student program. It is important to only predict the next step and not the complete solution! Use no additional import statements and no modules that were not imported so far. Also, there should be only the edited codeblock and no further explanations. The reply should be a Markdown code block. Please consider the students approach to the problem when predicting the next step. NEVER disclose the full solution. The current program state is: 
+{previous_step}
+
+## 4. Test Messages:
+Additionally, you can consider the failure messages from automated unit-tests on the students current state. They can hint at problems in the student code.
+But be careful, the unit-test messages can also be incomplete and misleading. The unit test Messages are: 
+{test_messages}
+
+**Next Step:**
+"""
         return instruction, system
-    

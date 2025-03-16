@@ -12,7 +12,7 @@ import os
 from config import config
 import random
 import hashlib
-from services.email import send_mail
+from services.email_sending import send_mail
 import re
 
 """For Information about fastapi-users and this implementation of it, please refer to
@@ -29,30 +29,50 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
         await database.update_user(user, update_dict)
         print(f"User {user.id} has registered.")
 
+
     async def on_after_forgot_password(
         self, user: User, token: str, request: Optional[Request] = None
     ):
         verification_email = request._json["verificationEmail"]
         reset_token_key = request._json["resetKey"]
         verification_hash = hashlib.sha256((verification_email + str(reset_token_key)).encode("utf-8")).hexdigest()
-        if user.verification_email == verification_hash:
-            send_mail(f"""
-Dear User,
+        if user.encrypted_email == verification_hash:
+            send_mail(f"""Dear User,
+
 someone has requested to change the password of your account.
 Please use the following reset-token to generate a new password.
 {token}
-Best wishes
-The Curious Camel Team
-""", verification_email)
+""", "ITS password change request", verification_email)
         
         print(f"User {user.id} has forgot their password. Reset token: {token}")
 
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
     ):
-        message = f"Hello new User,\nplease veriy your account using the following verification token:\n{token}"     
-        send_mail(message, user.verification_email)
+        reset_token_key = random.randint(100000000000, 900000000000)
+        #Only the hashed concatenation of email+reset_token_key is stored, so that users real identities stay unknown to the admins.
+        encrypted_email = hashlib.sha256((user.verification_email + str(reset_token_key)).encode("utf-8")).hexdigest()
+
+        message = f"""Hello new User,
+
+this mail contains important information on how to verify your account and retrieve your account credentials in case of loss.
+
+Your username is: {user.username}
+        
+Please veriy your account now using the following verification token:
+
+{token}
+
+Once your account is activated, you can request a recovery key for your password on our website
+The key to generate a password-reset-token for your account is {reset_token_key}.
+
+Since it is possible to reset your password with the reset token, please keep this mail save and secure."""   
+        send_mail(message, "ITS user verification", user.verification_email)
+        hashed_email = hashlib.sha256((user.verification_email).encode("utf-8")).hexdigest()
+        update_dict = {"encrypted_email": encrypted_email, "verification_email": hashed_email}
+        await database.update_user(user, update_dict)
         print(f"Verification requested for user {user.id}. Verification token: {token}")
+        
 
     async def on_after_login(self, user: User, request: Request | None = None, response: Response | None = None) -> None:
         print("User {0} has logged in".format(user.email))
@@ -60,27 +80,13 @@ The Curious Camel Team
     async def on_after_verify(
         self, user: User, request: Optional[Request] = None
     ) -> None:
-        reset_token_key = random.randint(10000000, 90000000)
-        #Only the hashed concatenation of email+reset_token_key is stored, so that users real identities stay unknown to the admins.
-        hashed_email = hashlib.sha256((user.verification_email + str(reset_token_key)).encode("utf-8")).hexdigest()
-        message=f"""
-Dear User,
-your account is now activated, this mail contains important information on how to retrieve your account credentials.
-Your username is {user.username}.
-The key to generate a password-reset-token for your account is {reset_token_key}.
-Since it is possible to reset your password with the reset token, please keep this mail save and secure.
-Best wishes
-The Curious Camel Team
-"""
-        send_mail(message, user.verification_email)
-
+        hashed_email = User.verification_email
         global_accounts_list = await database.get_global_accounts_list()
-        hashed_email = hashlib.sha256((user.verification_email).encode("utf-8")).hexdigest()
         global_accounts_list.hashed_email_list.append(hashed_email)
         await database.update_global_accounts_list({"hashed_email_list": global_accounts_list.hashed_email_list})
+        user_update_dict = {"verification_email": None}
+        await database.update_user(user, user_update_dict)
 
-        update_dict = {"verification_email": hashed_email}
-        await database.update_user(user, update_dict)
 
     #Create has to be ovewritten in order to allow for checking for dublicate users based on hashed emails
     async def create(self, user_create, safe: bool = False, request: Optional[Request] = None):
@@ -97,7 +103,8 @@ The Curious Camel Team
         class EmailDomainNotAllowedException(exceptions.FastAPIUsersException):
             pass
         if not allowed_mail_adress:
-            send_mail("Dear User,\nan account using this email-adress already exists. Please try to recover it or contact your admin.\n",
+            send_mail("Dear User,\n\nan account using this email-adress already exists. Please try to recover it or contact your admin.\n",
+                        "ITS Account already exists",
                       user_create.verification_email)
             raise EmailDomainNotAllowedException
         return await BaseUserManager.create(self, user_create, safe, request)

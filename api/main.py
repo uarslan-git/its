@@ -7,15 +7,17 @@ from submissions.schemas import Base_Submission, Tested_Submission
 from tasks import handle_tasks
 from feedback import handle_feedback
 from courses import handle_courses
+from surveys import handle_surveys
+from surveys.schemas import Survey
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from users import handle_users
 from users import schemas as user_schemas
 from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings
 from tasks.schemas import Task
-from attempts.schemas import Attempt, AttemptState
+from attempts.schemas import Attempt, AttemptState, NestedAttemptState
 from beanie import init_beanie
-from db import db_connector_beanie
+from db import db_connector_beanie, database
 from users.schemas import User
 from config import config
 from runs import handle_runs
@@ -27,6 +29,14 @@ from fastapi.responses import JSONResponse
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 from system.schemas import AppSettings
 from feedback.schemas import Url
+from models.domain.skill_weights_pfa_update import Skill_parameters_pfa_update
+from datetime import datetime
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger  
+from apscheduler.schedulers.asyncio import AsyncIOScheduler  
+from contextlib import asynccontextmanager
+from asyncio import run
+
 
 
 REQUEST_TIMEOUT_ERROR = 30  # Threshold
@@ -62,6 +72,7 @@ app.include_router(handle_courses.router, prefix=f"{prefix}")
 app.include_router(handle_runs.router, prefix=f"{prefix}/run")
 app.include_router(retrieve_info.router, prefix=f"{prefix}/info")
 app.include_router(handle_settings.router, prefix=f"{prefix}/settings")
+app.include_router(handle_surveys.router, prefix=f"{prefix}/surveys")
 
 # User Router and database setup
 app.include_router(
@@ -101,12 +112,46 @@ async def on_startup():
         document_models=[
             User, Base_Submission, Tested_Submission, 
             Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings,
-              Task, Attempt, AttemptState, AppSettings, Url,
-            user_schemas.GlobalAccountList, 
+              Task, Attempt, AttemptState, NestedAttemptState, AppSettings, Url,
+            user_schemas.GlobalAccountList, Survey
         ],
     )
     await initialize_settings(db_connection_beanie)
     await initialize_global_accounts_list(db_connection_beanie)
+    #async def scheduled_jobs():
+    scheduler = AsyncIOScheduler()
+    trigger = IntervalTrigger(seconds=60) # TODO: not sure yet if it can be added as a parameter
+    scheduler.add_job(coroutine_updater, trigger)
+    scheduler.start()
+    #loop = asyncio.get_event_loop()
+    #a1 = loop.create_task(get())
+    #loop.run_until_complete(a1)
+
+async def course_parameter_update():
+    # TODO: schedule the updates of the course: exact timing not decided yet
+    courses = await database.get_courses()
+    updater = Skill_parameters_pfa_update()
+    for course in courses:
+        if (not course.q_matrix is None):
+            try:
+                await updater.select(course=course)
+            except:
+                pass
+
+async def coroutine_updater():
+    return await course_parameter_update()
+#scheduler = AsyncIOScheduler()
+#trigger = IntervalTrigger(seconds=60) 
+#scheduler.add_job(course_parameter_update, trigger)
+#scheduler.start()
+#asyncio.get_event_loop().run_forever()
+#asyncio.run(scheduler)
+
+#@asynccontextmanager
+#async def lifespan(app: FastAPI):
+#    yield
+#    scheduler.shutdown()
+
 
 origins = ["http://localhost:4200", "http://localhost:8080",
            "http://localhost", "https://localhost"]
@@ -146,4 +191,5 @@ if __name__ == "__main__":
     database_host = config.database_host
     db_connection_beanie = db_connector_beanie.database(database_host=database_host, 
                                                         database_user=config.database_usr, database_pwd=config.database_pwd)
+
     uvicorn.run(app, host="0.0.0.0", port=8000, )

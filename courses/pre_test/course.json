@@ -2,19 +2,19 @@
     "display_name": "Data Mining: Pre-Test",
     "domain": "Data Mining",
     "sub_domains": ["Probability Theory", "Statistical Testing", "PCA", "Clustering", "logistic_models", "Markov Models", "Deep Models", "Recommenders"],
-    "curriculum": [["proba_dice", "proba_joint_conditional", "proba_independence"], 
-                   ["stats_p_value", "stats_test", "stats_formulae"], 
-                   ["pca_eigenvalues", "pca_component", "pca_fa"], 
-                   ["clust_k_means", "clust_likelihood", "clust_agglomerative"], 
-                   ["logistic_overview", "logistic_irt","logistic_pfa"], 
-                   ["markov_chain", "markov_bkt_derivation","markov_bkt_understanding"],
-                   ["deep_training", "deep_vae","deep_dkt"],
-                   ["rec_collaborative_filtering", "rec_matrix_factorization","rec_cold_start"]
+    "curriculum": ["proba_dice", "proba_joint_conditional", "proba_independence", 
+                   "stats_p_value", "stats_test", "stats_formulae", 
+                   "pca_eigenvalues", "pca_component", "pca_fa", 
+                   "clust_k_means", "clust_likelihood", "clust_agglomerative", 
+                   "logistic_overview", "logistic_irt","logistic_pfa", 
+                   "markov_chain", "markov_bkt_derivation","markov_bkt_understanding",
+                   "deep_training", "deep_vae","deep_dkt",
+                   "rec_collaborative_filtering", "rec_matrix_factorization","rec_cold_start"
                  ],
     "course_settings": {
         "feedback_init_time": 60,
         "feedback_cooldown": 30,
-        "pedagogical_model": "default",
+        "pedagogical_model": "prototype",
         "language_generation_model": "default"
     }
 }

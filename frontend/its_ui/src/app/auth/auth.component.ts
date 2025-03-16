@@ -5,6 +5,7 @@ import { DatetimeService } from '../shared/services/datetime.service';
 
 import { environment } from 'src/environments/environment';
 import { DataTermsPopupComponent } from '../shared/components/data-terms-popup/data-terms-popup.component';
+import { PrivacyPolicyPopupComponent } from '../shared/components/privacy-policy-popup/privacy-policy-popup.component'
 import { timeout } from 'rxjs';
 
 interface AuthResponse {
@@ -20,15 +21,19 @@ interface AuthResponse {
 
 export class AuthComponent {
 
-  @ViewChild('dataTermsPopupComponent', { static: false }) dataTermsPopupComponent!: DataTermsPopupComponent;
+  @ViewChild('dataTermsPopupComponent', {static: false}) dataTermsPopupComponent!: DataTermsPopupComponent;
+  @ViewChild('privacyPolicyPopupComponent', {static: false}) privacyPolicyPopupComponent!: PrivacyPolicyPopupComponent;
   @ViewChild('consentCheckboxYes', {static: false}) consentCheckboxYes!: ElementRef;
   @ViewChild('consentCheckboxNo', {static: false}) consentCheckboxNo!: ElementRef;
-  //TODO: Fetch availiable courses directly from database.
-  @ViewChild('courseSelection', {static: false}) courseSelection!: ElementRef;
-
+  @ViewChild('privacyCheckbox', {static: false}) privacyCheckbox!: ElementRef;
+  
   //showDataTermPopup: boolean = false;
   showDataTermPopup() {
     this.dataTermsPopupComponent!.showPopup();
+  }
+
+  showPrivacyPolicyPopup() {
+    this.privacyPolicyPopupComponent!.showPopup();
   }
 
   apiUrl = environment.apiUrl;
@@ -90,6 +95,11 @@ export class AuthComponent {
   register(email: string, username: string, password: string, dataCollectionConsent: boolean): void {
     if(!this.consentCheckboxNo.nativeElement.checked && !this.consentCheckboxYes.nativeElement.checked){
       window.alert("Please select (Yes/No) whether we can use your data for scientific purposes.")
+      return;
+    }
+
+    if(!this.privacyCheckbox.nativeElement.checked){
+      window.alert("Please acknowledge the Privacy Policy to proceed.")
       return;
     }
 

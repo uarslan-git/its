@@ -1,67 +1,35 @@
-# Scientific Data Collection Information
+# Information for participants
 
-## Introduction
+Thank you for your interest in the training with out Intelligent Tutoring System. In addition to the Data Protection statement, we would like to provide you with some additional information about the system, how it works, and what participation implies. 
 
-Welcome to the prototype of the intelligent Tutoring System of the Technical Faculty! This document provides information about how we collect, process, and use your pseudomized data. Apart from necessary data collection for our core app features, we collect data for the sole purpose of scientific research. We are dedicated to upholding privacy standards and complying with European Data Protection Laws.
+## Goals of the ITS
 
-## 1.Contact
+In the WS2024/2025, our research group – AG „Knowledge Respresentation and Machine Learning“, officially represented by Prof. Dr. Benjamin Paaßen, offers additional exam preparation materials for the „Introduction to Data Mining“ within this ITS. These tasks are not mandatory for course completion, and they do not include exclusive information, that was not presented during the lectures. Nevertheless, we hope that these additional tasks may help you explore the topic of Data Mining in more depth, as well as help you consolidate the knowledge from the lectures and other materials. 
 
-The data controller for your personal data is:
+**Please note that interaction within this ITS as well as donation any of the data for scientific purposes is completely optional and in no way will affect the examinations of the aforementioned course. That is, choosing to interact (or not interact), with or without completion of any activities within this ITS, with or without donating data for scientific purposes, will have no impact on the course performance. Still, we hope that additional materials provided in this ITS can be helpful for you to consolidate knowledge acquired throughout the semester.**
 
-AG Knowledge Representation and Machine Learning
-Universitaet Bielefeld
-Technische Fakultaet
-Postfach 10 01 31
-33501 Bielefeld
-E-Mail [its@techfak.de](mailto:its@techfak.de)
+The detailed description of the data can be found in Privacy Policy. Please note that the interaction data in collected for the system funcionality. However, we would also like to use the data collected within the ITS for research purposes. Upon the registration, the system will ask you to either opt in or opt out of data collection for scientific purposes: this choice is yours to make and will not lead to any disadvantage for you. In case you prefer not to allow usage of your data for scientific purposes, please be aware that the data will still be collected and saved for the purpose of maintaining system’s functionality, but will be exculded from any evaluation or analysis in the future, and irrevertably deleted after the 31.03.2025.
+Please note that you can withdraw your consent to scientific data usage at any point in the user profile.
 
-## 2. Types of Data Collected
+Additionally, within the system we provide questionnaires (learning personality and feedback), data from which we would like to use for research and to improve the ITS. Participation, as well as data donation, are optional for all users.
 
-We collect the following types of pseudonymised data in order to ensure the basic functionality of our application.
+## Additional Instructions
+To preserve your anonymity, we implore you to use following measures while interacting with the ITS: 
 
-- **Profile Information** Username, enrolled courses, etc.
-- **Interaction Data** The last state of your attempt on each task.
-- **Submission Data** Your code submissions for verification of task completion.
+please choose a login name that cannot be tracked to you personally (Max_Mustermann is not good, if  Max Mustermann is your name, but data_mining_master_42 is good). 
 
-Depending on your selected preferences, we collect and process the following types of pseudomised data for scientific research purposes:
+please do not enter any personal data in the code editor: this data is saved automatically.
 
-- **Interaction Data** Intermediate states on your attempts for each task.
-- **Submission Data** Your code submissions and code runs.
+## Responsibility for the ITS 
+In case of any question, please refer to the party responsible for the its.techfak.de (or the controllers mentioned in the Privacy Policy).
+ 
+Contact details of responsible parties:
 
-## 3. Purposes of Data Collection
+AG Knowledge Representation and Machine Learning \
+CITEC \
+Inspiration 1 \ 
+33619 Bielefeld \ 
+Phone: +49 521 106-87838 \ 
+E-Mail: ag-kml@techfak.uni-bielefeld.de
 
-If you agree, we collect and process your personal data solely for the purpose of conducting scientific research on machine learning methods for educational software. This includes:
-
-- Methods to select tasks that fit your individual skill profile.
-- Methods to generate individual feedback and hints to the solution of tasks.
-- Tutoring chatbots.
-- Other methods for learning experience improvement.
-
-## 4. Data Sharing
-
-We may share anonymized or aggregated data with other researchers or institutions for the purpose of advancing scientific knowledge. Individual participants' identities will be protected.
-
-## 5. Data Security
-
-We prioritize the security of your data and have implemented measures to ensure its confidentiality. To maximise security, you should use a username for the prototype system, that cannot be linked back to you personally. 
-
-## 6. Your Rights
-
-As a participant in our scientific research, you have the following rights:
-
-- **Access:** Request access to your personal data collected for research purposes.
-- **Rectification:** Request correction of inaccuracies in your data.
-- **Withdrawal of Consent:** You have the right to withdraw your consent at any time, and it will not affect the lawfulness of processing based on consent before withdrawal.
-- **Deletion:** Delete your all your account data. Please note, that we can only delete the data that contains your username information. Once the data is extracted and anonymized for research purposes, we will not be able to delete the data from the anonymized database. 
-
-To exercise these rights, please contact us at [its@techfak.de](mailto:its@techfak.de).
-
-## 7. Changes to this Policy
-
-We may update this Scientific Data Collection Information to reflect changes in our research practises. Updates should not affect the data processing and usage of your data, if you are using the prototype system.
-
-## Contact Information
-
-If you have any questions or concerns about this Scientific Data Collection Information, please contact us at [its@techfak.de](mailto:its@techfak.de).
-
-Last Updated: 11.10.2023
+Last update: 18.12.2024.

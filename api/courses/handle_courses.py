@@ -37,17 +37,12 @@ async def get_course(course_unique_name, user: User = Depends(current_active_ver
         course_enrollment = await database.get_course_enrollment(user, course_unique_name)
     
     curriculum = course.curriculum
-    sub_domains = course.sub_domains
     
     course_settings_index = course_enrollment.course_settings_index
     course_settings = course.course_settings_list[course_settings_index]
     course = override_course_settings(course, course_settings)
     course.course_settings_list = [course_settings]
 
-    if type(curriculum[0]) == list:
-        course.curriculum = [task for sub_domain in course.curriculum for task in sub_domain]
-    else:
-        pass
     return(course)
 
 
@@ -114,7 +109,8 @@ async def unzip_folder(file: UploadFile, temp_dir):
         zip_ref.extractall(temp_dir)
 
 
-#TODO: Upload von Task folder ist nicht user-friendly, 
+#TODO: Upload von Task folder ist nicht user-friendly, weil man keine Kurs-folder hochladen kann.
+#TODO: Upload sollte ein update der UI und aller Zustände triggern
 @router.post("/update_tasks")
 async def update_tasks(file: UploadFile, temp_dir="./temp", user: User = Depends(current_active_verified_user)):
     if (not "admin" in user.roles) and (not "tutor" in user.roles):

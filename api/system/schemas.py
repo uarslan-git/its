@@ -7,4 +7,5 @@ from typing import Optional
 
 class AppSettings(Document):
     ollama_url: str
+    ollama_key: Optional[str]=None
     email_whitelist: list
