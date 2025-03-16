@@ -38,41 +38,27 @@ export class CodePanelComponent {
   submitButtonClicked() {
     var payload = {}
     if(this.isMultipleChoice) {
-      this.client.post<any>(`${environment.apiUrl}/mc_submit`, 
-        {
-          selected_choices: this.multipleChoiceComponent.checked,
-          task_unique_name: this.current_task_id, 
-          course_unique_name: sessionStorage.getItem("courseID"),
-          code: this.submitted_code,
-          log: "True", 
-          type: "submission",
-          submission_time: this.datetimeService.datetimeNow()
-        },
-        {withCredentials: true}).subscribe((data) => {
-          this.eventShareService.emitTestReadyEvent(data.submission_id);
-        }
-      );
+      payload = {
+        selected_choices: this.multipleChoiceComponent.checked,
+        task_unique_name: this.current_task_id, 
+        course_unique_name: sessionStorage.getItem("courseID"),
+        code: "",
+        log: "True", 
+        type: "submission",
+        submission_time: this.datetimeService.datetimeNow()
+      }
     }
     else {
       this.submitted_code = this.codeEditorComponent.userContentControl;
-      this.client.post<any>(`${environment.apiUrl}/code_submit`, 
-            {task_unique_name: this.current_task_id, code: this.submitted_code, 
-              course_unique_name: sessionStorage.getItem("courseID"),
-              log: "True", type: "submission",
-              selected_choices: [],
-              submission_time: this.datetimeService.datetimeNow()
-            },
-              {withCredentials: true}).subscribe((data) => {
-                /* this.recordChanges(this.codeEditorComponent.newContentList, data.submission_id);
-                this.codeEditorComponent.newContentList = []; */
-                //this.codeEditorComponent.newContentList.push([[-2, data.submission_id]])
-                //this.codeEditorComponent.appendContent([[-2, data.submission_id]]);
-                this.codeEditorComponent.appendContent([[-2, data.submission_id]]);
-                this.eventShareService.emitTestReadyEvent(data.submission_id);
-      });
+      payload = {task_unique_name: this.current_task_id, code: this.submitted_code, 
+        course_unique_name: sessionStorage.getItem("courseID"),
+        log: "True", type: "submission",
+        selected_choices: [],
+        submission_time: this.datetimeService.datetimeNow()
+      }
     }
     this.client.post<any>(`${environment.apiUrl}/submit`, payload, {withCredentials: true}).subscribe((data) => {
-      this.recordChanges(this.submitted_code, data.submission_id);
+      this.recordChanges([this.submitted_code, data.submission_id]);
       this.eventShareService.emitTestReadyEvent(data.submission_id);
     })
   }
