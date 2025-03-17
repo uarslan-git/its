@@ -11,6 +11,10 @@ from sys import __stdout__
 import aiohttp
 import json
 
+import io
+import base64
+import matplotlib.pyplot as plt
+
 
 async def handle_submission(submission: Base_Submission, user: User):
     """Split point for all types of submissions."""
@@ -162,6 +166,20 @@ def json_serialize(obj):
         return np.array2string(obj)
     return obj"""
 
+plt_dummy = """
+class dummy_plt():
+    def __init__(self):
+        self.plot_args = []
+    
+    def plot(self, *args, **kwargs):
+        self.plot_args.append({'args': args, 'kwargs': kwargs})
+    
+    def show(self):
+        pass
+
+plt = dummy_plt()
+"""
+
 async def run_tests(task_json, submission):
     tests = task_json.tests
     test_results = []
@@ -199,17 +217,24 @@ from io import StringIO
 submission_captured_output = StringIO()
 unsafe_sys_import.stdout = submission_captured_output
 {0}
+{1}
 unsafe_sys_import.stdout = __stdout__
 submission_captured_output = submission_captured_output.getvalue().strip()
-{1}
 {2}
 {3}
+{4}
 print("##!serialization!##")
-print(json.dumps({{'test_message': test_message, 'test_result': test_result}}, default=json_serialize))
+print(json.dumps({{'test_message': test_message, 'test_result': test_result, 'plot_args': plt.plot_args}}, default=json_serialize))
 print("##!serialization!##")
-    """.format(submission_code, test_code, run_test_code, json_serialize)
+    """
+    # check if matplotlib is used and set flag to reuse
+    plot_used = False
+    if "import matplotlib" in submission_code or True: # TODO remove debug import
+        plot_used = True
+        test_submission_code = test_submission_code.format(plt_dummy, submission_code, test_code, run_test_code, json_serialize)
+    else:
+        test_submission_code = test_submission_code.format("", submission_code, test_code, run_test_code, json_serialize)
     try:
-        
         save = check_user_code(submission_code, prefix_lines)
         if save:
             result_string = await execute_code_judge0(test_submission_code)
@@ -219,18 +244,32 @@ print("##!serialization!##")
                 result_dict = json.loads(result_string)
                 test_message = result_dict["test_message"]
                 test_result = result_dict["test_result"]
+                test_plots = process_plots(result_dict["plot_args"])
             else:
                 test_result = 0
                 test_message = result_string
             result_message = "Test success" if test_result else "Test failure:"
-        return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}   
+        return {"test_name": test_name, "status": test_result, "message": f"{result_message} {test_message} \nTEST PLOT{test_plots}".strip()}   
     except BaseException as e:
         test_result = 0
         result_message = "Error or Exception:"
         test_message = str(e)
-        return {"test_name": test_name, "status": test_result, "message": "{0} {1}".format(result_message, test_message).strip()}
+        return {"test_name": test_name, "status": test_result, "message": f"{result_message} {test_message}".strip()}
 
-
+def process_plots(plot_args):
+    plot_string = ""
+    for plot_arg in plot_args:
+        print("ARGS", plot_arg)
+        img_stream = io.BytesIO()
+        img_format = "png"
+        plt.plot(*plot_arg['args'], **plot_arg['kwargs'])
+        plt.savefig(img_stream, format=img_format, bbox_inches='tight')
+        img_stream.seek(0)
+        img_base64 = base64.b64encode(img_stream.read()).decode()
+        img_style = "max-width:88%; padding: 0% 5% 0% 5%"
+        plot_string = plot_string + f"\n<img alt='test plot' src='data:image/{img_format};base64,{img_base64}' style='{img_style}'>"
+        #plot_string = plot_string + f"<img alt='test plot' src='data:image/{img_format};base64,BASE64' style='{img_style}'> \n"
+    return plot_string
 
 def check_user_code(code, prefix_lines=[]):
     class ImportVisitor(ast.NodeVisitor):
@@ -315,7 +354,7 @@ def check_user_code(code, prefix_lines=[]):
     ast_tree = ast.parse(code)
     visitor = ImportVisitor(prefix_lines=prefix_lines)
     visitor.visit(ast_tree)
-    print(code)
+    #print(code)
     bad_strings = ["__builtins__", "np.distutil", "multiprocessing", "APIRouter", "asyncio", "current_active_user", "database", "run_with_timeout"]
     for string in bad_strings:
         if string in code:

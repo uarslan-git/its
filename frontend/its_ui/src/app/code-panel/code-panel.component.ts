@@ -52,7 +52,8 @@ export class CodePanelComponent {
       this.submitted_code = this.codeEditorComponent.userContentControl;
       payload = {task_unique_name: this.current_task_id, code: this.submitted_code, 
         course_unique_name: sessionStorage.getItem("courseID"),
-        log: "True", type: "submission",
+        log: "True", 
+        type: "submission",
         selected_choices: [],
         submission_time: this.datetimeService.datetimeNow()
       }
