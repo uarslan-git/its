@@ -7,18 +7,9 @@ from models.domain.submissions.submissions import check_user_code, execute_code_
 import json
 import re
 
-json_serialize = """
-def json_serialize(obj):
-    if isinstance(obj, np.ndarray):
-        #return obj.tolist()
-        return np.array2string(obj)
-    return obj
-"""
-
 async def run_code(submission: Run_code_submission, user: User):
     user_id = user.id
     task_json = await database.get_task(submission.task_unique_name)
-    print("TASK\n", task_json)
     submission_code = task_json.prefix + submission.code
     run_arguments = parse_argument_types(submission.run_arguments)
     if task_json.type == TaskType.Function:
@@ -33,11 +24,9 @@ async def run_code(submission: Run_code_submission, user: User):
     if task_json.prefix == "": prefix_lines = []
     else: prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
     
-    print("CODE\n", run_code)
     safe = check_user_code(submission_code, prefix_lines)
     if not safe: return
     result_json = await execute_code(run_code)
-    print("RESULT\n", result_json)
     if task_json.type in [TaskType.Function]:
         run_result = str(result_json["run_result"])
     elif task_json.type in [TaskType.PlotFunction]:
@@ -59,7 +48,7 @@ def parse_argument_types(arg_dict):
     try:
         check_list = [check_user_code(entry[1]) for entry in run_arguments]
     except Exception as e: 
-        return {}, "Illegal argument"
+        raise ValueError("Illegal argument.")
     else:
         try:
             run_argument_string = dict([(entry[0], f'#$eval(##{entry[1]}##)$#') for entry in run_arguments])
@@ -80,7 +69,5 @@ async def execute_code(code):
             parsed_result_string = parsed_result_string[0].strip()
         else:
             raise Exception("Bad Judge0 parsing!")
-        #run_result = run_result.split("##!serialization!##")[1]
-        #run_result = run_result.split("##!serialization!##")[0]
         run_result = json.loads(parsed_result_string)
     return(run_result)
