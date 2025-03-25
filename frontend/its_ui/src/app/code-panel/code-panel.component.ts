@@ -58,6 +58,7 @@ export class CodePanelComponent {
         submission_time: this.datetimeService.datetimeNow()
       }
     }
+    // TODO fix: sometimes this.codeEditorComponent is undefinded
     this.client.post<any>(`${environment.apiUrl}/submit`, payload, {withCredentials: true}).subscribe((data) => {
       this.recordChanges([this.submitted_code, data.submission_id]);
       this.eventShareService.emitTestReadyEvent(data.submission_id);

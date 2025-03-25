@@ -65,9 +65,6 @@ async def execute_code(code):
     if "##!serialization!##" in run_result:
         pattern = r".*?\##!serialization!##(.*?)\##!serialization!##.*"
         parsed_result_string = re.findall(pattern, run_result, re.DOTALL)
-        if len(parsed_result_string)==1:
-            parsed_result_string = parsed_result_string[0].strip()
-        else:
-            raise Exception("Bad Judge0 parsing!")
-        run_result = json.loads(parsed_result_string)
+        if len(parsed_result_string) > 1: raise ValueError("Unexpected serialization tags.")
+        run_result = json.loads(parsed_result_string[0])
     return(run_result)

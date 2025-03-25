@@ -1,4 +1,5 @@
 from _ast import Call, Del, Delete, Global, Interactive, Nonlocal, Name
+import re
 from typing import Any
 import asyncio
 import ast
@@ -68,7 +69,6 @@ async def handle_code_submission(submission: Base_Submission, task_json, user: U
 
 async def handle_mc_submission(submission: Base_Submission, task_json, user: User):
     course_enrollment = await database.get_course_enrollment(user, course_unique_name=submission.course_unique_name)
-    task_json = await database.get_task(str(submission.task_unique_name))
     test_results = []
     valid_solution = True
 
@@ -76,20 +76,32 @@ async def handle_mc_submission(submission: Base_Submission, task_json, user: Use
     correct_choices = task_json.correct_choices
     selected_choices = submission.selected_choices
     choice_explanations = task_json.choice_explanations
-
-    # Check which choices were made
-    answers = [element in selected_choices for element in possible_choices]
-    # Check which choices are correct
-    results = [a == b for a, b in zip(answers, correct_choices)]
-    # Check if all choices are correct
-    valid_solution = all(results)
     
-    success_text = "Test success:" if valid_solution else "Test failure:"
-    result_msg = f"{success_text} \n"
+    course = await database.get_course(submission.course_unique_name)
 
-    for choice, correct, explanation in zip(possible_choices, results, choice_explanations):
-        correct_choice_msg = "correct" if correct else f"incorrect Reason: \n{explanation}"
-        result_msg = f"{result_msg}{choice} is {correct_choice_msg}\n\n"
+    # TODO surveys could be multiple choice
+    if course.domain=="Surveys":
+        if len(selected_choices) != 1:
+            result_msg="Only 1 answer is expected. Please choose only 1 option."
+            valid_solution = False
+        else:
+            result_msg="Test success."
+            valid_solution = True
+    else: 
+        # Check which choices were made
+        answers = [element in selected_choices for element in possible_choices]
+        # Check which choices are correct
+        results = [a == b for a, b in zip(answers, correct_choices)]
+        # Check if all choices are correct
+        valid_solution = all(results)
+        
+        success_text = "Test success:" if valid_solution else "Test failure:"
+        result_msg = f"{success_text} \n"
+
+        for choice, correct, explanation in zip(possible_choices, results, choice_explanations):
+            correct_choice_msg = "correct" if correct else f"incorrect Reason: \n{explanation}"
+            result_msg = f"{result_msg}{choice} is {correct_choice_msg}\n\n"
+
 
     test_result = {"test_name": "test_for_mc", "status": valid_solution, "message": result_msg}
     test_results.append(test_result)
@@ -128,11 +140,7 @@ async def run_tests(task_json, submission):
             safe = check_user_code(submission_code, prefix_lines)
             if not safe: continue
             test_result = None
-            if task_json.type in [TaskType.Function, TaskType.Print]:
-                test_result = await get_test_results_function(tests[test_name], test_name, submission_code)
-            elif task_json.type in [TaskType.PlotFunction]:
-                test_result = await get_test_results_plot(tests[test_name], test_name, submission_code)
-            else: raise ValueError(f"Task type '{task_json.type}' not recognized.")
+            test_result = await get_test_results(tests[test_name], test_name, submission_code, task_json.type)
             if test_result is None:
                 submission.type = "timed_out_submission"
                 await database.log_code_submission(submission)
@@ -144,37 +152,33 @@ async def run_tests(task_json, submission):
         test_results.append(test_result)
     return test_results
 
-async def get_test_results_function(test_code, test_name, submission_code):
+async def get_test_results(test_code, test_name, submission_code, task_type):
     """Run a single test case in an isolated environment and output the test.reults as a dict"""
-    test_submission_code = getExecutableString_function(test_code, test_name, submission_code)
+    if task_type in [TaskType.Function, TaskType.Print]:
+        test_submission_code = getExecutableString_function(test_code, test_name, submission_code)
+    elif task_type in [TaskType.PlotFunction]:
+        test_submission_code = getExecutableString_plotFunction(test_code, test_name, submission_code)
+    else: raise ValueError(f"Task type {task_type} not recognized.")
     result_string = await execute_code_judge0(test_submission_code)
+    
     if "##!serialization!##" in result_string:
-        result_string = result_string.split("##!serialization!##")[1]
-        result_string = result_string.split("##!serialization!##")[0]
-        result_dict = json.loads(result_string)
-        test_message = result_dict["test_message"]
+        pattern = r".*?\##!serialization!##(.*?)\##!serialization!##.*"
+        parsed_result_string = re.findall(pattern, result_string, re.DOTALL)
+        if len(parsed_result_string) > 1: raise ValueError("Unexpected serialization tags.")
+        result_dict = json.loads(parsed_result_string[0])
         test_result = result_dict["test_result"]
+        result_message = "Test success" if test_result else "Test failure:"
+        
+        if task_type in [TaskType.Function, TaskType.Print]:
+            message = f"{result_message} {result_dict["test_message"]}".strip()
+        elif task_type in [TaskType.PlotFunction]:
+            result_plot = process_plt_plot(result_dict["plot_args"])
+            message = f"{result_message} {result_plot}".strip()
+        else: raise ValueError(f"Task type {task_type} not recognized.")
     else:
         test_result = 0
-        test_message = result_string
-    result_message = "Test success" if test_result else "Test failure:"
-    return {"test_name": test_name, "status": test_result, "message": f"{result_message} {test_message}".strip()}
-
-async def get_test_results_plot(test_code, test_name, submission_code):
-    """Run a single test case in an isolated environment and output the test.reults as a dict"""
-    test_submission_code = getExecutableString_plotFunction(test_code, test_name, submission_code)
-    result_string = await execute_code_judge0(test_submission_code)
-    if "##!serialization!##" in result_string:
-        result_string = result_string.split("##!serialization!##")[1]
-        result_string = result_string.split("##!serialization!##")[0]
-        result_dict = json.loads(result_string)
-        result_plot = process_plt_plot(result_dict["plot_args"])
-        test_result = 1
-    else:
-        test_result = 0
-        result_plot = ""
-    result_message = "Test success" if test_result else "Test failure:"
-    return {"test_name": test_name, "status": test_result, "message": f"{result_message} {result_plot}".strip()}
+        message = f"Test failure: {result_string}"
+    return {"test_name": test_name, "status": test_result, "message": message}
 
 def process_plt_plot(plot_args):
     plot_string = ""
@@ -211,7 +215,7 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
             "max_file_size": "1000", #kb
             #"max_processes_and_or_threads": "1",
             "memory_limit": 100000, #kb
-            "source_code": code_payload,
+            "source_code": base64.b64encode(bytes(code_payload, 'utf-8')).decode("ascii"),
             #"stack_limit": "null",
             #"stdin": "null",
             "wall_time_limit": "10", #sec
@@ -219,7 +223,7 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
             "enable_network": "false",
             "redirect_stderr_to_stdout": "true",
             }
-        async with session.post(f"{url}/submissions/?base64_encoded=false", data=payload) as response:
+        async with session.post(f"{url}/submissions/?base64_encoded=true", data=payload) as response:
             run_token = await response.text()
             run_token = json.loads(run_token)["token"]
         max_iter = 100

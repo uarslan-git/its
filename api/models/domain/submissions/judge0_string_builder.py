@@ -74,6 +74,7 @@ def getExecutableString_plotFunction(test_code, test_name, submission_code):
     # enter all values to be returned as json here as {returnName: returnVariable}. Those need to be set somewhere in the code.
     return_args = {
         "plot_args": "plt.plot_args",
+        "test_result": "test_result",
     }
     code_strings = [
         plt_dummy,
