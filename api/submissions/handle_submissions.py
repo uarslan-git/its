@@ -14,7 +14,7 @@ async def submit(submission: Base_Submission, user: User = Depends(current_activ
     try:
         return await handle_submission(submission, user)
     except Exception as e:
-        test_result = 0
+        test_result = 500
         exception_type = type(e)
         test_message = str(e)
         # "test_name": test_name
@@ -22,5 +22,6 @@ async def submit(submission: Base_Submission, user: User = Depends(current_activ
     
 @router.get("/submission/feedback/{submission_id}")
 async def send_feedback(submission_id):
+    print(submission_id, str(submission_id))
     feedback = await database.get_submission(str(submission_id))
     return feedback

@@ -5,6 +5,7 @@ import ast
 from db.db_connector_beanie import User
 from submissions.schemas import Base_Submission, Tested_Submission
 from config import config
+import traceback
 
 from db import database
 from sys import __stdout__
@@ -24,6 +25,8 @@ async def handle_submission(submission: Base_Submission, user: User):
             return await handle_code_submission(submission, user)
         case "multiple_choice":
             return await handle_mc_submission(submission, user)
+        case "plot_function":
+            return await handle_plot_submission(submission, user)
         case _:
             raise ValueError(f"Task type '{task.type}' not recognized.")
 
@@ -112,6 +115,39 @@ async def handle_mc_submission(submission: Base_Submission, user: User):
     await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
+async def handle_plot_submission(submission: Base_Submission, user: User):
+    """Preprocess coda and return 'ground truth plot' and generated plot on a code submission.
+
+    Args:
+        submission (Code_submission): Submission object as defined in schemas.py
+    """
+    course_enrollment = await database.get_course_enrollment(user, course_unique_name=submission.course_unique_name)
+    task_json = await database.get_task(str(submission.task_unique_name))
+    test_results, valid_solution = await run_plots(task_json, submission)
+
+    # Log code submit to database
+    tested_submission = Tested_Submission(task_unique_name = submission.task_unique_name, 
+                                               course_unique_name=submission.course_unique_name,
+                                               code = submission.code,
+                                               possible_choices = [],
+                                               correct_choices = [],
+                                               selected_choices = [],  
+                                               test_results = test_results,
+                                               user_id=user.id, 
+                                               type="submission",
+                                               submission_time=submission.submission_time, 
+                                               valid_solution=valid_solution)
+    if valid_solution and (not submission.task_unique_name in course_enrollment.tasks_completed):
+        course_enrollment.tasks_completed.append(submission.task_unique_name)
+        course = await database.get_course(unique_name=user.current_course)
+        if course.curriculum == course_enrollment.tasks_completed:
+            if course_enrollment.course_unique_name not in course_enrollment.completed:
+                course_enrollment.completed = True
+        await database.update_course_enrollment(course_enrollment, {"completed": course_enrollment.completed, 
+                                                                    "tasks_completed": course_enrollment.tasks_completed})
+    await database.log_code_submission(tested_submission)
+    return  {"submission_id": str(tested_submission.id)}
+
 async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:2358"):
     """Execute a code snippet in judge0 and wait for the result to return.
 
@@ -178,7 +214,7 @@ class dummy_plt():
         pass
 
 plt = dummy_plt()
-"""
+""".strip()
 
 async def run_tests(task_json, submission):
     tests = task_json.tests
@@ -200,7 +236,6 @@ async def run_tests(task_json, submission):
 async def get_test_result(test_code, test_name, submission_code, prefix_lines):
     """Run a single test case in an isolated environment and output the test.reults as a dict"""
     run_test_code = """
-import json
 try:
     {0}()
     test_result = 1
@@ -214,26 +249,19 @@ except AssertionError as e:
 import sys as unsafe_sys_import
 from sys import __stdout__
 from io import StringIO
+import json
 submission_captured_output = StringIO()
 unsafe_sys_import.stdout = submission_captured_output
 {0}
-{1}
 unsafe_sys_import.stdout = __stdout__
 submission_captured_output = submission_captured_output.getvalue().strip()
+{1}
 {2}
 {3}
-{4}
 print("##!serialization!##")
-print(json.dumps({{'test_message': test_message, 'test_result': test_result, 'plot_args': plt.plot_args}}, default=json_serialize))
+print(json.dumps({{'test_message': test_message, 'test_result': test_result}}, default=json_serialize))
 print("##!serialization!##")
-    """
-    # check if matplotlib is used and set flag to reuse
-    plot_used = False
-    if "import matplotlib" in submission_code or True: # TODO remove debug import
-        plot_used = True
-        test_submission_code = test_submission_code.format(plt_dummy, submission_code, test_code, run_test_code, json_serialize)
-    else:
-        test_submission_code = test_submission_code.format("", submission_code, test_code, run_test_code, json_serialize)
+""".format(submission_code, test_code, run_test_code, json_serialize)
     try:
         save = check_user_code(submission_code, prefix_lines)
         if save:
@@ -244,24 +272,88 @@ print("##!serialization!##")
                 result_dict = json.loads(result_string)
                 test_message = result_dict["test_message"]
                 test_result = result_dict["test_result"]
-                test_plots = process_plots(result_dict["plot_args"])
             else:
                 test_result = 0
                 test_message = result_string
             result_message = "Test success" if test_result else "Test failure:"
-        return {"test_name": test_name, "status": test_result, "message": f"{result_message} {test_message} \nTEST PLOT{test_plots}".strip()}   
+        return {"test_name": test_name, "status": test_result, "message": f"{result_message} {test_message}".strip()}   
     except BaseException as e:
         test_result = 0
         result_message = "Error or Exception:"
         test_message = str(e)
         return {"test_name": test_name, "status": test_result, "message": f"{result_message} {test_message}".strip()}
 
-def process_plots(plot_args):
+async def run_plots(task_json, submission):
+    tests = task_json.tests
+    test_results = []
+    valid_solution = True
+    for test_name in tests.keys():
+        prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
+        test_result = await get_plot_result(tests[test_name], test_name, task_json.prefix+submission.code, prefix_lines)
+        if test_result is None:
+            submission.type = "timed_out_submission"
+            await database.log_code_submission(submission)
+            raise asyncio.TimeoutError
+        test_results.append(test_result)
+        if test_results[-1]["status"] == 0:
+            valid_solution = False
+    return test_results, valid_solution
+
+async def get_plot_result(test_code, test_name, submission_code, prefix_lines):
+    """Run a single test case in an isolated environment and output the test.reults as a dict"""
+    submission_code = submission_code.strip("import matplotlib.pyplot as plt")
+    run_test_code = """
+try:
+    {0}()
+    test_result = 1
+    test_message = ""
+except AssertionError as e:
+    test_result = 0
+    test_message = str(e)
+    print(e)""".format(test_name)
+    
+    test_submission_code = """
+import json
+{0}
+{1}
+{2}
+{3}
+{4}
+print("##!serialization!##")
+print(json.dumps({{'plot_args': plt.plot_args}}, default=json_serialize))
+print("##!serialization!##")
+""".format(plt_dummy, submission_code, test_code, run_test_code, json_serialize)
+    try:
+        save = check_user_code(submission_code, prefix_lines)
+        if save:
+            print("\nSUBMISSION\n", test_submission_code)
+            result_string = await execute_code_judge0(test_submission_code)
+            print("\nRESULT\n", result_string)
+            if "##!serialization!##" in result_string:
+                result_string = result_string.split("##!serialization!##")[1]
+                result_string = result_string.split("##!serialization!##")[0]
+                result_dict = json.loads(result_string)
+                result_plot = process_plt_plot(result_dict["plot_args"])
+                test_result = 1
+            else:
+                test_result = 0
+                result_plot = ""
+            result_message = "Test success" if test_result else "Test failure:"
+        return {"test_name": test_name, "status": test_result, "message": f"{result_message} {result_plot}".strip()}   
+    except BaseException as e:
+        test_result = 0
+        result_message = "Error or Exception:"
+        test_message = str(e)
+        print(traceback.format_exc())
+        return {"test_name": test_name, "status": test_result, "message": f"{result_message} {test_message}".strip()}
+
+def process_plt_plot(plot_args):
     plot_string = ""
     for plot_arg in plot_args:
         print("ARGS", plot_arg)
         img_stream = io.BytesIO()
         img_format = "png"
+        plt.cla()
         plt.plot(*plot_arg['args'], **plot_arg['kwargs'])
         plt.savefig(img_stream, format=img_format, bbox_inches='tight')
         img_stream.seek(0)
