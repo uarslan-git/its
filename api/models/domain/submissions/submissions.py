@@ -24,22 +24,21 @@ async def handle_submission(submission: Base_Submission, user: User):
     task = await database.get_task(submission.task_unique_name)
     match task.type:
         case TaskType.Function | TaskType.Print:
-            return await handle_code_submission(submission, user)
+            return await handle_code_submission(submission, task, user)
         case TaskType.MultipleChoice:
-            return await handle_mc_submission(submission, user)
+            return await handle_mc_submission(submission, task, user)
         case TaskType.PlotFunction:
-            return await handle_code_submission(submission, user)
+            return await handle_code_submission(submission, task, user)
         case _:
             raise ValueError(f"Task type '{task.type}' not recognized.")
 
-async def handle_code_submission(submission: Base_Submission, user: User):
+async def handle_code_submission(submission: Base_Submission, task_json, user: User):
     """Preprocess coda and run a series of test cases on a code submission.
 
     Args:
         submission (Code_submission): Submission object as defined in schemas.py
     """
     course_enrollment = await database.get_course_enrollment(user, course_unique_name=submission.course_unique_name)
-    task_json = await database.get_task(str(submission.task_unique_name))
     test_results = await run_tests(task_json, submission)
     valid_solution = all([result["status"] for result in test_results]) > 0
 
@@ -67,7 +66,7 @@ async def handle_code_submission(submission: Base_Submission, user: User):
     await database.log_code_submission(tested_submission)
     return  {"submission_id": str(tested_submission.id)}
 
-async def handle_mc_submission(submission: Base_Submission, user: User):
+async def handle_mc_submission(submission: Base_Submission, task_json, user: User):
     course_enrollment = await database.get_course_enrollment(user, course_unique_name=submission.course_unique_name)
     task_json = await database.get_task(str(submission.task_unique_name))
     test_results = []
@@ -125,9 +124,9 @@ async def run_tests(task_json, submission):
     for test_name in tests.keys():
         prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
         try:
-            submission_code = task_json.prefix+submission.code
-            save = check_user_code(submission_code, prefix_lines)
-            if not save: continue
+            submission_code = task_json.prefix + submission.code
+            safe = check_user_code(submission_code, prefix_lines)
+            if not safe: continue
             test_result = None
             if task_json.type in [TaskType.Function, TaskType.Print]:
                 test_result = await get_test_results_function(tests[test_name], test_name, submission_code)

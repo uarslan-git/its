@@ -1,3 +1,4 @@
+import traceback
 from fastapi import APIRouter, Depends
 from users.handle_users import current_active_verified_user
 from db.db_connector_beanie import User
@@ -14,11 +15,8 @@ async def submit(submission: Base_Submission, user: User = Depends(current_activ
     try:
         return await handle_submission(submission, user)
     except Exception as e:
-        test_result = 500
-        exception_type = type(e)
-        test_message = str(e)
-        # "test_name": test_name
-        return {"status": test_result, "message": f"{exception_type}: {test_message}".strip()}
+        print(traceback.format_exc())
+        {"status": 500, "message": f"{type(e)}: {str(e)}"}
     
 @router.get("/submission/feedback/{submission_id}")
 async def send_feedback(submission_id):

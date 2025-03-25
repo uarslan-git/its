@@ -88,8 +88,8 @@ async def task_to_json(dir, task_unique_name, db=None):
             task_dict["prefix"] = prefix.strip()
             #test if there is a required signature, and if so, add it to database.
             task_dict["example_solution"] = content_docstring.split("#!prefix!#\n")[1]
+            task_dict["function_name"] = get_function_names(file_path)[0] #TODO: Secure for example solutions with multiple functions.
             if task_type in [TaskType.Function, TaskType.PlotFunction]:
-                task_dict["function_name"] = get_function_names(file_path)[0] #TODO: Secure for example solutions with multiple functions.
                 arguments = extract_argument_names(task_dict["prefix"] + "\n" + task_dict["example_solution"])
                 task_dict["arguments"] = arguments
                 if task_type == TaskType.PlotFunction:

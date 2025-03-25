@@ -84,3 +84,38 @@ def getExecutableString_plotFunction(test_code, test_name, submission_code):
         format_json_returns(return_args),
     ]
     return "\n".join(code_strings)
+
+
+# These are for Runs
+
+def getExecutableString_runFunction(submission_code, function_name, run_arguments):
+    return_args = {
+        "run_result": "run_result",
+    }
+    code_strings = [
+        submission_code,
+        f"run_result = {function_name}(**{run_arguments})",
+        format_json_returns(return_args),
+    ]
+    return "\n".join(code_strings)
+
+def getExecutableString_runPrint(submission_code, function_name, run_arguments):
+    code_strings = [
+        submission_code,
+        #f"run_result = {function_name}(**{run_arguments})",
+    ]
+    return "\n".join(code_strings)
+
+def getExecutableString_runPlot(submission_code, function_name, run_arguments):
+    return_args = {
+        "run_result": "run_result",
+        "plot_args": "plt.plot_args",
+    }
+    code_strings = [
+        plt_dummy,
+        submission_code.strip("import matplotlib.pyplot as plt"),
+        f"run_result = {function_name}(**{run_arguments})",
+        "plot_args = plt.plot_args",
+        format_json_returns(return_args),
+    ]
+    return "\n".join(code_strings)
