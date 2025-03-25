@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from users.handle_users import current_active_verified_user
 from db.db_connector_beanie import User
 from submissions.schemas import Base_Submission
-from models.domain.submissions import handle_submission
+from api.models.domain.submissions.submissions import handle_submission
 
 from db import database
 from sys import __stdout__

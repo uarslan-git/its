@@ -1,10 +1,11 @@
+from api.courses.schemas import TaskType
 from fastapi import APIRouter
 from runs.schemas import Run_code_submission, Evaluated_run_code_submission
 from db.db_connector_beanie import User
 from db import database
 from fastapi import Depends
 from users.handle_users import current_active_verified_user
-from models.domain.submissions import check_user_code, json_serialize, execute_code_judge0
+from api.models.domain.submissions.submissions import check_user_code, json_serialize, execute_code_judge0
 import json
 import re
 
@@ -43,7 +44,7 @@ async def run_code(submission: Run_code_submission, user: User = Depends(current
     task_id = submission.task_unique_name
     task_json = await database.get_task(str(task_id))
     task_type = task_json.type
-    if task_type == "function":
+    if task_type == TaskType.Function:
         run_arguments, arg_message = parse_argument_types(submission.run_arguments)
         if arg_message == "Success":
             run_code = """{0}{1}
@@ -57,9 +58,9 @@ print(json.dumps(return_dict, default=json_serialize))
 print("##!serialization!##")""".format(task_json.prefix, submission.code, task_json.function_name, run_arguments, json_serialize)
         else:
             run_code = "raise Exception('{0}')".format(arg_message)
-    elif task_type == "print":
+    elif task_type == TaskType.Print:
         run_code = """{0}{1}""".format(task_json.prefix, submission.code)
-    elif task_type == "plot":
+    elif task_type == TaskType.PlotFunction:
         run_arguments, arg_message = parse_argument_types(submission.run_arguments)
         print("REPLACES", task_json, run_arguments)
         run_code = """{0}

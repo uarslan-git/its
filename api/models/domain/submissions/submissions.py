@@ -2,6 +2,8 @@ from _ast import Call, Del, Delete, Global, Interactive, Nonlocal, Name
 from typing import Any
 import asyncio
 import ast
+from api.courses.schemas import TaskType
+from api.models.domain.submissions.judge0_string_builder import getExecutableString_plotFunction, getExecutableString_function
 from db.db_connector_beanie import User
 from submissions.schemas import Base_Submission, Tested_Submission
 from config import config
@@ -21,11 +23,11 @@ async def handle_submission(submission: Base_Submission, user: User):
     """Split point for all types of submissions."""
     task = await database.get_task(submission.task_unique_name)
     match task.type:
-        case "function" | "print":
+        case TaskType.Function | TaskType.Print:
             return await handle_code_submission(submission, user)
-        case "multiple_choice":
+        case TaskType.MultipleChoice:
             return await handle_mc_submission(submission, user)
-        case "plot_function":
+        case TaskType.PlotFunction:
             return await handle_plot_submission(submission, user)
         case _:
             raise ValueError(f"Task type '{task.type}' not recognized.")
@@ -265,6 +267,7 @@ print("##!serialization!##")
     try:
         save = check_user_code(submission_code, prefix_lines)
         if save:
+            test_submission_code = getExecutableString_function(test_code, test_name, submission_code)
             result_string = await execute_code_judge0(test_submission_code)
             if "##!serialization!##" in result_string:
                 result_string = result_string.split("##!serialization!##")[1]
@@ -301,7 +304,7 @@ async def run_plots(task_json, submission):
 
 async def get_plot_result(test_code, test_name, submission_code, prefix_lines):
     """Run a single test case in an isolated environment and output the test.reults as a dict"""
-    submission_code = submission_code.strip("import matplotlib.pyplot as plt")
+    #submission_code = submission_code.strip("import matplotlib.pyplot as plt")
     run_test_code = """
 try:
     {0}()
@@ -326,6 +329,7 @@ print("##!serialization!##")
     try:
         save = check_user_code(submission_code, prefix_lines)
         if save:
+            test_submission_code = getExecutableString_plotFunction(test_code, test_name, submission_code)
             print("\nSUBMISSION\n", test_submission_code)
             result_string = await execute_code_judge0(test_submission_code)
             print("\nRESULT\n", result_string)

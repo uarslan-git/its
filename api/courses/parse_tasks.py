@@ -7,6 +7,7 @@ import io
 import ast
 import re
 import base64
+from api.courses.schemas import TaskType
 from db import database
 from PIL import Image
 
@@ -79,7 +80,7 @@ async def task_to_json(dir, task_unique_name, db=None):
             task_type = content_docstring.split("!#")[0]
             task_type = task_type[2:]
             task_dict["type"] = task_type
-            if task_type not in ["function", "print", "plot_function"]:
+            if task_type not in [TaskType.Function, TaskType.Print, TaskType.PlotFunction]: #["function", "print", "plot_function"]
                 raise Exception(f"Invalid task-type use function or print, not {task_type}")
             #json.dump({"example_solution": content_docstring}, outfile, ensure_ascii=False)
             prefix = content_docstring.split("#!prefix!#")[0]
@@ -87,16 +88,16 @@ async def task_to_json(dir, task_unique_name, db=None):
             task_dict["prefix"] = prefix.strip()
             #test if there is a required signature, and if so, add it to database.
             task_dict["example_solution"] = content_docstring.split("#!prefix!#\n")[1]
-            if task_type == "function" or task_type == "function_plot":
+            if task_type in [TaskType.Function, TaskType.PlotFunction]:
                 task_dict["function_name"] = get_function_names(file_path)[0] #TODO: Secure for example solutions with multiple functions.
                 arguments = extract_argument_names(task_dict["prefix"] + "\n" + task_dict["example_solution"])
                 task_dict["arguments"] = arguments
-                if task_type == "function_plot":
+                if task_type == TaskType.PlotFunction:
                     # check that plt is imported as plt
                     if not "import matplotlib.pyplot as plt" in prefix:
                         raise ValueError("Please impot mytplotlib.pyplot as plt.")
         elif file_name.startswith("multiple_choice"):
-            task_dict["type"] = "multiple_choice"
+            task_dict["type"] = TaskType.MultipleChoice
             task_dict["prefix"] = "no_prefix"
             task_dict["example_solution"] = ""
             if file_name.endswith(".py"):
