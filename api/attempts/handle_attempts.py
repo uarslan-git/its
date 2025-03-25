@@ -149,12 +149,14 @@ async def log_attempt_state(state: NestedAttemptState, user: User = Depends(curr
                 attempt.state_log.append(code_state)
             previous_code = apply_diff(previous_code, diff)
         if previous_code != state.current_state:
-            raise NotImplementedError("State log is broken, repair not implemented!")
+            if state.current_state.strip() == previous_code.strip():
+                state.current_state = previous_code
+                print("Simple state log repair through stripping occured.")
+            else:
+                raise NotImplementedError("State log is broken, repair not implemented!")
     if len(state.state_datetime_list) > 0:
         current_attempt_time = datetime.strptime(state.state_datetime_list[-1]["utc"], "%d.%m.%Y %H:%M:%S.%f")
         current_start_time = datetime.strptime(attempt.start_time_list[-1], "%d.%m.%Y %H:%M:%S")
         attempt.duration_list[-1] = str(current_attempt_time - current_start_time)
-        attempt.current_state = state.current_state
-    #TODO: Check diff here and repair if necessary!
+    attempt.current_state = state.current_state
     await database.update_attempt(attempt)
-
