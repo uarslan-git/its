@@ -1,4 +1,4 @@
-from api.courses.schemas import TaskType
+from courses.schemas import TaskType
 from models.pedagogical.feedback.base import Base_step_feedback_module
 from models.pedagogical.feedback.step_generator.prompt_llm_next_step import Prompt_llm_step_generator
 from models.pedagogical.feedback.feedback_generator.identity import Identity_feedback_generator

@@ -7,7 +7,7 @@ import io
 import ast
 import re
 import base64
-from api.courses.schemas import TaskType
+from courses.schemas import TaskType
 from db import database
 from PIL import Image
 

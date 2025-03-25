@@ -1,15 +1,23 @@
-from api.courses.schemas import TaskType
+from courses.schemas import TaskType
 from fastapi import APIRouter
 from runs.schemas import Run_code_submission, Evaluated_run_code_submission
 from db.db_connector_beanie import User
 from db import database
 from fastapi import Depends
 from users.handle_users import current_active_verified_user
-from api.models.domain.submissions.submissions import check_user_code, json_serialize, execute_code_judge0
+from models.domain.submissions.submissions import check_user_code, execute_code_judge0
 import json
 import re
 
 router = APIRouter()
+
+json_serialize = """
+def json_serialize(obj):
+    if isinstance(obj, np.ndarray):
+        #return obj.tolist()
+        return np.array2string(obj)
+    return obj
+"""
 
 #def capture_output(code):
 #    # Redirect stdout to capture the output

@@ -20,7 +20,7 @@ def json_serialize(obj):
     return obj
 
 print("##!serialization!##")
-print(json.dumps({{serialization_args}}, default=json_serialize))
+print(json.dumps({{{serialization_args}}}, default=json_serialize))
 print("##!serialization!##")
 """
 
@@ -61,7 +61,9 @@ def getExecutableString_function(test_code, test_name, submission_code):
         "test_result": "test_result",
     }
     code_strings = [
+        printIO_capture,
         submission_code,
+        printIO_release,
         test_code,
         execute_test_code.format(test_name=test_name),
         format_json_returns(return_args),
