@@ -23,17 +23,21 @@ async def run_code(submission: Run_code_submission, user: User):
     
     if task_json.prefix == "": prefix_lines = []
     else: prefix_lines = list(range(1, task_json.prefix.strip().count("\n")+2))
-    
-    safe = check_user_code(submission_code, prefix_lines)
-    if not safe: return
-    result_json = await execute_code(run_code)
-    if task_json.type in [TaskType.Function]:
-        run_result = str(result_json["run_result"])
-    elif task_json.type in [TaskType.PlotFunction]:
-        run_result = process_plt_plot(result_json["plot_args"])
-    else:
-        run_result = result_json
-    
+    try:
+        safe = check_user_code(submission_code, prefix_lines)
+    except Exception as e:
+            safe=False
+            run_result = f"Error or Exception: {str(e)}"
+            #test_result = {"test_name": test_name, "status": 0, "message": f"Error or Exception: {test_message}"}
+    if safe:
+        result_json = await execute_code(run_code)
+        if task_json.type in [TaskType.Function]:
+            run_result = str(result_json["run_result"])
+        elif task_json.type in [TaskType.PlotFunction]:
+            run_result = process_plt_plot(result_json["plot_args"])
+        else:
+            run_result = result_json
+        
     evaluated_submission = Evaluated_run_code_submission(
         code = submission.code, selected_choices = [], submission_time=submission.submission_time, run_arguments=submission.run_arguments,
         run_output=run_result, task_unique_name=submission.task_unique_name, type="run", user_id=user_id, course_unique_name=submission.course_unique_name

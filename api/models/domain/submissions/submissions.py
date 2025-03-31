@@ -170,7 +170,7 @@ async def get_test_results(test_code, test_name, submission_code, task_type):
         result_message = "Test success" if test_result else "Test failure:"
         
         if task_type in [TaskType.Function, TaskType.Print]:
-            message = f"{result_message} {result_dict["test_message"]}".strip()
+            message = f"{result_message} {result_dict['test_message']}".strip()
         elif task_type in [TaskType.PlotFunction]:
             result_plot = process_plt_plot(result_dict["plot_args"])
             message = f"{result_message} {result_plot}".strip()
