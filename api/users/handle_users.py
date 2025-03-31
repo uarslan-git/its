@@ -46,6 +46,7 @@ Please use the following reset-token to generate a new password.
         
         print(f"User {user.id} has forgot their password. Reset token: {token}")
 
+    #TODO: Ensure that failure doesn't lead to clear-text Emails being stored! 
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
     ):
