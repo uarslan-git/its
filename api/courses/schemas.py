@@ -1,5 +1,6 @@
 from beanie import Document
 from typing import Optional, Union
+from enum import StrEnum
 
 
 class CourseSettings(Document):
@@ -46,3 +47,9 @@ class CourseEnrollment(Document):
 
 class CourseSelection(Document):
     course_unique_name: str
+
+class TaskType(StrEnum):
+    Function = "function"
+    PlotFunction = "plot_function"
+    Print = "print"
+    MultipleChoice = "multiple_choice"

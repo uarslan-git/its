@@ -7,7 +7,9 @@ import io
 import ast
 import re
 import base64
+from courses.schemas import TaskType
 from db import database
+from PIL import Image
 
 def process_file(file_path):
     # Process the content of the text file as needed.
@@ -99,7 +101,7 @@ async def task_to_json(dir, task_unique_name, db=None):
         elif file_name.endswith("md"):
             header = content_docstring.split("\n")[0]
             if not header.startswith("# "):
-                raise Exception("task.md should contain the first line '# task_display_name'")
+                raise ValueError(f"'{file_path}' should contain the first line '# task_display_name'")
             task_display_name = header.split("#")[1].strip()
             content_docstring = replace_images(content_docstring, task_unique_name, dir)
             task_dict["display_name"] = task_display_name
@@ -109,7 +111,7 @@ async def task_to_json(dir, task_unique_name, db=None):
             task_type = content_docstring.split("!#")[0]
             task_type = task_type[2:]
             task_dict["type"] = task_type
-            if task_type not in ["function", "print"]:
+            if task_type not in [TaskType.Function, TaskType.Print, TaskType.PlotFunction]: #["function", "print", "plot_function"]
                 raise Exception(f"Invalid task-type use function or print, not {task_type}")
             #json.dump({"example_solution": content_docstring}, outfile, ensure_ascii=False)
             prefix = content_docstring.split("#!prefix!#")[0]
@@ -117,25 +119,28 @@ async def task_to_json(dir, task_unique_name, db=None):
             task_dict["prefix"] = prefix.strip()
             #test if there is a required signature, and if so, add it to database.
             task_dict["example_solution"] = content_docstring.split("#!prefix!#\n")[1]
-            if task_type == "function":
-                task_dict["function_name"] = get_function_names(file_path)[0] #TODO: Secure for example solutions with multiple functions.
+            task_dict["function_name"] = get_function_names(file_path)[0] #TODO: Secure for example solutions with multiple functions.
+            if task_type in [TaskType.Function, TaskType.PlotFunction]:
                 arguments = extract_argument_names(task_dict["prefix"] + "\n" + task_dict["example_solution"])
                 task_dict["arguments"] = arguments
+                if task_type == TaskType.PlotFunction:
+                    # check that plt is imported as plt
+                    if not "import matplotlib.pyplot as plt" in prefix:
+                        raise ValueError("Please impot mytplotlib.pyplot as plt.")
         elif file_name.startswith("multiple_choice"):
-            task_dict["type"] = "multiple_choice"
+            task_dict["type"] = TaskType.MultipleChoice
             task_dict["prefix"] = "no_prefix"
             task_dict["example_solution"] = ""
-
             if file_name.endswith(".py"):
                 json_section = content_docstring.split("#!json!#")[1]
                 mc_json = json.loads(json_section)
             elif file_name.endswith(".json"):
                 mc_json = json.loads(content_docstring)
             else: raise TypeError("'multiple_choice' has to be of type '.py' or '.json'.")
-
             task_dict["possible_choices"] = mc_json["possible_choices"]
             task_dict["correct_choices"] = mc_json["correct_choices"]
             task_dict["choice_explanations"] = mc_json["choice_explanations"]
+            
     task_dict["tests"] = tests
     await database.create_task(task_dict)
 

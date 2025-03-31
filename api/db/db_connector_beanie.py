@@ -6,7 +6,7 @@ from typing import Optional
 from users.schemas import User, GlobalAccountList
 from tasks.schemas import Task
 from attempts.schemas import Attempt
-from submissions.schemas import Code_submission as Submission
+from submissions.schemas import Base_Submission as Submission
 from runs.schemas import Evaluated_run_code_submission as Run_submission
 from tasks.schemas import Task
 from feedback.schemas import Evaluated_feedback_submission as Feedback_submission

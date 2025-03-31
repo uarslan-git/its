@@ -1,7 +1,7 @@
 from models.pedagogical.feedback.base import Base_step_feedback_module
 from models.pedagogical.content_selection.base import Base_task_selector
 from users.schemas import User
-from submissions.schemas import Code_submission
+from submissions.schemas import Base_Submission
 
 
 class Base_pedagogical_model():
@@ -14,5 +14,5 @@ class Base_pedagogical_model():
         return await self.task_selector.select(user, topic)
     
     #Inner Loop
-    async def provide_feedback(self, submission: Code_submission):
+    async def provide_feedback(self, submission: Base_Submission):
         return await self.feedback_module.provide_feedback(submission)

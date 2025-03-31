@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./feedback-panel.component.css']
 })
 export class FeedbackPanelComponent {
+  show: boolean = true
 
   @ViewChild("taskSolvedDialog", {static: true}) taskSolvedDialog!: ElementRef<HTMLDialogElement>;
 
@@ -39,6 +40,7 @@ export class FeedbackPanelComponent {
       this.displayFeedbackSurvey = false;
     });
     this.testReadySubscription = this.eventShareService.testReady$.subscribe((data) => {
+      console.log("data", data)
       this.displayFeedbackSurvey = false;
       const submissionId = data
       this.fetchSubmissionFeedback(submissionId);
@@ -98,6 +100,7 @@ export class FeedbackPanelComponent {
   }
 
   fetchSubmissionFeedback(submission_id: string) {
+    console.log("fetchSubmissionFeedback", submission_id)
     const endpoint_url = `${environment.apiUrl}/submission/feedback/${submission_id}`;
     this.client.get<any>(endpoint_url, ).subscribe((data) => { 
       this.feedback = {
@@ -126,6 +129,7 @@ export class FeedbackPanelComponent {
   }
 
   fetchRunExperiment(runId: string) {
+      console.log("fetchRunExperiment", runId)
       const endpoint_url = `${environment.apiUrl}/submission/feedback/${runId}`;
       this.client.get<any>(endpoint_url, ).subscribe((data) => { 
         this.feedback = {
@@ -137,6 +141,7 @@ export class FeedbackPanelComponent {
   }
 
   fetchRequestedFeedback(feedbackID: string) {
+    console.log("fetchRequestedFeedback", feedbackID)
       const endpoint_url = `${environment.apiUrl}/submission/feedback/${feedbackID}`;
       this.client.get<any>(endpoint_url, ).subscribe((data) => { 
         this.feedback = {

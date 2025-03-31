@@ -160,4 +160,3 @@ async def log_attempt_state(state: NestedAttemptState, user: User = Depends(curr
         attempt.duration_list[-1] = str(current_attempt_time - current_start_time)
     attempt.current_state = state.current_state
     await database.update_attempt(attempt)
-
