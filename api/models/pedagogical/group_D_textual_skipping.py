@@ -1,5 +1,4 @@
-from models.pedagogical.base import Base_pedagogical_model
-from models.pedagogical.content_selection.first_uncompleted_task import First_uncompleted_task_selector
+from models.pedagogical.base_pedagogical import Base_pedagogical_model
 from models.pedagogical.feedback.llm_prototype_feedback_module import LLM_prototype_feedback_module
 from models.pedagogical.content_selection.skipping_easy_tasks import Skipping_task_selector
 

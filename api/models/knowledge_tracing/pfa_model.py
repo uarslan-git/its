@@ -1,0 +1,98 @@
+from models.knowledge_tracing.kt_base import KT_Factor_Analysis_Model_Base
+from courses.schemas import Course
+from tasks.schemas import Task
+from users.schemas import User
+from db import database
+
+from sklearn.linear_model import LogisticRegression
+import numpy as np
+
+class PFA_Model(KT_Factor_Analysis_Model_Base):
+    current_user: User
+    q_matrix: dict
+    skill_weights: np.ndarray
+    succ_rate: np.ndarray
+    fail_rate: np.ndarray
+    
+    async def set_user(self, user: User, course: Course = None):
+        if course == None:
+            course = await database.get_course(user.current_course)
+        course_enrollment = await database.get_course_enrollment(user, course.unique_name)
+
+        # TODO handle initialization if values are not present
+        self.q_matrix = course.q_matrix
+        self.skill_weights = np.array(course.course_parameters["skill_weights_pfa"])
+        
+        self.succ_rate, self.fail_rate = self.get_sf_rate(course_enrollment)
+        return self
+    
+    def completion_probability(self, task: Task, n: int = 3):
+        new_task_skills = self.q_matrix.get(task)
+        new_task_skills = np.repeat(new_task_skills, n)
+        new_task_weights = new_task_skills * self.skill_weights
+
+        logit = 0
+        for i in range(len(self.q_matrix)):
+            logit += new_task_weights[n*i]*self.succ_rate[i]
+            + new_task_weights[n*i+1]*self.fail_rate[i]
+            + new_task_weights[n*i+2]
+        return 1 / (1 + np.exp(-logit))
+        
+    async def update_course_weights(self, course: Course = None):
+        if course == None: 
+            course = await database.get_course(self.current_user.current_course)
+        if course.domain == "Surveys": return
+        
+        #get all the task completions and order it for users and time stamps (last submissions available?) call all_course_submissions + correctness
+        all_enrolled_users = await database.get_all_enrolled_users(course.unique_name)
+
+        q_matrix = course.q_matrix
+        num_skills = len(course.competencies)
+        course_parameters_new = course.course_parameters.copy()
+        
+        Xlogreg_reg = []
+        Ylogreg = []
+        
+        # TODO refactor to use get_sf_rate
+        for user in all_enrolled_users:
+            s = np.zeros(num_skills)
+            f = np.zeros(num_skills)
+            for task in user.tasks_attempted:     
+                task_skills = q_matrix.get(task)
+                new_row= np.zeros(num_skills*3)
+                for j in range(num_skills):
+                # adding the entry  
+                    new_row[3*j + 0] = s[j]
+                    new_row[3*j + 1] = f[j]
+                    new_row[3*j + 2] = task_skills[j]
+                if (task in user.tasks_completed):
+                    s = [sum(x) for x in zip(s, task_skills)]
+                    Ylogreg.append(1)
+                else:
+                    f += [sum(x) for x in zip(s, task_skills)]
+                    Ylogreg.append(0)
+                Xlogreg_reg.append(new_row)
+        
+        pfa_model = LogisticRegression(penalty = 'l2', C = 1.0, fit_intercept = False)
+        pfa_model.fit(Xlogreg_reg, Ylogreg)
+
+        coefficients = (-pfa_model.coef_[0]).tolist()
+        course_parameters_new["skill_weights_pfa"] = coefficients
+
+        await database.update_course(course, {"course_parameters": course_parameters_new})
+        return 
+    
+    def get_sf_rate(self, course_enrollment):
+        attempted_tasks = course_enrollment.tasks_attempted
+        completed_tasks = course_enrollment.tasks_completed
+        
+        succ_rate = np.zeros(len(self.q_matrix))
+        fail_rate = np.zeros(len(self.q_matrix))
+        for task in attempted_tasks:
+            task_skills = self.q_matrix.get(task)
+            if task in completed_tasks:
+                # TODO + or +=?
+                succ_rate += [sum(x) for x in zip(succ_rate, task_skills)]
+            else:
+                fail_rate += [sum(x) for x in zip(succ_rate, task_skills)]
+        return succ_rate, fail_rate

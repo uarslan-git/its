@@ -3,7 +3,7 @@ from db import database
 from db.db_connector_beanie import User
 from models.domain.submissions.submissions import run_tests
 
-from models import manager
+from models import model_manager
 
 
 async def handle_feedback(submission: Feedback_submission, user: User):
@@ -18,7 +18,7 @@ async def handle_feedback(submission: Feedback_submission, user: User):
     task_id = submission.task_unique_name
     task_json = await database.get_task(str(task_id))
     test_results, valid_solution = await run_tests(task_json, submission)
-    pedagogical_model = await manager.pedagogical_model(user)
+    pedagogical_model = await model_manager.get_pedagogical_model_by_user(user)
     evaluated_feedback_submission = Evaluated_feedback_submission(task_unique_name = submission.task_unique_name, 
                                                             course_unique_name=submission.course_unique_name,
                                                             code = submission.code,

@@ -5,10 +5,6 @@ import subprocess
 import atexit
 import os
 import signal
-#from courses.parse_courses import parse_course
-#from courses.parse_tasks import parse_all_tasks
-from pymongo import MongoClient
-from api.config import config
 
 
 def cleanup_child_processes():

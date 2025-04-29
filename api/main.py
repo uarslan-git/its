@@ -1,6 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Depends, Request, Response, HTTPException
-from fastapi import APIRouter
+from fastapi import FastAPI, Depends, Request
 from submissions import handle_submissions
 from attempts import handle_attempts
 from submissions.schemas import Base_Submission, Tested_Submission
@@ -10,7 +9,6 @@ from courses import handle_courses
 from surveys import handle_surveys
 from surveys.schemas import Survey
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from users import handle_users
 from users import schemas as user_schemas
 from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings
@@ -29,13 +27,9 @@ from fastapi.responses import JSONResponse
 from starlette.status import HTTP_504_GATEWAY_TIMEOUT
 from system.schemas import AppSettings
 from feedback.schemas import Url
-from models.domain.skill_weights_pfa_update import Skill_parameters_pfa_update
-from datetime import datetime
-from apscheduler.schedulers.background import BackgroundScheduler
+from models.domain.skill_weights_pfa_update import update_skill_parameters
 from apscheduler.triggers.interval import IntervalTrigger  
 from apscheduler.schedulers.asyncio import AsyncIOScheduler  
-from contextlib import asynccontextmanager
-from asyncio import run
 
 
 
@@ -130,11 +124,10 @@ async def on_startup():
 async def course_parameter_update():
     # TODO: schedule the updates of the course: exact timing not decided yet
     courses = await database.get_courses()
-    updater = Skill_parameters_pfa_update()
     for course in courses:
         if (not course.q_matrix is None):
             try:
-                await updater.select(course=course)
+                await update_skill_parameters(course=course)
             except:
                 pass
 
