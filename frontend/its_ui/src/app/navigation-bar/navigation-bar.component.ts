@@ -30,7 +30,7 @@ export class NavigationBarComponent {
 
   apiUrl: string = environment.apiUrl;
   user_name: string = "INVALID_EMAIL";
-  title: string = 'Tutoring System for Programming';
+  title: string = 'SCRIPT'//'Tutoring System for Programming';
   task_name: string = '';
   course?: any;
   course_topics: string[] = [];

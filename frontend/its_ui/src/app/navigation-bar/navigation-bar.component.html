@@ -1,5 +1,7 @@
 <nav class="navbar">
-    <div class="nav-brand" (click)="emitHomeButtonClicked()">{{title}}</div>
+    <div class="nav-brand" (click)="emitHomeButtonClicked()" title="Home">
+      <mat-icon>home</mat-icon>
+      {{title}}</div>
     <ul class="nav-links">
 
 
@@ -15,6 +17,8 @@
           </div>
         </div>
       </li>
+
+      <div class="vspace"></div>
 
       <!-- TODO: Make dropdown elements responsive to their content (such that they disapear if no content is present)-->
       <li *ngIf="display_elements.has('taskSelection')"><a (click)="newTaskButtonClicked('previous')"><i class="arrow left" role="button"></i></a></li>
@@ -35,25 +39,30 @@
           </div>
         </div>
       </li> -->
+      <div class="vspace"></div>
+
+      
 
       <li *ngIf="roles.includes('admin') || roles.includes('tutor')">
         <div class="dropdown">
-          <li>
+          <li title="Settings">
             <button class="dropbtn">Settings
               <i class="fa fa-caret-down"></i>
             </button>
           </li>
           <div class="dropdown-content">
-            <li *ngIf="roles.includes('admin')"><a (click)="emitAdminSettingsRequested()">Admin Settings</a></li>
-            <li *ngIf="display_elements.has('courseSettings')" ><a (click)="emitCourseSettingsRequested()">Course Settings</a></li>
+            <li *ngIf="roles.includes('admin')"><a (click)="emitAdminSettingsRequested()" href="#">Admin Settings</a></li>
+            <li *ngIf="display_elements.has('courseSettings')" ><a (click)="emitCourseSettingsRequested()" href="#">Course Settings</a></li>
           </div>
         </div>
       </li>
 
+      <div *ngIf="roles.includes('admin') || roles.includes('tutor')" class="vspace"></div>
+      
       <li>
         <div class="dropdown">
-          <li>
-            <button class="dropbtn">Info
+          <li title="Info">
+            <button class="dropbtn"><mat-icon>info</mat-icon>
               <i class="fa fa-caret-down"></i>
             </button>
           </li>
@@ -66,7 +75,7 @@
           </div>
         </div>
       </li>
-      
+
     </ul>
   </nav>
   

@@ -19,7 +19,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatOptionModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
-
+import {MatIconModule} from '@angular/material/icon';
 
 import { TaskPanelComponent } from './task-panel/task-panel.component';
 import { NavigationBarComponent } from './navigation-bar/navigation-bar.component';
@@ -64,6 +64,7 @@ import { StarRatingModule } from 'angular-star-rating';
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatOptionModule,
     StarRatingModule.forRoot(),
     MarkdownModule.forRoot({
