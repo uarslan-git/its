@@ -1,3 +1,4 @@
+import warnings
 from models.knowledge_tracing.kt_base import KT_Factor_Analysis_Model_Base
 from courses.schemas import Course
 from tasks.schemas import Task
@@ -10,32 +11,43 @@ import numpy as np
 class PFA_Model(KT_Factor_Analysis_Model_Base):
     current_user: User
     q_matrix: dict
+    competencies: list
     skill_weights: np.ndarray
     succ_rate: np.ndarray
     fail_rate: np.ndarray
+    
+    def __init__(self, n_parameters: int = 3):
+        self.n = n_parameters
+        super().__init__()
     
     async def set_user(self, user: User, course: Course = None):
         if course == None:
             course = await database.get_course(user.current_course)
         course_enrollment = await database.get_course_enrollment(user, course.unique_name)
 
-        # TODO handle initialization if values are not present
+        # set default values if any are not present
+        if (course.q_matrix == None or
+            course.competencies == None or
+            course.course_parameters == None or
+            not "skill_weights_pfa" in course.course_parameters.keys()):
+            await self.set_default_q_matrix(course, self.n)
         self.q_matrix = course.q_matrix
-        self.skill_weights = np.array(course.course_parameters["skill_weights_pfa"])
+        self.competencies = course.competencies
+        self.skill_weights = np.array(course.course_parameters.get("skill_weights_pfa"))
         
         self.succ_rate, self.fail_rate = self.get_sf_rate(course_enrollment)
         return self
     
-    def completion_probability(self, task: Task, n: int = 3):
+    def completion_probability(self, task: Task):
         new_task_skills = self.q_matrix.get(task)
-        new_task_skills = np.repeat(new_task_skills, n)
+        new_task_skills = np.repeat(new_task_skills, self.n)
         new_task_weights = new_task_skills * self.skill_weights
 
         logit = 0
-        for i in range(len(self.q_matrix)):
-            logit += new_task_weights[n*i]*self.succ_rate[i]
-            + new_task_weights[n*i+1]*self.fail_rate[i]
-            + new_task_weights[n*i+2]
+        for i in range(len(self.competencies)):
+            logit += new_task_weights[self.n*i]*self.succ_rate[i]
+            + new_task_weights[self.n*i+1]*self.fail_rate[i]
+            + new_task_weights[self.n*i+2]
         return 1 / (1 + np.exp(-logit))
         
     async def update_course_weights(self, course: Course = None):
@@ -59,7 +71,7 @@ class PFA_Model(KT_Factor_Analysis_Model_Base):
             f = np.zeros(num_skills)
             for task in user.tasks_attempted:     
                 task_skills = q_matrix.get(task)
-                new_row= np.zeros(num_skills*3)
+                new_row= np.zeros(num_skills*self.n)
                 for j in range(num_skills):
                 # adding the entry  
                     new_row[3*j + 0] = s[j]
@@ -86,13 +98,30 @@ class PFA_Model(KT_Factor_Analysis_Model_Base):
         attempted_tasks = course_enrollment.tasks_attempted
         completed_tasks = course_enrollment.tasks_completed
         
-        succ_rate = np.zeros(len(self.q_matrix))
-        fail_rate = np.zeros(len(self.q_matrix))
+        succ_rate = np.zeros(len(self.competencies))
+        fail_rate = np.zeros(len(self.competencies))
         for task in attempted_tasks:
-            task_skills = self.q_matrix.get(task)
             if task in completed_tasks:
-                # TODO + or +=?
-                succ_rate += [sum(x) for x in zip(succ_rate, task_skills)]
+                succ_rate = np.add(succ_rate, self.q_matrix.get(task))
             else:
-                fail_rate += [sum(x) for x in zip(succ_rate, task_skills)]
+                fail_rate = np.add(fail_rate, self.q_matrix.get(task))
         return succ_rate, fail_rate
+
+    @staticmethod
+    async def set_default_q_matrix(course: Course, n_parameters: int):
+        warnings.warn(f"PFA: Some required fields not found for course '{course.unique_name}' not found, constructing default Q-Matrix.")
+        
+        competencies = ["default_competency"]
+        q_matrix = {task: [1] for task in course.curriculum}
+        course_parameters = course.course_parameters
+        
+        skill_weights_pfa = [0] * n_parameters
+        if course_parameters == None:
+            course_parameters = {"skill_weights_pfa": skill_weights_pfa}
+        else:
+            course_parameters["skill_weights_pfa"] = skill_weights_pfa
+        
+        await database.update_course(course, {
+            "q_matrix": q_matrix,
+            "competencies": competencies,
+            "course_parameters": course_parameters,})

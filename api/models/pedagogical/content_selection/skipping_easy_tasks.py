@@ -10,7 +10,7 @@ class Skipping_task_selector(Base_task_selector):
     def __init__(self, model: KT_Factor_Analysis_Model_Base = PFA_Model):
         self.learner_model: KT_Factor_Analysis_Model_Base = model()
 
-    async def select(self, user: User):
+    async def select(self, user: User, topic: str = None):
         """Task select method fo the ITS prototype. This is not a sophisticated Outer Loop, only very basic curriculum-aware task selection.
 
         Args:
@@ -29,7 +29,7 @@ class Skipping_task_selector(Base_task_selector):
         if course.domain == "Surveys":
             return(uncompleted_tasks[0])
         
-        self.learner_model.set_user(user)
+        await self.learner_model.set_user(user)
         # This can be handled by a switch to potentially handle different methods for other classes
         completion_probability = self.learner_model.completion_probability
         

@@ -1,4 +1,4 @@
-#!plot!#
+#!plot_function!#
 import matplotlib.pyplot as plt
 def plot_points():
 #!prefix!#

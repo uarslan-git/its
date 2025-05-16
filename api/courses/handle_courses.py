@@ -1,13 +1,11 @@
 from fastapi import APIRouter, HTTPException, status, UploadFile
 from fastapi import Depends
-from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection, CourseSettings
+from courses.schemas import Course, CourseInfo, CourseEnrollment, CourseSelection
 from users.schemas import User
 from users.handle_users import current_active_verified_user
 from db import database
-from random import randrange
 import itertools
 import numpy as np
-from typing import List
 import zipfile
 from io import BytesIO
 import shutil

@@ -1,7 +1,5 @@
 
-from models.pedagogical.content_selection.skipping_easy_tasks import Skipping_task_selector
-from models.pedagogical.content_selection.first_uncompleted_task import First_uncompleted_task_selector
-from models.knowledge_tracing.pfa_model import PFA_Model
+from models.pedagogical.base_pedagogical import Base_pedagogical_model
 from models.pedagogical.prototype import Prototype_pedagogical_model
 from models.pedagogical.skipping_tasks_pfa import Skipping_tasks_pfa_pedagogical_model
 from models.pedagogical.llm_feedback_textual import LLM_feedback_textual_pedagogical_model
@@ -41,8 +39,8 @@ class Model_Manager():
         self.group_D = Group_D_textual_skipping()
 
     
-    def get_pedagogical_model(self, model_name: str = None):
-        if model_name is None:
+    def get_pedagogical_model(self, model_name: str = None) -> Base_pedagogical_model:
+        if model_name is None or model_name == "default":
             return self.pedagogical_default
         try:
             return self.pedagogical_models[model_name]
@@ -50,7 +48,7 @@ class Model_Manager():
             warnings.warn(f"Pedagogical Model '{model_name}' not known, using default.", UserWarning)
             return self.pedagogical_default
 
-    async def get_pedagogical_model_by_user(self, user: User):
+    async def get_pedagogical_model_by_user(self, user: User) -> Base_pedagogical_model:
         course_unique_name = user.current_course
         course_settings = await database.get_course_settings_for_user(user.id, course_unique_name)
         model_name = course_settings["pedagogical_model"]
