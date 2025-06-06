@@ -33,8 +33,9 @@ class Skipping_task_selector(Base_task_selector):
         # This can be handled by a switch to potentially handle different methods for other classes
         completion_probability = self.learner_model.completion_probability
         
-        if ((completion_probability(uncompleted_tasks[0])>0.8) and (uncompleted_tasks[0] not in mandatory_tasks)):
-            while ((completion_probability(uncompleted_tasks[0])>0.8) and (len(uncompleted_tasks)>0) and (uncompleted_tasks[0] not in mandatory_tasks)):
+        if ((completion_probability(uncompleted_tasks[0]) > 0.8) and (uncompleted_tasks[0] not in mandatory_tasks)):
+            while ((completion_probability(uncompleted_tasks[0]) > 0.8) and (len(uncompleted_tasks) > 0) and (uncompleted_tasks[0] not in mandatory_tasks)):
                 uncompleted_tasks.pop(0)
 
-        return(uncompleted_tasks[0])
+        self.learner_model.unset_user()
+        return uncompleted_tasks[0]

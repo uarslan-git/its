@@ -14,6 +14,10 @@ class KT_Factor_Analysis_Model_Base(ABC):
         raise NotImplementedError()
     
     @abstractmethod
+    def unset_user(self):
+        raise NotImplementedError()
+    
+    @abstractmethod
     def completion_probability(self, task: Task):
         raise NotImplementedError()
     

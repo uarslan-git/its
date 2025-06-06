@@ -21,6 +21,7 @@ class PFA_Model(KT_Factor_Analysis_Model_Base):
         super().__init__()
     
     async def set_user(self, user: User, course: Course = None):
+        self.current_user = user
         if course == None:
             course = await database.get_course(user.current_course)
         course_enrollment = await database.get_course_enrollment(user, course.unique_name)
@@ -37,8 +38,19 @@ class PFA_Model(KT_Factor_Analysis_Model_Base):
         
         self.succ_rate, self.fail_rate = self.get_sf_rate(course_enrollment)
         return self
+
+    def unset_user(self):
+        self.current_user = None
+        self.q_matrix = None
+        self.competencies = None
+        self.skill_weights = None
+        self.succ_rate = None
+        self.fail_rate = None
     
     def completion_probability(self, task: Task):
+        if self.current_user == None:
+            raise AttributeError("PFA Model has not been set to a user. Call 'set_user' before calculating completion probability.")
+        
         new_task_skills = self.q_matrix.get(task)
         new_task_skills = np.repeat(new_task_skills, self.n)
         new_task_weights = new_task_skills * self.skill_weights
