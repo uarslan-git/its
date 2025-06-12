@@ -17,7 +17,8 @@ async def handle_feedback(submission: Feedback_submission, user: User):
     user_id = user.id
     task_id = submission.task_unique_name
     task_json = await database.get_task(str(task_id))
-    test_results, valid_solution = await run_tests(task_json, submission)
+    test_results = await run_tests(task_json, submission)
+    valid_solution = all([result["status"] for result in test_results]) > 0
     pedagogical_model = await manager.pedagogical_model(user)
     evaluated_feedback_submission = Evaluated_feedback_submission(task_unique_name = submission.task_unique_name, 
                                                             course_unique_name=submission.course_unique_name,
