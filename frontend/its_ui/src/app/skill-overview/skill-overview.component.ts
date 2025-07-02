@@ -1,6 +1,12 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 import { EventEmitter } from '@angular/core';
 
+export interface CourseDescription{
+  unique_name: string;
+  display_name: string;
+}
 @Component({
   selector: 'app-skill-overview',
   templateUrl: './skill-overview.component.html',
@@ -8,8 +14,29 @@ import { EventEmitter } from '@angular/core';
 })
 export class SkillOverviewComponent {
 
-  selectedCourse = "course1"
-  courses = ["course1", "course2", "course3"]
+
+  courses : CourseDescription[]= [];
+  selectedCourse : CourseDescription | null = null;
+  
+  constructor(
+      private client: HttpClient,
+    ){
+    }
+
+  ngOnInit(): void {
+    this.fetchCourseInfo()
+  }
+
+  fetchCourseInfo(){
+    const endpoint_url = `${environment.apiUrl}/course/info/`;
+    this.client.get<any>(endpoint_url, {withCredentials: true}).subscribe((data) => { 
+      this.courses =  data.course_list;
+      if (this.courses.length > 0)
+      {
+        this.selectedCourse = this.courses[0]
+      }
+  });
+  }
 
   skills1 : any[] =[
     {
@@ -56,7 +83,7 @@ export class SkillOverviewComponent {
 
   onSelectedCourseChange(event: Event) {
     var newValue = "course2"
-    this.selectedCourse = newValue;
+    this.selectedCourse = {unique_name:"course2", display_name: "Course2"};
     console.log(`Selected option: ${this.selectedCourse}`);
 
     if(newValue == "course2"){
@@ -66,4 +93,14 @@ export class SkillOverviewComponent {
       this.skills = this.skills1
     }
   }
+  
+
+  generateExplanation(skillName: string){
+    window.alert(`Explanation for skill with name ${skillName}`)
+  }
+
+  generateReason(skillName: string){
+    window.alert(`Reason for skill with name ${skillName}`)
+  }
+
 }
