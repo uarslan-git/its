@@ -99,7 +99,7 @@ There are two options for deployment. The first one deployment through Docker an
 
 Example: 
 
-'''
+```
 ITS_ENV="development-docker"
 
 DB_SERVICE_PW="SECRET"
@@ -108,7 +108,7 @@ DB_ROOT_PW="SECRET"
 JWT_SECRET="SECRET"
 USER_VERIFICATION_SECRET="SECRET"
 RESET_PWD_SECRET="SECRET"
-'''
+```
 
 4. Open a terminal inside the repo and run "docker-compose up"
 
@@ -129,7 +129,7 @@ RESET_PWD_SECRET="SECRET"
 
 Example: 
 
-'''
+```
 ITS_ENV="development"
 
 DB_SERVICE_PW="SECRET"
@@ -138,11 +138,11 @@ DB_ROOT_PW="SECRET"
 JWT_SECRET="SECRET"
 USER_VERIFICATION_SECRET="SECRET"
 RESET_PWD_SECRET="SECRET"
-'''
+```
 
 4. Set up a user in MongoDB with read and write access to "its_db"
 
-'''
+```
 use admin
 db.createUser(
   {
@@ -151,7 +151,7 @@ db.createUser(
     roles: [ { role: "readWrite", db: "its_db" }]
   }
 )
-'''
+```
 
 5. Install python requirements in /api/requirements.txt, it is recommended to use a virtual python environment like conda. 
 
