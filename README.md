@@ -162,16 +162,21 @@ db.createUser(
 
 #### Setting up an (admin) user.
 
+In the development environment no emails are sended upon registration. The tokens for verifiction and pasword reset are printed to the backend console. For deployment through docker, one has to access the backend container for verifying new users. 
 
+Only users with the roles "admin" and "tutor" can upload courses to the system. The roles can be added manually in the database User document. 
 
 #### Loading a course to the system
 
+If your user has the respective priveliges, courses can be uploaded through the UI. For uploading a new course, there is a button on the course-selection page. For uploading new tasks to an exiting course, there is an option in the course settings.
+
 #### Setting up the LLM Server
+
+To set up the feedback functionality, please ensure that you can access an Ollama instance with your preferred models installed. Indicate the link to your instance in the admin settings. Additionally, you can select a language generation model in the course settings.
 
 ## Contributing
 
 We welcome external contributors to this project. If you want to contribute, we are happy to assist with questions regarding the integration of your contribution with our system. In any case, contributions should align with the general system architecture.
-
 
 ## Contributors
 
