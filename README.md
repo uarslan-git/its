@@ -1,14 +1,28 @@
 # Readme
 
-Curious Camel (preliminary name) is an Intelligent Tutoring System for programming. In this file, you will find information on how to start using, contributing or hosting Curious Camel. This software is developed and maintained by the Knowledge Representation and Machine Learning (KML) group of Bielefeld University (https://www.uni-bielefeld.de/fakultaeten/technische-fakultaet/arbeitsgruppen/kml/).
+SCRIPT (Step-based Coding for Research and Interactive Programming Training) is an Intelligent Tutoring System for programming. In this REDAME, you will find information on how to start using, contributing or hosting SCRIPT. This software is developed and maintained by the Knowledge Representation and Machine Learning (KML) group of Bielefeld University (https://www.uni-bielefeld.de/fakultaeten/technische-fakultaet/arbeitsgruppen/kml/).
 
 ## License
 
-This software is distributed under the xxxx license. It shall not be redistributed commercially. The source code shall not be used in proprietary systems unless permission is granted by the KML group. 
+"SCRIPT" is an Intelligent Tutoring System for Programming.
+Copyright (C) 2025  Benjamin Paaßen, Jesper Dannath, Alina Deriyeva
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ## Feature List
 
-- [x] Online code-editor
+- [x] Online code-editor based on Monaco code editor
 - [x] Display tasks and feedback with markdown
 - [x] User management and data-collection settings
 - [x] Save code execution using Jugde0
@@ -18,19 +32,19 @@ This software is distributed under the xxxx license. It shall not be redistribut
 - [x] Print, function and multiple-choice tasks
 - [x] Multiple courses per user
 - [x] E-Mail based login
-- [x] Monaco code editor
 - [x] Upload courses
 - [x] Conceptual Feedback on Steps
 - [x] Course settings
 - [x] Task selection based on user competency
-- [ ] Tasks with image-files
+- [x] Tasks with image-files
+- [ ] Learning progress dashboard
 - [ ] Fill the gap-tasks
-
+- [ ] Course enrollment system
 
 
 ## How to use?
 
-At this point, the feature set of Curious Camel is limited. To maintain courses within the system, it is currently necessary to administrate the server directly. Therefore, this manual features two user groups: students and administrators. 
+At this point, SCRIPT is still in an alpha stage.
 
 ### Learners
 
@@ -69,11 +83,86 @@ The user profile can be reached over the navigation bar. It displays basic infor
 
 ![profile](doc/pictures/profile.png "Profile View"){width=300}
 
-### Admins
+## How to deploy?
 
-#### Installation
+There are two options for deployment. The first one deployment through Docker and the second one is local deployment. We recommend deployment through Docker for testing out the system and local deployment for development.
 
-Specify .env file with different secrets for the backend.
+### Deployment through Docker
+
+1. Clone the repository
+
+2.  Install required software
+
+    - Docker, Docker-compose
+
+3. Set up a .env file in the repo's root folder
+
+Example: 
+
+'''
+ITS_ENV="development-docker"
+
+DB_SERVICE_PW="SECRET"
+DB_ROOT_PW="SECRET"
+
+JWT_SECRET="SECRET"
+USER_VERIFICATION_SECRET="SECRET"
+RESET_PWD_SECRET="SECRET"
+'''
+
+4. Open a terminal inside the repo and run "docker-compose up"
+
+
+### Local Deployment
+
+1. Clone the repository
+
+2.  Install required software
+
+    - Docker, Docker-compose
+    - MongoDB (5.x)
+    - NodeJs
+    - Angular CLI
+    - Judge0 (Best install through the provided judge0/docker-compose.yml)
+
+3. Set up a .env file in the repo's root folder
+
+Example: 
+
+'''
+ITS_ENV="development"
+
+DB_SERVICE_PW="SECRET"
+DB_ROOT_PW="SECRET"
+
+JWT_SECRET="SECRET"
+USER_VERIFICATION_SECRET="SECRET"
+RESET_PWD_SECRET="SECRET"
+'''
+
+4. Set up a user in MongoDB with read and write access to "its_db"
+
+'''
+use admin
+db.createUser(
+  {
+    user: "backend_service_user",
+    pwd:  "SECRET"
+    roles: [ { role: "readWrite", db: "its_db" }]
+  }
+)
+'''
+
+5. Install python requirements in /api/requirements.txt, it is recommended to use a virtual python environment like conda. 
+
+6. Run "npm install" in frontend/its_ui
+
+6. Start the system by running start_app.py
+
+
+#### Setting up an (admin) user.
+
+
 
 #### Loading a course to the system
 
@@ -81,7 +170,7 @@ Specify .env file with different secrets for the backend.
 
 ## Contributing
 
-We welcome external contributors to this project. If you want to contribute, we are happy to assist with questions regarding the integration of your contribution with our system. In any case, contributions should align with the general system architecture of the system.
+We welcome external contributors to this project. If you want to contribute, we are happy to assist with questions regarding the integration of your contribution with our system. In any case, contributions should align with the general system architecture.
 
 
 ## Contributors
