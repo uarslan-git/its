@@ -6,6 +6,7 @@ from submissions.schemas import Base_Submission, Tested_Submission
 from tasks import handle_tasks
 from feedback import handle_feedback
 from courses import handle_courses
+from skills import handle_skills
 from surveys import handle_surveys
 from surveys.schemas import Survey
 from fastapi.middleware.cors import CORSMiddleware
@@ -63,6 +64,7 @@ app.include_router(handle_tasks.router, prefix=f"{prefix}")
 app.include_router(handle_feedback.router, prefix=f"{prefix}")
 app.include_router(handle_attempts.router, prefix=f"{prefix}")
 app.include_router(handle_courses.router, prefix=f"{prefix}")
+app.include_router(handle_skills.router, prefix=f"{prefix}")
 app.include_router(handle_runs.router, prefix=f"{prefix}/run")
 app.include_router(retrieve_info.router, prefix=f"{prefix}/info")
 app.include_router(handle_settings.router, prefix=f"{prefix}/settings")
