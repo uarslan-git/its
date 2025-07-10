@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { EventEmitter } from '@angular/core';
@@ -14,9 +14,17 @@ export interface CourseDescription{
 })
 export class SkillOverviewComponent {
 
+  @ViewChild('reasonPopup', {static: true}) reasonPopup!: ElementRef<HTMLDialogElement>;
+  @ViewChild('explanationPopup', {static: true}) explanationPopup!: ElementRef<HTMLDialogElement>;
+
+  reasonMarkdown: string = '';
+  explanationMarkdown: string = '';
 
   courses : CourseDescription[]= [];
   selectedCourse : CourseDescription | null = null;
+
+  course_value  = 59;
+  course_progress = 15; 
   
   constructor(
       private client: HttpClient,
@@ -27,6 +35,7 @@ export class SkillOverviewComponent {
     this.fetchCourseInfo()
   }
 
+  //TODO: only do this for courses the user is enrolled in (needs additional request)
   fetchCourseInfo(){
     const endpoint_url = `${environment.apiUrl}/course/info/`;
     this.client.get<any>(endpoint_url, {withCredentials: true}).subscribe((data) => { 
@@ -96,11 +105,13 @@ export class SkillOverviewComponent {
   
 
   generateExplanation(skillName: string){
-    window.alert(`Explanation for skill with name ${skillName}`)
+    this.explanationMarkdown = "# Explanation\nHere is an explanation for skill " + skillName;
+    this.explanationPopup.nativeElement.showModal();
   }
 
   generateReason(skillName: string){
-    window.alert(`Reason for skill with name ${skillName}`)
+    this.reasonMarkdown = "# Reason\nHere is a reason for skill " + skillName;
+    this.reasonPopup.nativeElement.showModal();
   }
 
 }

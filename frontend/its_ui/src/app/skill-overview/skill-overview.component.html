@@ -4,13 +4,18 @@
     <select (change)="onSelectedCourseChange($event)">
     <option *ngFor="let course of courses" [value]="course.unique_name">{{ course.display_name }}</option>
     </select>
-
+    <!-- <h3>Course Progress</h3> -->
+    <div class="progress-container">
+        <div class="progress-bar-gain" [style.width.%]="course_value + course_progress"></div>
+        <div class="progress-bar-value" [style.width.%]="course_value"></div>
+        <div class="overlay-text">{{ course_value }}% + {{course_progress}}%</div>
+    </div>
     <div class="entry-list">
     <table>
         <thead>
         <tr>
             <th>Name</th>
-            <th>Progress</th>
+            <th>Skill Progress</th>
             <th>Associated Tasks</th>
             <th>Reason</th>
             <th>Explanation</th>
@@ -21,10 +26,8 @@
             <td>{{ skill.name }}</td>
             <td>
                 <div class="progress-container">
-                     <div class="progress-bar-gain" [style.width.%]="skill.value + skill.progress">
-                    </div>
-                    <div class="progress-bar-value" [style.width.%]="skill.value">
-                    </div>
+                    <div class="progress-bar-gain" [style.width.%]="skill.value + skill.progress"></div>
+                    <div class="progress-bar-value" [style.width.%]="skill.value"></div>
                     <div class="overlay-text">{{ skill.value }}% + {{skill.progress}}%</div>
                 </div>
             </td>
@@ -36,3 +39,30 @@
     </table>
     </div>
 </div>
+
+
+  <dialog #explanationPopup class="popup-dialog-container">
+    <div class="popup-dialog">
+      <app-markdown-panel [markdownString]="explanationMarkdown"></app-markdown-panel>
+        <div class="ok-button-container">
+          <button class="popup-dialog-button" (click)="explanationPopup.close()">
+            Close
+         </button>
+        </div>
+    </div>
+  </dialog>
+
+
+  <dialog #reasonPopup class="popup-dialog-container">
+    <div class="popup-dialog">
+      <app-markdown-panel [markdownString]="reasonMarkdown"></app-markdown-panel>
+        <div class="ok-button-container">
+          <button class="popup-dialog-button" (click)="reasonPopup.close()">
+            Close
+         </button>
+        </div>
+    </div>
+  </dialog>
+
+
+
