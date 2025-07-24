@@ -1,9 +1,11 @@
-from beanie import Document
-from typing import Optional, Union
-from enum import StrEnum
+from pydantic import BaseModel
+from typing import List
 
 
-class Skill(Document):
+class Skill(BaseModel):
     name: str
-    value: int
-    gain: int
+    value: float
+    gain: float
+
+class SkillOverview(BaseModel):
+    skill_list: List[Skill]

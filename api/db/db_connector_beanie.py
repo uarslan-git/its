@@ -2,7 +2,7 @@ import motor.motor_asyncio
 from courses.schemas import Course, CourseEnrollment
 from beanie import Document
 from fastapi_users.db import BeanieUserDatabase
-from typing import Optional
+from typing import Optional, Iterable
 from users.schemas import User, GlobalAccountList
 from tasks.schemas import Task
 from attempts.schemas import Attempt
@@ -66,11 +66,12 @@ class database():
             submission = await Feedback_submission.find_one(Feedback_submission.id == PydanticObjectId(submission_id))
         return(submission)
     
-    async def get_tested_submissions_per_user_and_course(self, user_id, course_unique_name):
-        submissions = await Tested_Submission.find_all(
+    async def get_tested_submissions_per_user_and_course(self, user_id, course_unique_name) -> Iterable[Tested_Submission]:
+        submissions = await Tested_Submission.find(
             Tested_Submission.user_id==PydanticObjectId(user_id),
             Tested_Submission.course_unique_name==course_unique_name,
-            with_children=False)
+            Tested_Submission.type == "submission",
+            with_children=False).to_list()
         return submissions
 
     async def get_user(self, user_id): 

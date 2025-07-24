@@ -122,7 +122,7 @@ class PFA_Model(KT_Factor_Analysis_Model_Base):
                 fail_rate = np.add(fail_rate, self.q_matrix.get(task))
         return succ_rate, fail_rate
     
-    async def get_sf_rate_based_on_submissions(self, tested_submissions : Iterable[Tested_Submission]):
+    def get_sf_rate_based_on_submissions(self, tested_submissions : Iterable[Tested_Submission]):
         succ_rate = np.zeros(len(self.competencies))
         fail_rate = np.zeros(len(self.competencies))
 

@@ -7,19 +7,19 @@ from models import model_manager
 from models.pedagogical.skipping_tasks_pfa import Skipping_tasks_pfa_pedagogical_model
 from models.pedagogical.content_selection.skipping_easy_tasks import Skipping_task_selector
 from models.knowledge_tracing.pfa_model import PFA_Model
-from skills.schemas import Skill
+from skills.schemas import SkillOverview, Skill
 from typing import List
 import numpy as np
 
 from datetime import datetime, timedelta, timezone
-from dateutil import parser, parserinfo
+from dateutil import parser
 
 
 router = APIRouter(prefix="/skills")
 
 # TODO: check if user is involved in the courses every time
 @router.get("/{course_unique_name}")
-async def get_skills_overview(course_unique_name: str, user: User = Depends(current_active_verified_user)) -> List[Skill]:
+async def get_skills_overview(course_unique_name: str, user: User = Depends(current_active_verified_user)) -> SkillOverview:
     course = await database.get_course(course_unique_name)
     if course == None:
         raise HTTPException(            
@@ -32,12 +32,17 @@ async def get_skills_overview(course_unique_name: str, user: User = Depends(curr
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not enrolled in the course")
     
-    skill_names = course.competencies # TODO: handle courses with no skills or q_matrix (maybe better extract this out of the pfa_model)
+    skill_names = course.competencies # TODO: (maybe better extract this out of the pfa_model)
+    if skill_names == None:
+        raise HTTPException(            
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This course has no skills")
 
     pedagogical_model: Skipping_tasks_pfa_pedagogical_model = model_manager.get_pedagogical_model("pfa_model") # TODO: check if these 'type casts' hold always
     task_selector: Skipping_task_selector = pedagogical_model.task_selector
     pfa_model: PFA_Model = task_selector.learner_model
 
+    await pfa_model.set_user(user, course) # TODO: this seems like an anti pattern (wouldn't it be much better to create on pfa model per course and always pass the user as a parameter)
     weights = pfa_model.skill_weights
 
     tested_submissions = await database.get_tested_submissions_per_user_and_course(user.id, course_unique_name)
@@ -46,16 +51,17 @@ async def get_skills_overview(course_unique_name: str, user: User = Depends(curr
     submissions_last_week = []
     older_submissions = []
     for submission in tested_submissions:
-        if submission.type != "submission": # Should already be filtered by the db request
-            continue
         
-        # Is stored as text directtly from the frontend in db, format used 'dd.MM.yyyy HH:mm:ss'
-        if parser.parse(submission.submission_time["utc"], dayfirst=True) < split_point_utc: # TODO: this is not the right format
+        # Is stored as text directly from the frontend in the db, format used 'dd.MM.yyyy HH:mm:ss'
+        if parser.parse(submission.submission_time["utc"], dayfirst=True).timestamp() > split_point_utc.timestamp():
             submissions_last_week.append(submission) 
         else:
             older_submissions.append(submission)
+
     success_rate_last_week, fail_rate_last_week = pfa_model.get_sf_rate_based_on_submissions(older_submissions)
     success_rate_gain, fail_rate_gain = pfa_model.get_sf_rate_based_on_submissions(submissions_last_week)
+    pfa_model.unset_user()
+
     success_rate_now = success_rate_last_week + success_rate_gain
     fail_rate_now =  fail_rate_last_week + fail_rate_gain
 
@@ -69,8 +75,8 @@ async def get_skills_overview(course_unique_name: str, user: User = Depends(curr
             + weights[i*3+2])
 
         result.append(Skill(name=name, value=value_last_week, gain = value_now - value_last_week))
-
-    return result
+        
+    return SkillOverview(skill_list=result)
 
 #maybe more somthing like detail instead of reason
 @router.get("/{course_unique_name}/{skill_name}/reason")
@@ -84,7 +90,7 @@ async def get_reason(course_unique_name: str, skill_name: str, user: User = Depe
     if course.competencies == None or skill_name not in course.competencies: # TODO: clarify how to deal with missing competencies
         raise HTTPException(            
             status_code=status.HTTP_404_NOT_FOUND,
-        detail="No skill with this name was found")
+            detail="No skill with this name was found")
     
     raise NotImplementedError()
 

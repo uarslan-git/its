@@ -1,7 +1,7 @@
 <div class = "skill-overview-container">
 
 <!-- [(ngModel)]="selectedCourse" -->
-    <select (change)="onSelectedCourseChange($event)">
+    <select id = "skill-overview-course-selection" (change)="onSelectedCourseChange()">
     <option *ngFor="let course of courses" [value]="course.unique_name">{{ course.display_name }}</option>
     </select>
     <!-- <h3>Course Progress</h3> -->
@@ -16,7 +16,6 @@
         <tr>
             <th>Name</th>
             <th>Skill Progress</th>
-            <th>Associated Tasks</th>
             <th>Reason</th>
             <th>Explanation</th>
         </tr>
@@ -26,12 +25,11 @@
             <td>{{ skill.name }}</td>
             <td>
                 <div class="progress-container">
-                    <div class="progress-bar-gain" [style.width.%]="skill.value + skill.progress"></div>
+                    <div class="progress-bar-gain" [style.width.%]="skill.value + skill.gain"></div>
                     <div class="progress-bar-value" [style.width.%]="skill.value"></div>
-                    <div class="overlay-text">{{ skill.value }}% + {{skill.progress}}%</div>
+                    <div class="overlay-text">{{ skill.value }}% + {{skill.gain}}%</div>
                 </div>
             </td>
-            <td>{{ [skill.associated_tasks] }}</td>
             <td><button class="list-button" (click)="generateReason(skill.name)">Get Reason</button></td>
             <td><button class="list-button" (click)="generateExplanation(skill.name)">Get Explanation</button></td>
         </tr>
