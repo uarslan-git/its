@@ -11,6 +11,10 @@ from skills.schemas import Skill
 from typing import List
 import numpy as np
 
+from datetime import datetime, timedelta, timezone
+from dateutil import parser, parserinfo
+
+
 router = APIRouter(prefix="/skills")
 
 # TODO: check if user is involved in the courses every time
@@ -29,25 +33,42 @@ async def get_skills_overview(course_unique_name: str, user: User = Depends(curr
             detail="User not enrolled in the course")
     
     skill_names = course.competencies # TODO: handle courses with no skills or q_matrix (maybe better extract this out of the pfa_model)
-    q_matrix = np.array(list(course.q_matrix.values()))
-
 
     pedagogical_model: Skipping_tasks_pfa_pedagogical_model = model_manager.get_pedagogical_model("pfa_model") # TODO: check if these 'type casts' hold always
     task_selector: Skipping_task_selector = pedagogical_model.task_selector
     pfa_model: PFA_Model = task_selector.learner_model
 
     weights = pfa_model.skill_weights
-    success_rate, fail_rate = pfa_model.get_sf_rate(course_enrollment) # mybe dont fail when there is no course enrollment and just set both to 0
+
+    tested_submissions = await database.get_tested_submissions_per_user_and_course(user.id, course_unique_name)
+    split_point_utc = datetime.now(timezone.utc) - timedelta(days=7)
     
+    submissions_last_week = []
+    older_submissions = []
+    for submission in tested_submissions:
+        if submission.type != "submission": # Should already be filtered by the db request
+            continue
+        
+        # Is stored as text directtly from the frontend in db, format used 'dd.MM.yyyy HH:mm:ss'
+        if parser.parse(submission.submission_time["utc"], dayfirst=True) < split_point_utc: # TODO: this is not the right format
+            submissions_last_week.append(submission) 
+        else:
+            older_submissions.append(submission)
+    success_rate_last_week, fail_rate_last_week = pfa_model.get_sf_rate_based_on_submissions(older_submissions)
+    success_rate_gain, fail_rate_gain = pfa_model.get_sf_rate_based_on_submissions(submissions_last_week)
+    success_rate_now = success_rate_last_week + success_rate_gain
+    fail_rate_now =  fail_rate_last_week + fail_rate_gain
 
     result = []
     for i, name in enumerate(skill_names):
-        value = (weights[i*3] * success_rate[i]
-            + weights[i*3+1] * fail_rate[i]
+        value_last_week = (weights[i*3] * success_rate_last_week[i]
+            + weights[i*3+1] * fail_rate_last_week[i]
             + weights[i*3+2])
-        
+        value_now = (weights[i*3] * success_rate_now[i]
+            + weights[i*3+1] * fail_rate_now[i]
+            + weights[i*3+2])
 
-        result.append(Skill(name=name, value=value))
+        result.append(Skill(name=name, value=value_last_week, gain = value_now - value_last_week))
 
     return result
 

@@ -7,6 +7,7 @@ from users.schemas import User, GlobalAccountList
 from tasks.schemas import Task
 from attempts.schemas import Attempt
 from submissions.schemas import Base_Submission as Submission
+from submissions.schemas import Tested_Submission
 from runs.schemas import Evaluated_run_code_submission as Run_submission
 from tasks.schemas import Task
 from feedback.schemas import Evaluated_feedback_submission as Feedback_submission
@@ -64,6 +65,13 @@ class database():
         elif submission.type == "feedback_request":
             submission = await Feedback_submission.find_one(Feedback_submission.id == PydanticObjectId(submission_id))
         return(submission)
+    
+    async def get_tested_submissions_per_user_and_course(self, user_id, course_unique_name):
+        submissions = await Tested_Submission.find_all(
+            Tested_Submission.user_id==PydanticObjectId(user_id),
+            Tested_Submission.course_unique_name==course_unique_name,
+            with_children=False)
+        return submissions
 
     async def get_user(self, user_id): 
         #Use fastapi_users boilerplate indirectly to increase modularity.

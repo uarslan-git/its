@@ -7,6 +7,9 @@ from db import database
 
 from sklearn.linear_model import LogisticRegression
 import numpy as np
+from collections.abc import Iterable
+from submissions.schemas import Tested_Submission
+
 
 class PFA_Model(KT_Factor_Analysis_Model_Base):
     current_user: User
@@ -118,6 +121,18 @@ class PFA_Model(KT_Factor_Analysis_Model_Base):
             else:
                 fail_rate = np.add(fail_rate, self.q_matrix.get(task))
         return succ_rate, fail_rate
+    
+    async def get_sf_rate_based_on_submissions(self, tested_submissions : Iterable[Tested_Submission]):
+        succ_rate = np.zeros(len(self.competencies))
+        fail_rate = np.zeros(len(self.competencies))
+
+        for tested_submission in tested_submissions:
+            if tested_submission.valid_solution:
+                succ_rate += self.q_matrix.get(tested_submission.task_unique_name)
+            else:
+                fail_rate += self.q_matrix.get(tested_submission.task_unique_name)
+        return succ_rate, fail_rate
+        
 
     @staticmethod
     async def set_default_q_matrix(course: Course, n_parameters: int):
