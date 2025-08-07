@@ -7,7 +7,7 @@ from models import model_manager
 from models.pedagogical.skipping_tasks_pfa import Skipping_tasks_pfa_pedagogical_model
 from models.pedagogical.content_selection.skipping_easy_tasks import Skipping_task_selector
 from models.knowledge_tracing.pfa_model import PFA_Model
-from skills.schemas import SkillOverview, Skill
+from skills.schemas import SkillOverview, Skill, ReasonDescription, ExplanationDescription
 from typing import List
 import numpy as np
 
@@ -87,12 +87,42 @@ async def get_reason(course_unique_name: str, skill_name: str, user: User = Depe
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No course with this unique name was found")
     
-    if course.competencies == None or skill_name not in course.competencies: # TODO: clarify how to deal with missing competencies
+    if course.competencies == None or skill_name not in course.competencies:
         raise HTTPException(            
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No skill with this name was found")
     
-    raise NotImplementedError()
+    course_enrollment = await database.get_course_enrollment(user, course_unique_name)
+    if course_enrollment == None:
+        raise HTTPException(            
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not enrolled in the course")
+
+    skill_index = course.competencies.index(skill_name)
+    associated_tasks = []
+    for task_name, skill_vector in course.q_matrix.items():
+        if skill_vector[skill_index] > 0.5:
+            associated_tasks.append(task_name)
+
+    solved_correctly = []
+    solved_incorrectly = []
+    not_attempted = []
+    for task_name in associated_tasks:
+        if task_name in course_enrollment.tasks_attempted:
+            if task_name in course_enrollment.tasks_completed:
+                solved_correctly.append(task_name)
+            else:
+                solved_incorrectly.append(task_name)
+        else:
+            not_attempted.append(task_name)
+    
+    reason = f"""
+The estimation of the skill development is provided with help of Performance Factor Analysis based on the performance in the tasks associated with the skill {skill_name}: \n
+Solved correctly: {solved_correctly}
+Solved incorrectly: {solved_incorrectly}
+Not attempted: {not_attempted}"""
+    
+    return ReasonDescription(reason=reason)
 
 
 @router.get("/{course_unique_name}/{skill_name}/llm_explanation")
@@ -103,7 +133,7 @@ async def get_llm_explanation(course_unique_name: str, skill_name: str, user: Us
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No course with this unique name was found")
     
-    if course.competencies == None or skill_name not in course.competencies: # TODO: clarify how to deal with missing competencies
+    if course.competencies == None or skill_name not in course.competencies:
         raise HTTPException(            
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No skill with this name was found")
