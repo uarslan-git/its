@@ -73,8 +73,16 @@ export class SkillOverviewComponent {
   }
 
   generateReason(skillName: string){
-    this.reasonMarkdown = "# Reason\nHere is a reason for skill " + skillName;
+    const endpoint_url = `${environment.apiUrl}/skills/${this.selectedCourse}/${skillName}/reason`;
+    this.client.get<any>(endpoint_url, {withCredentials: true}).subscribe((data) => {
+      this.reasonMarkdown = data.reason
+    })
     this.reasonPopup.nativeElement.showModal();
   }
 
+  
+  suggestNextSteps()
+  {
+    //TODO; implement method
+  }
 }

@@ -10,6 +10,7 @@
         <div class="progress-bar-value" [style.width.%]="course_value"></div>
         <div class="overlay-text">{{ course_value }}% + {{course_progress}}%</div>
     </div>
+    <button class="isolated-button" (click)="suggestNextSteps()">Suggest Next Steps</button>
     <div class="entry-list">
     <table>
         <thead>
