@@ -65,50 +65,68 @@ class PFA_Model(KT_Factor_Analysis_Model_Base):
             + new_task_weights[self.n*i+2]
         return 1 / (1 + np.exp(-logit))
         
-    async def update_course_weights(self, course: Course = None):
-        if course == None: 
-            course = await database.get_course(self.current_user.current_course)
-        if course.domain == "Surveys": return
-        
-        #get all the task completions and order it for users and time stamps (last submissions available?) call all_course_submissions + correctness
-        all_enrolled_users = await database.get_all_enrolled_users(course.unique_name)
+    async def update_course_weights(self, courses: list[Course]):
+        if not courses:
+            return
 
-        q_matrix = course.q_matrix
-        num_skills = len(course.competencies)
-        course_parameters_new = course.course_parameters.copy()
-        
         Xlogreg_reg = []
         Ylogreg = []
         
-        # TODO refactor to use get_sf_rate
-        for user in all_enrolled_users:
-            s = np.zeros(num_skills)
-            f = np.zeros(num_skills)
-            for task in user.tasks_attempted:     
-                task_skills = q_matrix.get(task)
-                new_row= np.zeros(num_skills*self.n)
-                for j in range(num_skills):
-                # adding the entry  
-                    new_row[3*j + 0] = s[j]
-                    new_row[3*j + 1] = f[j]
-                    new_row[3*j + 2] = task_skills[j]
-                if (task in user.tasks_completed):
-                    s = [sum(x) for x in zip(s, task_skills)]
-                    Ylogreg.append(1)
-                else:
-                    f += [sum(x) for x in zip(s, task_skills)]
-                    Ylogreg.append(0)
-                Xlogreg_reg.append(new_row)
-        
+        all_skills = []
+        for course in courses:
+            all_skills.extend(course.competencies)
+        all_skills = sorted(list(set(all_skills)))
+
+        for course in courses:
+            all_enrolled_users = await database.get_all_enrolled_users(course.unique_name)
+            q_matrix = course.q_matrix
+            num_skills = len(course.competencies)
+
+            for user_enrollment in all_enrolled_users:
+                s = np.zeros(len(all_skills))
+                f = np.zeros(len(all_skills))
+                for task in user_enrollment.tasks_attempted:
+                    if task in q_matrix:
+                        task_skills_original = q_matrix.get(task)
+                        task_skills_mapped = np.zeros(len(all_skills))
+                        for i, skill in enumerate(course.competencies):
+                            if skill in all_skills:
+                                skill_index = all_skills.index(skill)
+                                task_skills_mapped[skill_index] = task_skills_original[i]
+
+                        new_row = np.zeros(len(all_skills) * self.n)
+                        for j in range(len(all_skills)):
+                            new_row[3*j + 0] = s[j]
+                            new_row[3*j + 1] = f[j]
+                            new_row[3*j + 2] = task_skills_mapped[j]
+                        
+                        if (task in user_enrollment.tasks_completed):
+                            s = [sum(x) for x in zip(s, task_skills_mapped)]
+                            Ylogreg.append(1)
+                        else:
+                            f += [sum(x) for x in zip(f, task_skills_mapped)]
+                            Ylogreg.append(0)
+                        Xlogreg_reg.append(new_row)
+
+        if not Xlogreg_reg:
+            return
+
         pfa_model = LogisticRegression(penalty = 'l2', C = 1.0, fit_intercept = False)
         pfa_model.fit(Xlogreg_reg, Ylogreg)
 
         coefficients = (-pfa_model.coef_[0]).tolist()
-        course_parameters_new["skill_weights_pfa"] = coefficients
+        
+        for course in courses:
+            course_parameters_new = course.course_parameters.copy()
+            skill_weights_pfa = np.zeros(len(course.competencies) * self.n)
+            for i, skill in enumerate(course.competencies):
+                if skill in all_skills:
+                    skill_index = all_skills.index(skill)
+                    skill_weights_pfa[i*self.n:(i+1)*self.n] = coefficients[skill_index*self.n:(skill_index+1)*self.n]
+            
+            course_parameters_new["skill_weights_pfa"] = skill_weights_pfa.tolist()
+            await database.update_course(course, {"course_parameters": course_parameters_new})
 
-        await database.update_course(course, {"course_parameters": course_parameters_new})
-        return 
-    
     def get_sf_rate(self, course_enrollment):
         attempted_tasks = course_enrollment.tasks_attempted
         completed_tasks = course_enrollment.tasks_completed

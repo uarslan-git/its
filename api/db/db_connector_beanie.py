@@ -14,6 +14,7 @@ from feedback.schemas import Evaluated_feedback_submission as Feedback_submissio
 from system.schemas import AppSettings
 from beanie import PydanticObjectId
 from surveys.schemas import Survey
+from beanie.operators import In
 
 
 async def get_user_db():
@@ -92,6 +93,10 @@ class database():
     
     async def get_courses(self):
         courses = await Course.find().to_list()
+        return courses
+    
+    async def get_courses_by_skills(self, skills: list):
+        courses = await Course.find(In(Course.competencies, skills)).to_list()
         return courses
     
     async def get_course_settings_for_user(self, user_id, course_unique_name):

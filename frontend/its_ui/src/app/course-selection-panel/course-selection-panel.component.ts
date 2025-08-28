@@ -67,11 +67,32 @@ export class CourseSelectionPanelComponent {
             console.log("Course Uploaded!")
           },
           error => {
-            console.error('Upload error:', error);
-            alert("A problem occured during course uploading. Please refer to logs for details.")
+            if (error.status === 409) {
+              if (window.confirm(error.error.detail)) {
+                this.uploadCourseWithCoupling(file);
+              }
+            } else {
+              console.error('Upload error:', error);
+              alert("A problem occured during course uploading. Please refer to logs for details.")
+            }
           }
         );
       }
     }
+  }
+
+  uploadCourseWithCoupling(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    const url: string = `${environment.apiUrl}/course/upload_course?couple_skills=true`;
+    this.client.post<any>(url, formData,{"withCredentials": true}).subscribe(
+      () => {
+        console.log("Course Uploaded with coupling!")
+      },
+      error => {
+        console.error('Upload error:', error);
+        alert("A problem occured during course uploading with coupling. Please refer to logs for details.")
+      }
+    );
   }
 }

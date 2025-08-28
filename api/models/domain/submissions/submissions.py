@@ -19,6 +19,8 @@ import io
 import base64
 import matplotlib.pyplot as plt
 
+from models.knowledge_tracing.pfa_model import PFA_Model
+
 
 async def handle_submission(submission: Base_Submission, user: User):
     """Split point for all types of submissions."""
@@ -55,7 +57,7 @@ async def handle_code_submission(submission: Base_Submission, task_json, user: U
                                                type="submission",
                                                submission_time=submission.submission_time, 
                                                valid_solution=valid_solution)
-    #TODO: Handle course and enrollment updates by learner model, trigger learner model.
+    
     if valid_solution and (not submission.task_unique_name in course_enrollment.tasks_completed):
         course_enrollment.tasks_completed.append(submission.task_unique_name)
         course = await database.get_course(unique_name=user.current_course)
@@ -65,6 +67,13 @@ async def handle_code_submission(submission: Base_Submission, task_json, user: U
         await database.update_course_enrollment(course_enrollment, {"completed": course_enrollment.completed, 
                                                                     "tasks_completed": course_enrollment.tasks_completed})
     await database.log_code_submission(tested_submission)
+
+    course = await database.get_course(submission.course_unique_name)
+    if course.competencies:
+        courses_to_update = await database.get_courses_by_skills(course.competencies)
+        pfa_model = PFA_Model()
+        await pfa_model.update_course_weights(courses_to_update)
+
     return  {"submission_id": str(tested_submission.id)}
 
 async def handle_mc_submission(submission: Base_Submission, task_json, user: User):
@@ -118,7 +127,7 @@ async def handle_mc_submission(submission: Base_Submission, task_json, user: Use
                                                type="submission",
                                                submission_time=submission.submission_time, 
                                                valid_solution=valid_solution)
-    #TODO: Handle course and enrollment updates by learner model, trigger learner model.
+    
     if valid_solution and (not submission.task_unique_name in course_enrollment.tasks_completed):
         course_enrollment.tasks_completed.append(submission.task_unique_name)
         course = await database.get_course(unique_name=user.current_course)
@@ -128,6 +137,13 @@ async def handle_mc_submission(submission: Base_Submission, task_json, user: Use
         await database.update_course_enrollment(course_enrollment, {"completed": course_enrollment.completed, 
                                                                     "tasks_completed": course_enrollment.tasks_completed})
     await database.log_code_submission(tested_submission)
+
+    course = await database.get_course(submission.course_unique_name)
+    if course.competencies:
+        courses_to_update = await database.get_courses_by_skills(course.competencies)
+        pfa_model = PFA_Model()
+        await pfa_model.update_course_weights(courses_to_update)
+
     return  {"submission_id": str(tested_submission.id)}
 
 async def run_tests(task_json, submission):
@@ -268,7 +284,7 @@ def check_user_code(code, prefix_lines=[]):
             if node.lineno not in self.prefix_lines:
                 raise Exception("Deletes are not allowed in this context")
             else:
-                self.generic_visit(node)
+                self.generic_.visit(node)
         
         def visit_Global(self, node: Global):
             if node.lineno not in self.prefix_lines:
@@ -277,7 +293,7 @@ def check_user_code(code, prefix_lines=[]):
                 self.generic_visit(node)
 
         def visit_Nonlocal(self, node: Nonlocal):
-            if node.lineno not in self.prefix_lines: 
+            if node.lineno not in self.prefix_lines:
                 raise Exception("Nonlocal Scope is not allowed")
             else:
                 self.generic_visit(node)

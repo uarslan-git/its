@@ -12,6 +12,7 @@ import shutil
 import os
 from courses.parse_tasks import parse_all_tasks
 from courses.parse_courses import parse_course
+import json
 
 
 router = APIRouter(prefix="/course")
@@ -128,7 +129,7 @@ async def update_tasks(file: UploadFile, temp_dir="./temp", user: User = Depends
 
 
 @router.post("/upload_course")
-async def upload_course(file: UploadFile, temp_dir="./temp", user: User = Depends(current_active_verified_user)):
+async def upload_course(file: UploadFile, couple_skills: bool = False, temp_dir="./temp", user: User = Depends(current_active_verified_user)):
     if (not "admin" in user.roles) and (not "tutor" in user.roles):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -139,9 +140,35 @@ async def upload_course(file: UploadFile, temp_dir="./temp", user: User = Depend
     if len(course_name) > 1:
         raise Exception("Uploaded archive should only contain a single course folder which should be named with the course_unique_name")
     course_name = os.path.basename(course_name[0])
+    course_path = os.path.join(temp_dir, course_name)
+
+    with open(os.path.join(course_path, "course.json"), "r") as course_file:
+        course_json = course_file.read()
+    course_dict = json.loads(course_json)
+    
+    if "competencies" in course_dict and not couple_skills:
+        skills = course_dict["competencies"]
+        overlapping_courses = await database.get_courses_by_skills(skills)
+        if overlapping_courses:
+            overlap_details = {}
+            for course in overlapping_courses:
+                overlapping_skills = list(set(skills) & set(course.competencies))
+                if overlapping_skills:
+                    overlap_details[course.display_name] = overlapping_skills
+            
+            if overlap_details:
+                warning_message = "The following skills already exist in other courses:\n"
+                for course_title, skill_list in overlap_details.items():
+                    warning_message += f"- Course: {course_title}, Skills: {', '.join(skill_list)}\n"
+                warning_message += "\nDo you want to couple the skills from your course with the existing ones?"
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail=warning_message
+                )
+
     try:
-        await parse_course(os.path.join(temp_dir, course_name))
-        await parse_task_folder(os.path.join(temp_dir, course_name, "task_folder"))
+        await parse_course(course_path)
+        await parse_task_folder(os.path.join(course_path, "task_folder"))
     except Exception as e:
         shutil.rmtree(temp_dir)
         raise e
