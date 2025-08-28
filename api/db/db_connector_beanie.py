@@ -121,7 +121,7 @@ class database():
         course_enrollment = await CourseEnrollment.find_one(CourseEnrollment.user_id==str(user.id), 
                                                             CourseEnrollment.course_unique_name==course_unique_name)
         if course_enrollment is None:
-            raise Exception(f"Course enrollment not found for {str(User.id)} and {course_unique_name}")
+            raise Exception(f"Course enrollment not found for {str(user.id)} and {course_unique_name}")
         else:
             return course_enrollment
         
