@@ -1,0 +1,50 @@
+{
+    "course_name": "Intro_to_ML_2",
+    "display_name": "Introduction to Machine Learning 2",
+    "domain": "Simple Python",
+    "sub_domains": [],
+    "competencies":["Competency1", "Competency2", "Competency3", "Competency4", "Competency5"],
+    "unique_name": "Intro_to_Py_2",
+    "curriculum": ["square", "variables", "name_check", "shorten", "my_list", "second_sum", "smallest_positive", "reshape_and_sum", "trigonometry", "simulate_dice_rolls"],
+    "mandatory_curriculum": ["square", "name_check"],
+    "tasks": [
+        "task_my_list",
+        "task_name_check",
+        "task_reshape_and_sum",
+        "task_second_sum",
+        "task_shorten",
+        "task_simulate_dice_rolls",
+        "task_smallest_positive",
+        "task_square",
+        "task_trigonometry",
+        "task_variables",
+        "task_what_are_you"
+    ],
+    "skills": [
+        "python-fundamentals",
+        "lists",
+        "numpy-fundamentals",
+        "numpy-indexing",
+        "numpy-operations",
+        "strings",
+        "random"
+    ],
+    "q_matrix": {
+        "square":  [0, 0, 0, 1, 0],
+        "what_are_you": [0, 0, 0, 1, 0],
+        "variables": [0, 0, 1, 1, 0],
+        "name_check":  [1, 0, 1, 1, 0],
+        "shorten": [1, 0, 1, 0, 0],
+        "my_list": [1, 0, 0, 0, 0],
+        "second_sum": [1, 0, 0, 0, 0],
+        "smallest_positive": [1, 0, 0, 0, 1],
+        "reshape_and_sum": [0, 1, 0, 0, 1 ],
+        "trigonometry": [0, 1, 0, 0, 0 ],
+        "simulate_dice_rolls": [0, 1, 0, 0, 1 ]
+    },
+    "course_parameters": {"skill_weights_pfa": [0,0,0,0,0,0,0,0,0,10,10,10,0,0,0]},
+    "course_settings": {
+        "feedback_init_time": 60,
+        "feedback_cooldown": 30
+    }
+}
