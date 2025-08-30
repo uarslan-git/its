@@ -208,7 +208,7 @@ def process_plt_plot(plot_args):
         img_base64 = base64.b64encode(img_stream.read()).decode()
         img_style = "max-width:88%; padding: 0% 5% 0% 5%"
         plot_string = plot_string + f"\n<img alt='test plot' src='data:image/{img_format};base64,{img_base64}' style='{img_style}'>"
-        #plot_string = plot_string + f"<img alt='test plot' src='data:image/{img_format};base64,BASE64' style='{img_style}'> \n"
+        #plot_string = plot_string + f"<img alt='test plot' src='data:image/{img_format};base64,BASE64' style='{img_style}'> \n" 
     return plot_string
 
 async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:2358"):
@@ -225,23 +225,33 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
         _type_: _description_
     """
     async with aiohttp.ClientSession() as session:
+        print(f"Code Payload: {code_payload}")
         payload = {
             #"expected_output": "null",
-            "language_id": "10",
-            "max_file_size": "1000", #kb
+            "language_id": 71,
+            "max_file_size": 1000, #kb
             #"max_processes_and_or_threads": "1",
             "memory_limit": 100000, #kb
-            "source_code": base64.b64encode(bytes(code_payload, 'utf-8')).decode("ascii"),
+            "source_code": code_payload,
             #"stack_limit": "null",
             #"stdin": "null",
-            "wall_time_limit": "10", #sec
-            "cpu_time_limit": "10", #sec
-            "enable_network": "false",
-            "redirect_stderr_to_stdout": "true",
+            "wall_time_limit": 10, #sec
+            "cpu_time_limit": 10, #sec
+            "enable_network": False,
+            "redirect_stderr_to_stdout": True,
             }
-        async with session.post(f"{url}/submissions/?base64_encoded=true", data=payload) as response:
-            run_token = await response.text()
-            run_token = json.loads(run_token)["token"]
+        async with session.post(f"{url}/submissions/?base64_encoded=false", json=payload) as response:
+            response_text = await response.text()
+            print(f"Judge0 response: {response_text}")
+            try:
+                response_json = json.loads(response_text)
+                if "language_id" in response_json and isinstance(response_json["language_id"], list):
+                    raise Exception(f"Judge0 error: {response_json['language_id'][0]}")
+                run_token = response_json["token"]
+            except json.JSONDecodeError:
+                raise Exception(f"Failed to decode JSON from Judge0 submission response: Status: {response.status}, Body: {response_text}, Headers: {response.headers}")
+            except KeyError:
+                raise Exception(f"Judge0 response missing 'token' key: Status: {response.status}, Body: {response_text}")
         max_iter = 100
         for i in range(0, max_iter): #max_iter for querying the status
             async with session.get(f"{url}/submissions/{run_token}") as response:

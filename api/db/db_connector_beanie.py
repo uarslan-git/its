@@ -65,6 +65,8 @@ class database():
             submission = await Run_submission.find_one(Run_submission.id == PydanticObjectId(submission_id))
         elif submission.type == "feedback_request":
             submission = await Feedback_submission.find_one(Feedback_submission.id == PydanticObjectId(submission_id))
+        elif submission.type == "submission":
+            submission = await Tested_Submission.find_one(Tested_Submission.id == PydanticObjectId(submission_id))
         return(submission)
     
     async def get_tested_submissions_per_user_and_course(self, user_id, course_unique_name) -> Iterable[Tested_Submission]:

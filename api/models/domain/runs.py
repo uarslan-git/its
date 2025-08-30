@@ -57,8 +57,8 @@ def parse_argument_types(arg_dict):
         try:
             run_argument_string = dict([(entry[0], f'#$eval(##{entry[1]}##)$#') for entry in run_arguments])
             run_argument_string = json.dumps(run_argument_string)
-            run_argument_string = run_argument_string.replace('"#$', "")
-            run_argument_string = run_argument_string.replace('$#"', "")
+            run_argument_string = run_argument_string.replace(""""#$""", "")
+            run_argument_string = run_argument_string.replace("$#""", "")
             run_argument_string = run_argument_string.replace('##', '"')
         except Exception as e:
             raise ValueError("Invalid argument.")
@@ -70,5 +70,5 @@ async def execute_code(code):
         pattern = r".*?\##!serialization!##(.*?)\##!serialization!##.*"
         parsed_result_string = re.findall(pattern, run_result, re.DOTALL)
         if len(parsed_result_string) > 1: raise ValueError("Unexpected serialization tags.")
-        run_result = json.loads(parsed_result_string[0])
-    return(run_result)
+        return json.loads(parsed_result_string[0])
+    return {"message": run_result}
