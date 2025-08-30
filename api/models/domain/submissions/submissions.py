@@ -228,17 +228,17 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
         print(f"Code Payload: {code_payload}")
         payload = {
             #"expected_output": "null",
-            "language_id": 71,
-            "max_file_size": 1000, #kb
+            "language_id": "10",
+            "max_file_size": "1000", #kb
             #"max_processes_and_or_threads": "1",
             "memory_limit": 100000, #kb
-            "source_code": code_payload,
+            "source_code": base64.b64encode(bytes(code_payload, 'utf-8')).decode("ascii"),
             #"stack_limit": "null",
             #"stdin": "null",
-            "wall_time_limit": 10, #sec
-            "cpu_time_limit": 10, #sec
-            "enable_network": False,
-            "redirect_stderr_to_stdout": True,
+            "wall_time_limit": "10", #sec
+            "cpu_time_limit": "10", #sec
+            "enable_network": "false",
+            "redirect_stderr_to_stdout": "true",
             }
         async with session.post(f"{url}/submissions/?base64_encoded=false", json=payload) as response:
             response_text = await response.text()
