@@ -108,9 +108,9 @@ class PFA_Model(KT_Factor_Analysis_Model_Base):
                             Ylogreg.append(0)
                         Xlogreg_reg.append(new_row)
 
-        if not Xlogreg_reg:
+        if not Xlogreg_reg or len(set(Ylogreg)) < 2:
             return
-
+        
         pfa_model = LogisticRegression(penalty = 'l2', C = 1.0, fit_intercept = False)
         pfa_model.fit(Xlogreg_reg, Ylogreg)
 

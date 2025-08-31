@@ -240,7 +240,7 @@ async def execute_code_judge0(code_payload, url=f"http://{config.judge0_host}:23
             "enable_network": "false",
             "redirect_stderr_to_stdout": "true",
             }
-        async with session.post(f"{url}/submissions/?base64_encoded=false", json=payload) as response:
+        async with session.post(f"{url}/submissions/?base64_encoded=true", json=payload) as response:
             response_text = await response.text()
             print(f"Judge0 response: {response_text}")
             try:
